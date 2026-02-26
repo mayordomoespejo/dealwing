@@ -16,6 +16,11 @@ export default defineConfig({
       '/api': {
         target: 'http://localhost:3000',
         changeOrigin: true,
+        // Don't proxy Vite module requests (e.g. api/_mock.js imported by the frontend).
+        // Only real API calls (no file extension) should be forwarded to the BFF.
+        bypass: req => {
+          if (/\.(js|ts|jsx|tsx|mjs)(\?|$)/.test(req.url ?? '')) return req.url
+        },
       },
     },
   },
