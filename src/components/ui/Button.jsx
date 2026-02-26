@@ -1,5 +1,6 @@
 import { forwardRef } from 'react'
 import { motion } from 'framer-motion'
+import { SpinnerIcon } from '@/icons'
 import styles from './Button.module.css'
 
 /**
@@ -46,10 +47,7 @@ const Button = forwardRef(function Button(
     >
       {loading && (
         <span className={styles.spinner} aria-hidden="true">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5">
-            <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
-            <path d="M12 2a10 10 0 0 1 10 10" />
-          </svg>
+          <SpinnerIcon size={16} />
         </span>
       )}
       {!loading && icon && <span className={styles.icon}>{icon}</span>}

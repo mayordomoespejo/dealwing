@@ -2,13 +2,11 @@ import { useState, useEffect, useRef, useCallback, useId } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { searchAirports } from '@/lib/airports.js'
 import { queryKeys } from '@/lib/queryKeys.js'
 import { http } from '@/lib/http.js'
 import { FieldError } from '@/components/ui/FieldError.jsx'
+import { XIcon } from '@/icons'
 import styles from './AirportAutocomplete.module.css'
-
-const MOCK = import.meta.env.VITE_MOCK_API === 'true'
 
 /** Debounce hook */
 function useDebounce(value, delay = 300) {
@@ -19,6 +17,8 @@ function useDebounce(value, delay = 300) {
   }, [value, delay])
   return debounced
 }
+
+const MIN_SEARCH_CHARS = 3
 
 /**
  * Airport autocomplete input.
@@ -41,6 +41,8 @@ export function AirportAutocomplete({
   error,
   label,
   icon,
+  externalLabel = '',
+  onLabelChange,
 }) {
   const { t } = useTranslation()
   const id = useId()
@@ -49,44 +51,51 @@ export function AirportAutocomplete({
   const listRef = useRef(null)
 
   const [inputText, setInputText] = useState('')
+  const [selectedLabel, setSelectedLabel] = useState('')
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
 
   const debouncedQuery = useDebounce(inputText, 280)
+  const queryTrimmed = debouncedQuery.trim()
+  const hasMinChars = queryTrimmed.length >= MIN_SEARCH_CHARS
 
-  // When value is cleared externally, reset the input text.
+  // Sync external label (e.g. loaded from history) or clear when value is removed.
   useEffect(() => {
-    if (!value) setInputText('')
-  }, [value])
+    if (!value) {
+      setInputText('')
+      setSelectedLabel('')
+    } else if (externalLabel) {
+      setSelectedLabel(externalLabel)
+    }
+  }, [value, externalLabel])
 
-  // Fetch suggestions from BFF (or local static list in mock mode)
-  const { data: suggestions = [] } = useQuery({
+  // Fetch suggestions from BFF (AeroDataBox requires min 3 characters)
+  const {
+    data: suggestions = [],
+    isError,
+    status,
+  } = useQuery({
     queryKey: queryKeys.locations.search(debouncedQuery),
     queryFn: async () => {
-      if (debouncedQuery.length < 1) return []
-      if (MOCK) {
-        return searchAirports(debouncedQuery, 8).map(a => ({
-          iataCode: a.iata,
-          name: a.name,
-          cityName: a.city,
-          countryCode: a.country,
-        }))
-      }
-      const res = await http.get('/api/locations', { q: debouncedQuery })
+      if (!hasMinChars) return []
+      const res = await http.get('/api/locations', { q: queryTrimmed })
       return res.data ?? []
     },
-    enabled: debouncedQuery.length >= 1 && open,
+    enabled: hasMinChars && open,
     staleTime: 1000 * 60 * 60, // 1h — airport names don't change
   })
 
   const select = useCallback(
     airport => {
+      const displayLabel = airport.cityName || airport.name || airport.iataCode
       onChange(airport.iataCode)
+      setSelectedLabel(displayLabel)
+      onLabelChange?.(displayLabel)
       setInputText('')
       setOpen(false)
       setActiveIndex(-1)
     },
-    [onChange]
+    [onChange, onLabelChange]
   )
 
   function handleInputChange(e) {
@@ -94,8 +103,11 @@ export function AirportAutocomplete({
     setInputText(e.target.value)
     setOpen(true)
     setActiveIndex(-1)
-    // If user clears, reset value
-    if (!text) onChange('')
+    // If user clears, reset value and label
+    if (!text) {
+      onChange('')
+      onLabelChange?.('')
+    }
   }
 
   function handleKeyDown(e) {
@@ -154,7 +166,7 @@ export function AirportAutocomplete({
           aria-controls={listboxId}
           aria-activedescendant={activeIndex >= 0 ? `${id}-opt-${activeIndex}` : undefined}
           className={`${styles.input} ${icon ? styles.withIcon : ''} ${value ? styles.hasValue : ''}`}
-          value={value ? inputText || value : inputText}
+          value={value ? inputText || selectedLabel : inputText}
           onChange={handleInputChange}
           onFocus={() => setOpen(true)}
           onBlur={handleBlur}
@@ -172,15 +184,33 @@ export function AirportAutocomplete({
             className={styles.clearBtn}
             onClick={() => {
               onChange('')
+              onLabelChange?.('')
               setInputText('')
               inputRef.current?.focus()
             }}
             aria-label={t('search.clearAirport')}
           >
-            ×
+            <XIcon size={16} />
           </button>
         )}
       </div>
+
+      {/* Hint when user has typed but fewer than 3 characters */}
+      {!error &&
+        open &&
+        !value &&
+        inputText.trim().length > 0 &&
+        inputText.trim().length < MIN_SEARCH_CHARS && (
+          <FieldError>{t('search.minCharsAirport')}</FieldError>
+        )}
+
+      {/* No results or API error */}
+      {!error &&
+        open &&
+        !value &&
+        (isError || (status === 'success' && suggestions.length === 0)) && (
+          <FieldError>{t('search.airportSearchError')}</FieldError>
+        )}
 
       <AnimatePresence>
         {open && suggestions.length > 0 && (

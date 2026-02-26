@@ -5,7 +5,7 @@ const STORAGE_KEY = 'dw:searchHistory'
 
 /**
  * Manages recent search history in localStorage.
- * Each entry: { id, origin, destination, departureDate, returnDate, adults, currency, searchedAt }
+ * Each entry: { id, origin, destination, departureDate, returnDate, adults, searchedAt }
  */
 export function useSearchHistory() {
   const [history, setHistory] = useLocalStorage(STORAGE_KEY, [])

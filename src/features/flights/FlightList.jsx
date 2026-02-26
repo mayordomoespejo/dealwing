@@ -8,28 +8,8 @@ import { computePriceStats } from './dealScore.js'
 import { formatPrice } from '@/lib/formatters.js'
 import styles from './FlightList.module.css'
 
-const SORT_FNS = {
-  price: (a, b) => a.price - b.price,
-  duration: (a, b) => a.totalDurationMin - b.totalDurationMin,
-  dealScore: (a, b) => b.dealScore - a.dealScore,
-}
-
-/**
- * @param {object[]} flights       - all domain flight offers
- * @param {object}   filters       - { maxPrice, maxStops, airlines }
- * @param {string}   sortBy        - 'price' | 'duration' | 'dealScore'
- * @param {boolean}  isLoading
- * @param {object}   error
- * @param {string}   selectedId    - currently selected flight id
- * @param {Function} onSelect      - (flight) => void
- * @param {Function} onShowDetail  - (flight) => void
- * @param {Function} onSave
- * @param {Function} isSaved       - (flight) => boolean
- */
 export function FlightList({
   flights,
-  filters,
-  sortBy,
   isLoading,
   error,
   selectedId,
@@ -41,34 +21,12 @@ export function FlightList({
 }) {
   const { t } = useTranslation()
 
-  const filteredAndSorted = useMemo(() => {
+  const sorted = useMemo(() => {
     if (!flights?.length) return []
+    return [...flights].sort((a, b) => a.price - b.price)
+  }, [flights])
 
-    let result = [...flights]
-
-    // Filter by max price
-    if (filters.maxPrice) {
-      result = result.filter(f => f.price <= filters.maxPrice)
-    }
-
-    // Filter by max stops
-    if (filters.maxStops !== undefined && filters.maxStops !== 99) {
-      result = result.filter(f => f.stops <= filters.maxStops)
-    }
-
-    // Filter by selected airlines
-    if (filters.airlines?.length) {
-      result = result.filter(f => f.airlines.some(a => filters.airlines.includes(a)))
-    }
-
-    // Sort
-    const sortFn = SORT_FNS[sortBy] ?? SORT_FNS.price
-    result.sort(sortFn)
-
-    return result
-  }, [flights, filters, sortBy])
-
-  const stats = useMemo(() => computePriceStats(filteredAndSorted), [filteredAndSorted])
+  const stats = useMemo(() => computePriceStats(sorted), [sorted])
 
   // Loading state
   if (isLoading) {
@@ -111,7 +69,7 @@ export function FlightList({
   }
 
   // No results
-  if (!filteredAndSorted.length) {
+  if (!sorted.length) {
     return (
       <div className={styles.empty}>
         <div className={styles.emptyIcon}>🔍</div>
@@ -125,33 +83,27 @@ export function FlightList({
     <div className={styles.list}>
       {/* Header with stats */}
       <div className={styles.listHeader}>
-        <span className={styles.resultCount}>
-          {t('flights.results', { count: filteredAndSorted.length })}
-          {flights.length !== filteredAndSorted.length &&
-            ` ${t('flights.ofTotal', { total: flights.length })}`}
-        </span>
-        {filteredAndSorted.length > 0 && (
-          <div className={styles.priceInsights}>
-            <span className={styles.insightItem}>
-              <span className={styles.insightLabel}>{t('flights.from')}</span>
-              <span className={styles.insightValue}>
-                {formatPrice(stats.min, flights[0]?.currency)}
-              </span>
+        <span className={styles.resultCount}>{t('flights.results', { count: sorted.length })}</span>
+        <div className={styles.priceInsights}>
+          <span className={styles.insightItem}>
+            <span className={styles.insightLabel}>{t('flights.from')}</span>
+            <span className={styles.insightValue}>
+              {formatPrice(stats.min, flights[0]?.currency)}
             </span>
-            <span className={styles.insightDivider}>·</span>
-            <span className={styles.insightItem}>
-              <span className={styles.insightLabel}>{t('flights.avg')}</span>
-              <span className={styles.insightValue}>
-                {formatPrice(stats.mean, flights[0]?.currency)}
-              </span>
+          </span>
+          <span className={styles.insightDivider}>·</span>
+          <span className={styles.insightItem}>
+            <span className={styles.insightLabel}>{t('flights.avg')}</span>
+            <span className={styles.insightValue}>
+              {formatPrice(stats.mean, flights[0]?.currency)}
             </span>
-          </div>
-        )}
+          </span>
+        </div>
       </div>
 
       {/* Flight cards */}
       <AnimatePresence mode="popLayout" initial={false}>
-        {filteredAndSorted.map(flight => (
+        {sorted.map(flight => (
           <FlightCard
             key={flight.id}
             flight={flight}

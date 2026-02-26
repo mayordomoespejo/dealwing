@@ -2,42 +2,52 @@ import { z } from 'zod'
 
 const today = () => new Date().toISOString().slice(0, 10)
 
-export const searchSchema = z
-  .object({
-    tripType: z.enum(['one-way', 'round-trip']),
-    origin: z
-      .string()
-      .length(3, 'Must be a 3-letter IATA code')
-      .regex(/^[A-Z]{3}$/, 'Must be uppercase IATA code (e.g. MAD)'),
-    destination: z
-      .string()
-      .length(3, 'Must be a 3-letter IATA code')
-      .regex(/^[A-Z]{3}$/, 'Must be uppercase IATA code (e.g. JFK)')
-      .optional()
-      .or(z.literal('')),
-    departureDate: z
-      .string()
-      .min(1, 'Departure date is required')
-      .refine(val => val >= today(), 'Date cannot be in the past'),
-    returnDate: z.string().optional().or(z.literal('')),
-    adults: z.number().int().min(1).max(9),
-    currency: z.enum(['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF']),
-  })
-  .refine(
-    data => {
-      if (data.tripType === 'round-trip' && !data.returnDate) return false
-      return true
-    },
-    { message: 'Return date is required for round-trip', path: ['returnDate'] }
-  )
-  .refine(
-    data => {
-      if (data.returnDate && data.departureDate && data.returnDate < data.departureDate)
-        return false
-      return true
-    },
-    { message: 'Return date must be after departure date', path: ['returnDate'] }
-  )
+/**
+ * Builds the search form schema with translated validation messages.
+ * @param { (key: string) => string } t - i18n translate function (e.g. useTranslation().t)
+ * @returns { z.ZodType } Zod schema for the search form
+ */
+export function getSearchSchema(t) {
+  return z
+    .object({
+      tripType: z.enum(['one-way', 'round-trip']),
+      origin: z
+        .string()
+        .min(1, t('search.validation.originRequired'))
+        .length(3, t('search.validation.originIataLength'))
+        .regex(/^[A-Z]{3}$/, t('search.validation.originIataFormat')),
+      destination: z
+        .string()
+        .min(1, t('search.validation.destinationRequired'))
+        .length(3, t('search.validation.destinationIataLength'))
+        .regex(/^[A-Z]{3}$/, t('search.validation.destinationIataFormat')),
+      departureDate: z
+        .string()
+        .min(1, t('search.validation.departureRequired'))
+        .refine(val => val >= today(), t('search.validation.dateNotPast')),
+      returnDate: z.string().optional().or(z.literal('')),
+      adults: z
+        .number()
+        .int()
+        .min(1, t('search.validation.adultsRange'))
+        .max(9, t('search.validation.adultsRange')),
+    })
+    .refine(
+      data => {
+        if (data.tripType === 'round-trip' && !data.returnDate) return false
+        return true
+      },
+      { message: t('search.validation.returnRequired'), path: ['returnDate'] }
+    )
+    .refine(
+      data => {
+        if (data.returnDate && data.departureDate && data.returnDate < data.departureDate)
+          return false
+        return true
+      },
+      { message: t('search.validation.returnAfterDeparture'), path: ['returnDate'] }
+    )
+}
 
 export const defaultValues = {
   tripType: 'round-trip',
@@ -46,5 +56,4 @@ export const defaultValues = {
   departureDate: '',
   returnDate: '',
   adults: 1,
-  currency: 'EUR',
 }

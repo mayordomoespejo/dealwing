@@ -12,7 +12,7 @@ import { formatPrice } from '@/lib/formatters.js'
  * @param {string}   sortBy    - 'price' | 'duration' | 'dealScore'
  * @param {Function} onSortChange
  */
-export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange }) {
+export function FlightFilters({ flights, filters, onChange }) {
   const { t } = useTranslation()
 
   if (!flights.length) return null
@@ -34,26 +34,6 @@ export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange
 
   return (
     <div className={styles.panel}>
-      {/* Sort */}
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>{t('filters.sortBy')}</h3>
-        <div className={styles.sortBtns}>
-          {[
-            { key: 'price', label: t('filters.price') },
-            { key: 'duration', label: t('filters.duration') },
-            { key: 'dealScore', label: t('filters.bestDeal') },
-          ].map(({ key, label }) => (
-            <button
-              key={key}
-              className={`${styles.sortBtn} ${sortBy === key ? styles.sortActive : ''}`}
-              onClick={() => onSortChange(key)}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
       {/* Price range */}
       <div className={styles.section}>
         <div className={styles.sectionHeaderRow}>

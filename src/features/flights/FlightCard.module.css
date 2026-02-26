@@ -1,4 +1,7 @@
 .card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-xl);
@@ -25,9 +28,6 @@
 
 .selected {
   border-color: var(--color-brand);
-  box-shadow:
-    0 0 0 3px var(--color-brand-100),
-    var(--shadow-md);
 }
 
 /* Top row */
@@ -35,7 +35,6 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-3);
 }
 
 .airline {
@@ -44,12 +43,18 @@
   gap: var(--space-2);
 }
 
-.airlineLogo {
-  width: 24px;
-  height: 24px;
+/* SVG logo (known airlines) */
+.airlineLogoSvg {
+  display: block;
+  flex-shrink: 0;
+}
+
+/* Fallback img (unknown airlines) */
+.airlineLogoImg {
+  width: 18px;
+  height: 18px;
   object-fit: contain;
-  border-radius: var(--radius-sm);
-  background: var(--color-bg-tertiary);
+  flex-shrink: 0;
 }
 
 .airlineName {
@@ -62,22 +67,6 @@
   display: flex;
   align-items: center;
   gap: var(--space-2);
-}
-
-/* Deal score circle */
-.dealScore {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 50%;
-  font-size: var(--text-xs);
-  font-weight: var(--font-bold);
-  color: var(--score-color);
-  background: color-mix(in srgb, var(--score-color) 12%, transparent);
-  border: 1.5px solid color-mix(in srgb, var(--score-color) 30%, transparent);
-  cursor: help;
 }
 
 .saveBtn {
@@ -102,7 +91,7 @@
   color: var(--color-error);
 }
 
-/* Route timeline */
+/* Route timeline — padding y bordes forman parte del diseño del bloque */
 .route {
   display: flex;
   align-items: center;
@@ -110,7 +99,6 @@
   padding: var(--space-3) 0;
   border-top: 1px solid var(--color-border);
   border-bottom: 1px solid var(--color-border);
-  margin-bottom: var(--space-3);
 }
 
 .timeBlock {
@@ -219,13 +207,18 @@
   gap: var(--space-1);
 }
 
+.sproutIcon {
+  color: var(--color-success);
+}
+
 .priceBlock {
-  text-align: right;
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
   flex-shrink: 0;
 }
 
 .price {
-  display: block;
   font-size: var(--text-2xl);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
@@ -234,35 +227,7 @@
 }
 
 .priceLabel {
-  font-size: var(--text-xs);
-  color: var(--color-text-tertiary);
-}
-
-/* Deal label ribbon */
-.dealLabel {
-  position: absolute;
-  top: var(--space-4);
-  right: calc(-1px);
   font-size: 10px;
-  font-weight: var(--font-bold);
-  color: var(--score-color);
-  background: color-mix(in srgb, var(--score-color) 10%, var(--color-surface));
-  border: 1px solid color-mix(in srgb, var(--score-color) 20%, transparent);
-  border-right: none;
-  border-radius: var(--radius-sm) 0 0 var(--radius-sm);
-  padding: 2px 6px;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  display: none; /* shown on hover */
-}
-
-.card:hover .dealLabel {
-  display: block;
-}
-
-/* Detail CTA */
-.detailCta {
-  margin-top: var(--space-3);
-  display: flex;
-  justify-content: flex-end;
+  font-weight: var(--font-medium);
+  color: var(--color-text-tertiary);
 }

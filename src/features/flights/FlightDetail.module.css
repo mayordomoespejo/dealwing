@@ -55,56 +55,6 @@
   gap: var(--space-2);
 }
 
-/* Score card */
-.scoreCard {
-  display: flex;
-  align-items: center;
-  gap: var(--space-4);
-  background: color-mix(in srgb, var(--score-color) 6%, var(--color-surface));
-  border: 1px solid color-mix(in srgb, var(--score-color) 20%, transparent);
-  border-radius: var(--radius-xl);
-  padding: var(--space-4);
-}
-
-.scoreGauge {
-  position: relative;
-  width: 80px;
-  flex-shrink: 0;
-}
-
-.gaugeArc {
-  width: 80px;
-  height: 50px;
-}
-
-.gaugeValue {
-  position: absolute;
-  bottom: 2px;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  color: var(--score-color);
-}
-
-.scoreDetails {
-  flex: 1;
-}
-
-.scoreLabel {
-  display: block;
-  font-size: var(--text-base);
-  font-weight: var(--font-semibold);
-  margin-bottom: var(--space-1);
-}
-
-.scoreDesc {
-  font-size: var(--text-xs);
-  color: var(--color-text-secondary);
-  line-height: var(--leading-relaxed);
-}
-
 /* Itinerary */
 .itinerary {
   background: var(--color-bg-tertiary);
@@ -283,6 +233,7 @@
 
 .co2Icon {
   font-size: 24px;
+  color: var(--color-success);
 }
 
 .co2Value {

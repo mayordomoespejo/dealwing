@@ -1,14 +1,8 @@
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/Badge.jsx'
-import { Button } from '@/components/ui/Button.jsx'
-import {
-  formatPrice,
-  formatDuration,
-  formatTime,
-  formatCO2,
-  dealScoreColor,
-} from '@/lib/formatters.js'
+import { HeartIcon, SproutIcon } from '@/icons'
+import { formatPrice, formatDuration, formatTime, formatCO2 } from '@/lib/formatters.js'
 import styles from './FlightCard.module.css'
 
 const AIRLINE_LOGO_BASE = 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/symbols'
@@ -29,14 +23,6 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
   const outSeg = flight.outbound.segments
   const firstSeg = outSeg[0]
   const lastSeg = outSeg.at(-1)
-
-  const scoreColor = dealScoreColor(flight.dealScore)
-  const scoreLabel =
-    flight.dealScore >= 70
-      ? t('formatters.greatDeal')
-      : flight.dealScore >= 40
-        ? t('formatters.goodDeal')
-        : t('formatters.fairDeal')
 
   const stopsLabel =
     flight.stops === 0
@@ -59,7 +45,10 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
       initial={{ opacity: 0, y: 12 }}
       animate={{ opacity: 1, y: 0 }}
       exit={{ opacity: 0 }}
-      onClick={() => onSelect?.(flight)}
+      onClick={() => {
+        onSelect?.(flight)
+        onShowDetail?.(flight)
+      }}
       onKeyDown={handleKeyDown}
       role="button"
       tabIndex={0}
@@ -70,29 +59,38 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
         price: formatPrice(flight.price, flight.currency),
       })}
     >
-      {/* Top: airline + deal score + save */}
+      {/* Top: airline + save */}
       <div className={styles.topRow}>
         <div className={styles.airline}>
-          <img
-            className={styles.airlineLogo}
-            src={`${AIRLINE_LOGO_BASE}/${flight.airlines[0]}.png`}
-            alt={flight.airlineNames[0]}
-            onError={e => {
-              e.target.style.display = 'none'
-            }}
-          />
-          <span className={styles.airlineName}>{flight.airlineNames.join(', ')}</span>
+          {flight.airlines?.[0] != null &&
+            (flight.airlineLogoUrls?.[0] ? (
+              <>
+                <img
+                  className={styles.airlineLogoImg}
+                  src={flight.airlineLogoUrls[0]}
+                  alt={flight.airlineNames?.[0]}
+                  onError={e => {
+                    e.target.style.display = 'none'
+                  }}
+                />
+                <span className={styles.airlineName}>{flight.airlineNames?.join(', ') ?? ''}</span>
+              </>
+            ) : (
+              <>
+                <img
+                  className={styles.airlineLogoImg}
+                  src={`${AIRLINE_LOGO_BASE}/${flight.airlines[0]}.png`}
+                  alt={flight.airlineNames?.[0]}
+                  onError={e => {
+                    e.target.style.display = 'none'
+                  }}
+                />
+                <span className={styles.airlineName}>{flight.airlineNames?.join(', ') ?? ''}</span>
+              </>
+            ))}
         </div>
 
         <div className={styles.topActions}>
-          <span
-            className={styles.dealScore}
-            style={{ '--score-color': scoreColor }}
-            title={t('flights.dealScore', { score: flight.dealScore })}
-          >
-            {flight.dealScore}
-          </span>
-
           <button
             className={`${styles.saveBtn} ${isSaved ? styles.saved : ''}`}
             onClick={e => {
@@ -102,17 +100,7 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
             aria-label={isSaved ? t('flights.removeFromSaved') : t('flights.saveFlight')}
             aria-pressed={isSaved}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill={isSaved ? 'currentColor' : 'none'}
-              stroke="currentColor"
-              strokeWidth="2"
-              aria-hidden="true"
-            >
-              <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-            </svg>
+            <HeartIcon size={16} fill={isSaved ? 'currentColor' : 'none'} />
           </button>
         </div>
       </div>
@@ -145,17 +133,9 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
       {/* Bottom: price + tags + CTA */}
       <div className={styles.bottomRow}>
         <div className={styles.badges}>
-          <Badge variant={flight.stops === 0 ? 'success' : 'default'} size="sm">
-            {stopsLabel}
-          </Badge>
           {flight.co2Kg > 0 && (
             <Badge variant="default" size="sm" title="Approximate CO₂ per passenger">
-              🌱 {formatCO2(flight.co2Kg)}
-            </Badge>
-          )}
-          {flight.seatsAvailable <= 5 && (
-            <Badge variant="warning" size="sm">
-              {t('flights.seatsLeft', { count: flight.seatsAvailable })}
+              <SproutIcon size={14} className={styles.sproutIcon} /> {formatCO2(flight.co2Kg)}
             </Badge>
           )}
         </div>
@@ -164,24 +144,6 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
           <span className={styles.price}>{formatPrice(flight.price, flight.currency)}</span>
           <span className={styles.priceLabel}>{t('flights.perPerson')}</span>
         </div>
-      </div>
-
-      {/* Deal label */}
-      <div className={styles.dealLabel} style={{ '--score-color': scoreColor }}>
-        {scoreLabel}
-      </div>
-
-      {/* Detail CTA */}
-      <div
-        className={styles.detailCta}
-        onClick={e => {
-          e.stopPropagation()
-          onShowDetail?.(flight)
-        }}
-      >
-        <Button variant="secondary" size="sm">
-          {t('flights.viewDetails')}
-        </Button>
       </div>
     </motion.article>
   )

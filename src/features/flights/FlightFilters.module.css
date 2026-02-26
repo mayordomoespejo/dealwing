@@ -39,35 +39,6 @@
   color: var(--color-brand);
 }
 
-/* Sort buttons */
-.sortBtns {
-  display: flex;
-  gap: var(--space-1);
-  flex-wrap: wrap;
-}
-
-.sortBtn {
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-size: var(--text-xs);
-  font-weight: var(--font-medium);
-  border: 1px solid var(--color-border);
-  color: var(--color-text-secondary);
-  background: transparent;
-  transition: all var(--duration-fast) var(--ease);
-}
-
-.sortBtn:hover {
-  border-color: var(--color-brand);
-  color: var(--color-brand);
-}
-
-.sortActive {
-  background: var(--color-brand);
-  border-color: var(--color-brand);
-  color: #fff;
-}
-
 /* Slider */
 .slider {
   -webkit-appearance: none;

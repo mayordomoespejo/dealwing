@@ -141,6 +141,14 @@ export const AIRPORTS = [
     lng: -0.4816,
   },
   {
+    iata: 'RMU',
+    name: 'Región de Murcia International Airport',
+    city: 'Murcia',
+    country: 'ES',
+    lat: 37.803,
+    lng: -0.8124,
+  },
+  {
     iata: 'SVQ',
     name: 'Seville Airport',
     city: 'Seville',

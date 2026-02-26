@@ -52,6 +52,10 @@
 .maplibregl-ctrl-bottom-right {
   bottom: var(--space-3);
 }
+/* Hide MapLibre's built-in attribution (we use our own in MapView) */
+.maplibregl-ctrl-attrib {
+  display: none !important;
+}
 .maplibregl-ctrl-logo {
   opacity: 0.5;
 }

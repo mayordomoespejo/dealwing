@@ -1,12 +1,17 @@
+/* Same look as Select (Moneda): trigger + dropdown list below */
+
 .container {
   position: relative;
   width: 100%;
+  min-width: 0;
+  flex: 1 1 0;
 }
 
+/* Mes y año mismo tamaño; mismo estilo que el trigger del Select */
 .trigger {
   width: 100%;
-  min-height: 44px;
-  padding: var(--space-2) var(--space-3) var(--space-2) var(--space-3);
+  min-height: 36px;
+  padding: var(--space-1) var(--space-2) var(--space-1) var(--space-3);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -54,14 +59,14 @@
   transform: rotate(180deg);
 }
 
-/* Dropdown appears below the trigger, does not cover it */
+/* Lista debajo, mismo estilo que el Select de moneda */
 .dropdown {
   position: absolute;
   top: 100%;
   left: 0;
   right: 0;
   margin-top: var(--space-1);
-  max-height: 240px;
+  max-height: 200px;
   overflow: hidden;
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
@@ -71,7 +76,7 @@
 }
 
 .dropdownInner {
-  max-height: 240px;
+  max-height: 200px;
   overflow-y: auto;
   border-radius: inherit;
 }
@@ -101,4 +106,10 @@
 .optionActive.optionSelected {
   background: var(--color-brand-subtle);
   color: var(--color-brand);
+}
+
+.optionDisabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
 }

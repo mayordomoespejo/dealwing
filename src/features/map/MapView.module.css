@@ -55,6 +55,15 @@
   color: var(--color-text-secondary);
 }
 
+/* Fixed-width container so "Origen" and "Destino" text align to the same left edge */
+.legendIcon {
+  width: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .legendDotOrigin {
   width: 10px;
   height: 10px;
@@ -62,14 +71,11 @@
   background: var(--color-brand);
   border: 2px solid white;
   box-shadow: 0 0 0 2px var(--color-brand-300);
-  flex-shrink: 0;
 }
 
 .legendDotDest {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
+  width: 16px;
+  height: 8px;
+  border-radius: 4px;
   background: var(--color-gray-800);
-  border: 2px solid white;
-  flex-shrink: 0;
 }

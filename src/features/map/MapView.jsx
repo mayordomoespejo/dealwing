@@ -1,4 +1,4 @@
-import { useRef } from 'react'
+import { useRef, forwardRef, useImperativeHandle } from 'react'
 import { useTranslation } from 'react-i18next'
 import { useMap } from './useMap.js'
 import styles from './MapView.module.css'
@@ -6,23 +6,29 @@ import styles from './MapView.module.css'
 /**
  * MapLibre GL map container.
  *
- * @param {object[]} flights     - domain flight offers (for markers/routes)
+ * Exposes { flyToDest(iata) } via ref for programmatic panning from the parent.
+ * Destination is fixed to RMU and is not clickable.
+ *
+ * @param {object[]} flights     - domain flight offers (for routes)
  * @param {string}   selectedId  - selected flight id
- * @param {Function} onSelect    - (flight) => void
  * @param {object}   searchParams
  */
-export function MapView({ flights = [], selectedId, onSelect, searchParams }) {
+export const MapView = forwardRef(function MapView(
+  { flights = [], selectedId, searchParams },
+  ref
+) {
   const { t, i18n } = useTranslation()
   const containerRef = useRef(null)
 
-  useMap({
+  const { flyToDest } = useMap({
     containerRef,
     flights,
     selectedId,
-    onSelect,
     searchParams,
     language: i18n.language,
   })
+
+  useImperativeHandle(ref, () => ({ flyToDest }), [flyToDest])
 
   return (
     <div className={styles.wrapper}>
@@ -43,14 +49,18 @@ export function MapView({ flights = [], selectedId, onSelect, searchParams }) {
       {/* Legend */}
       <div className={styles.legend}>
         <div className={styles.legendItem}>
-          <span className={styles.legendDotOrigin} />
+          <span className={styles.legendIcon}>
+            <span className={styles.legendDotOrigin} />
+          </span>
           {t('map.origin')}
         </div>
         <div className={styles.legendItem}>
-          <span className={styles.legendDotDest} />
+          <span className={styles.legendIcon}>
+            <span className={styles.legendDotDest} />
+          </span>
           {t('map.destination')}
         </div>
       </div>
     </div>
   )
-}
+})

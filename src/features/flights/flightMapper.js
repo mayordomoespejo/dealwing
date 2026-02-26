@@ -9,12 +9,16 @@ import { estimateCO2 } from './co2.js'
  * Domain FlightOffer:
  *   id, origin, destination, price, currency,
  *   outbound { duration, segments[] }, inbound? { duration, segments[] },
- *   totalDurationMin, stops, airlines, airlineNames,
+ *   totalDurationMin, stops, airlines, airlineNames, airlineLogoUrls,
  *   dealScore, co2Kg, isRoundTrip
  */
 export function mapFlightOffer(rawOffer) {
   const outboundSlice = rawOffer.slices[0]
   const inboundSlice = rawOffer.slices[1] ?? null
+
+  // Duffel includes lat/lng on each airport object — use as fallback for unknown airports
+  const duffelOrigin = outboundSlice.origin
+  const duffelDest = outboundSlice.destination
 
   const outboundSegments = outboundSlice.segments.map(mapSegment)
   const inboundSegments = inboundSlice ? inboundSlice.segments.map(mapSegment) : null
@@ -28,38 +32,51 @@ export function mapFlightOffer(rawOffer) {
   const outStops = outboundSegments.length - 1
   const inStops = inboundSegments ? inboundSegments.length - 1 : 0
 
-  // Deduplicated carrier codes and names across all segments
-  const allCarrierCodes = [
-    ...outboundSegments.map(s => s.carrierCode),
-    ...(inboundSegments ?? []).map(s => s.carrierCode),
-  ]
-  const airlines = [...new Set(allCarrierCodes)]
-  const airlineNames = [
-    ...new Set([
-      ...outboundSegments.map(s => s.carrierName),
-      ...(inboundSegments ?? []).map(s => s.carrierName),
-    ]),
-  ]
+  // Deduplicated carrier codes and names across all segments (order preserved)
+  const allSegments = [...outboundSegments, ...(inboundSegments ?? [])]
+  const seenCodes = new Set()
+  const airlines = []
+  const airlineNames = []
+  const airlineLogoUrls = []
+  for (const seg of allSegments) {
+    if (!seenCodes.has(seg.carrierCode)) {
+      seenCodes.add(seg.carrierCode)
+      airlines.push(seg.carrierCode)
+      airlineNames.push(seg.carrierName)
+      airlineLogoUrls.push(seg.carrierLogoUrl)
+    }
+  }
 
+  const passengerCount = rawOffer.passengers?.length || 1
   const totalPrice = parseFloat(rawOffer.total_amount)
+  const pricePerPax = totalPrice / passengerCount
   const currency = rawOffer.total_currency
+
+  // Use Duffel's emissions when provided; fall back to our own estimate
+  const co2Kg = rawOffer.total_emissions_kg
+    ? Math.round(parseFloat(rawOffer.total_emissions_kg) / passengerCount)
+    : estimateCO2(originIata, destIata, outboundSegments, outDurationMin)
 
   return {
     id: rawOffer.id,
     origin: getAirport(originIata) ?? {
       iata: originIata,
-      name: originIata,
-      city: originIata,
-      country: '',
+      name: duffelOrigin?.name ?? originIata,
+      city: duffelOrigin?.city_name ?? originIata,
+      country: duffelOrigin?.iata_country_code ?? '',
+      lat: duffelOrigin?.latitude,
+      lng: duffelOrigin?.longitude,
     },
     destination: getAirport(destIata) ?? {
       iata: destIata,
-      name: destIata,
-      city: destIata,
-      country: '',
+      name: duffelDest?.name ?? destIata,
+      city: duffelDest?.city_name ?? destIata,
+      country: duffelDest?.iata_country_code ?? '',
+      lat: duffelDest?.latitude,
+      lng: duffelDest?.longitude,
     },
-    price: totalPrice,
-    priceBase: parseFloat(rawOffer.base_amount ?? rawOffer.total_amount),
+    price: pricePerPax,
+    priceBase: parseFloat(rawOffer.base_amount ?? rawOffer.total_amount) / passengerCount,
     currency,
     outbound: {
       duration: outboundSlice.duration,
@@ -79,35 +96,38 @@ export function mapFlightOffer(rawOffer) {
     stops: outStops, // outbound stops (primary sort key)
     airlines,
     airlineNames,
-    seatsAvailable: null, // Duffel does not expose available seats on the offer
+    airlineLogoUrls,
     isRoundTrip: !!inboundSlice,
     dealScore: 0, // filled after normalization
-    co2Kg: estimateCO2(originIata, destIata, outboundSegments, outDurationMin),
+    co2Kg,
     _raw: rawOffer,
   }
 }
 
 /**
  * Map a Duffel segment to our domain segment model.
- * Duffel uses snake_case and different field names than Amadeus.
+ * Duffel uses snake_case and different field names.
+ * marketing_carrier can include logo_symbol_url (Duffel airline asset).
  */
 function mapSegment(seg) {
+  const carrier = seg.marketing_carrier
   return {
     id: seg.id,
     departure: {
       iataCode: seg.origin.iata_code,
-      terminal: seg.origin.terminal ?? null,
+      terminal: seg.origin_terminal ?? null,
       at: seg.departing_at,
     },
     arrival: {
       iataCode: seg.destination.iata_code,
-      terminal: seg.destination.terminal ?? null,
+      terminal: seg.destination_terminal ?? null,
       at: seg.arriving_at,
     },
-    carrierCode: seg.marketing_carrier.iata_code,
-    carrierName: seg.marketing_carrier.name,
+    carrierCode: carrier.iata_code,
+    carrierName: carrier.name,
+    carrierLogoUrl: carrier.logo_symbol_url ?? null,
     operatingCarrier: seg.operating_carrier.iata_code,
-    flightNumber: `${seg.marketing_carrier.iata_code}${seg.marketing_carrier_flight_number}`,
+    flightNumber: `${carrier.iata_code}${seg.marketing_carrier_flight_number}`,
     aircraftCode: seg.aircraft?.iata_code ?? '',
     duration: seg.duration,
     stops: seg.stops?.length ?? 0, // technical stops within segment

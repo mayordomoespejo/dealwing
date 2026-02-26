@@ -122,24 +122,29 @@ DUFFEL_ACCESS_TOKEN=duffel_test_your_token_here
 
 ### 3. Run locally
 
-```bash
-# Mock mode — frontend only, no backend needed
-npm run dev
+You need the BFF running for airport search and flight offers.
 
-# Real Duffel — start Vercel dev server (frontend + /api functions)
+```bash
+# Frontend + API (recommended): Vercel dev server runs both
 npx vercel dev
 ```
 
-Open [http://localhost:5173](http://localhost:5173) (or port shown in terminal).
+Then open the URL shown (e.g. [http://localhost:5173](http://localhost:5173)).
+
+- **Airport search**: ensure `RAPIDAPI_KEY` is set in `.env.local` or `.env.development` (Vercel loads both in dev). Without it, `/api/locations` falls back to a small static list.
+- **Flight search**: ensure `DUFFEL_ACCESS_TOKEN` is set (same env files). Without it, `/api/offers` returns 503.
+
+If you run only `npm run dev`, the app will try to proxy `/api` to `http://localhost:3000`; nothing will be there unless you run the API separately.
 
 ---
 
 ## Environment Variables
 
-| Variable              | Description                                 | Default         |
-| --------------------- | ------------------------------------------- | --------------- |
-| `VITE_MOCK_API`       | `"true"` → skip BFF, use built-in mock data | `"true"` in dev |
-| `DUFFEL_ACCESS_TOKEN` | Duffel access token (never sent to browser) | —               |
+| Variable              | Description                                                                                    | Default                       |
+| --------------------- | ---------------------------------------------------------------------------------------------- | ----------------------------- |
+| `VITE_MOCK_API`       | `"true"` → skip BFF, use built-in mock data                                                    | Unused (app always calls BFF) |
+| `DUFFEL_ACCESS_TOKEN` | Duffel token (flight search); server-only                                                      | —                             |
+| `RAPIDAPI_KEY`        | RapidAPI key for AeroDataBox (airport search); server-only. Put in `.env.local` for local dev. | —                             |
 
 ---
 

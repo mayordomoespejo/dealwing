@@ -6,14 +6,8 @@ import { useSaved } from './useSaved.js'
 import { FlightDetail } from '@/features/flights/FlightDetail.jsx'
 import { Badge } from '@/components/ui/Badge.jsx'
 import { Button } from '@/components/ui/Button.jsx'
-import {
-  formatPrice,
-  formatDuration,
-  formatTime,
-  formatDate,
-  formatCO2,
-  dealScoreColor,
-} from '@/lib/formatters.js'
+import { formatPrice, formatDuration, formatTime, formatDate, formatCO2 } from '@/lib/formatters.js'
+import { SproutIcon, TrashIcon, PaperPlaneIcon, HeartIcon } from '@/icons'
 import styles from './SavedList.module.css'
 
 export function SavedList() {
@@ -24,11 +18,13 @@ export function SavedList() {
   if (!saved.length) {
     return (
       <div className={styles.empty}>
-        <div className={styles.emptyIcon}>💙</div>
+        <HeartIcon size={64} fill="currentColor" className={styles.emptyIcon} />
         <h2 className={styles.emptyTitle}>{t('saved.noFlightsTitle')}</h2>
         <p className={styles.emptyText}>{t('saved.noFlightsHint')}</p>
         <Link to="/">
-          <Button variant="primary">{t('saved.searchFlights')}</Button>
+          <Button variant="primary" icon={<PaperPlaneIcon size={20} variant="inverse" />}>
+            {t('saved.searchFlights')}
+          </Button>
         </Link>
       </div>
     )
@@ -55,13 +51,6 @@ export function SavedList() {
                 : offer.stops === 1
                   ? t('formatters.oneStop')
                   : t('formatters.stops', { count: offer.stops })
-            const dealLabel =
-              offer.dealScore >= 70
-                ? t('formatters.greatDeal')
-                : offer.dealScore >= 40
-                  ? t('formatters.goodDeal')
-                  : t('formatters.fairDeal')
-
             return (
               <motion.article
                 key={id}
@@ -81,14 +70,6 @@ export function SavedList() {
                     <span className={styles.routeCities}>
                       {offer.origin.city} → {offer.destination.city}
                     </span>
-                  </div>
-
-                  <div
-                    className={styles.score}
-                    style={{ '--score-color': dealScoreColor(offer.dealScore) }}
-                  >
-                    {offer.dealScore}
-                    <span className={styles.scoreLabel}>{dealLabel}</span>
                   </div>
                 </div>
 
@@ -118,7 +99,10 @@ export function SavedList() {
                   <div className={styles.badges}>
                     <Badge variant={offer.stops === 0 ? 'success' : 'default'}>{stopsLabel}</Badge>
                     {offer.co2Kg > 0 && (
-                      <Badge variant="default">🌱 {formatCO2(offer.co2Kg)}</Badge>
+                      <Badge variant="default">
+                        <SproutIcon size={14} className={styles.sproutIcon} />{' '}
+                        {formatCO2(offer.co2Kg)}
+                      </Badge>
                     )}
                     <span className={styles.savedAt}>
                       {t('saved.savedOn', { date: new Date(savedAt).toLocaleDateString() })}
@@ -136,18 +120,7 @@ export function SavedList() {
                       onClick={() => removeOffer(id)}
                       aria-label={t('saved.removeSaved')}
                     >
-                      <svg
-                        width="16"
-                        height="16"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                        aria-hidden="true"
-                      >
-                        <polyline points="3 6 5 6 21 6" />
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2" />
-                      </svg>
+                      <TrashIcon size={16} />
                     </Button>
                   </div>
                 </div>

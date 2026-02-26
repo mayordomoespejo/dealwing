@@ -2,7 +2,7 @@
  * Lightweight fetch wrapper with error handling and query-string support.
  * Usage:
  *   http.get('/api/locations', { q: 'London' })
- *   http.post('/api/flight-offers', body)
+ *   http.post('/api/offers', body)
  */
 
 class HttpError extends Error {

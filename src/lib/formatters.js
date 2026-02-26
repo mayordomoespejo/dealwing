@@ -98,21 +98,3 @@ export function formatCO2(kg) {
 export function formatPassengers(count) {
   return `${count} ${count === 1 ? 'adult' : 'adults'}`
 }
-
-/**
- * Return a color CSS variable name based on deal score (0-100).
- */
-export function dealScoreColor(score) {
-  if (score >= 70) return 'var(--color-deal-great)'
-  if (score >= 40) return 'var(--color-deal-good)'
-  return 'var(--color-deal-fair)'
-}
-
-/**
- * Return a label based on deal score.
- */
-export function dealScoreLabel(score) {
-  if (score >= 70) return 'Great deal'
-  if (score >= 40) return 'Good deal'
-  return 'Fair price'
-}

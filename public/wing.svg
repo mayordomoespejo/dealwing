@@ -1,6 +1,9 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" fill="none">
-  <rect width="32" height="32" rx="8" fill="#2563eb"/>
-  <path d="M5 18L16 7L27 18" stroke="white" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
-  <path d="M10 15L16 9L22 15" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity="0.6"/>
-  <circle cx="16" cy="24" r="3" fill="white"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- DealWing favicon — paper plane: relleno blanco, bordes color marca -->
+<svg width="800px" height="800px" viewBox="0 -4.15 57.875 57.875" xmlns="http://www.w3.org/2000/svg">
+  <g id="Group_37" data-name="Group 37" transform="translate(-1209.722 -1357.465)">
+    <path id="Path_95" data-name="Path 95" d="M1224.729,1387.963v16.4l26.032-28.734Z" fill="#ffffff" stroke="#ea580c" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+    <path id="Path_96" data-name="Path 96" d="M1228.118,1390.522l37.479-30.686-17.1,45.207Z" fill="#ffffff" stroke="#ea580c" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+    <path id="Path_97" data-name="Path 97" d="M1211.722,1378.673l16.4,11.712,37.479-30.92Z" fill="#ffffff" stroke="#ea580c" stroke-linecap="round" stroke-linejoin="round" stroke-width="4"/>
+  </g>
 </svg>

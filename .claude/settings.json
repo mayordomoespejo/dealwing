@@ -5,7 +5,28 @@
       "Bash(npx husky init)",
       "Bash(npm run test)",
       "Bash(npm run build)",
-      "Bash(git add -A)"
+      "Bash(git add -A)",
+      "Bash(git commit:*)",
+      "Bash(npx eslint src/ api/ vite.config.js playwright.config.js --max-warnings 0)",
+      "Bash(npx eslint --version)",
+      "Bash(node -e \"const pkg = require\\(''./node_modules/eslint/package.json''\\); console.log\\(pkg.version\\)\")",
+      "Bash(npm install --save-dev eslint-plugin-react)",
+      "Bash(npx vitest run)",
+      "Bash(git add eslint.config.js package-lock.json package.json src/features/flights/FlightDetail.jsx src/features/flights/FlightFilters.jsx src/features/flights/FlightList.jsx src/features/flights/flightMapper.js src/features/search/AirportAutocomplete.jsx src/features/search/SearchForm.jsx src/lib/formatters.test.js)",
+      "Bash(npx eslint src/ api/ --max-warnings 0)",
+      "Bash(git add api/_duffel.js api/offers.js api/_mock.js api/locations.js src/features/flights/api.js src/features/flights/flightMapper.js .env.example .env.development README.md)",
+      "Bash(node --input-type=module 2)",
+      "Bash(1:*)",
+      "Bash(ls -la /Users/Miguel/Documents/developer/dealwing/.env*)",
+      "Bash(npx eslint src/ api/ vite.config.js --max-warnings 0)",
+      "Bash(git add vite.config.js)",
+      "Bash(npm install i18next react-i18next)",
+      "Bash(npm run lint)",
+      "Bash(node -e \"const p = require\\(''./node_modules/eslint-plugin-react-hooks/package.json''\\); console.log\\(p.version\\)\")",
+      "Bash(git add eslint.config.js src/app/Header.jsx src/app/Header.module.css src/app/Providers.jsx src/components/ui/Modal.jsx src/components/ui/Toast.jsx src/components/ui/DatePickerField.jsx src/components/ui/DatePickerField.module.css src/components/ui/DateRangePickerField.jsx src/components/ui/DateRangePickerField.module.css src/components/ui/FieldError.jsx src/components/ui/FieldError.module.css src/components/ui/Select.jsx src/components/ui/Select.module.css src/contexts/ src/features/flights/FlightCard.jsx src/features/flights/FlightDetail.jsx src/features/flights/FlightFilters.jsx src/features/flights/FlightList.jsx src/features/map/MapView.jsx src/features/map/useMap.js src/features/saved/SavedList.jsx src/features/search/AirportAutocomplete.jsx src/features/search/AirportAutocomplete.module.css src/features/search/SearchForm.jsx src/features/search/SearchForm.module.css src/icons/ src/lib/dateUtils.js src/lib/i18n.js src/lib/formatters.js src/locales/ src/main.jsx src/pages/Home.jsx src/pages/NotFound.jsx src/styles/variables.css package.json package-lock.json)",
+      "Bash(lsof -i :3000)",
+      "Bash(npm install --save-dev vercel)",
+      "Bash(npx vercel whoami)"
     ]
   }
 }

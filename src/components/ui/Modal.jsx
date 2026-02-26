@@ -3,6 +3,7 @@ import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { useKeyboard } from '@/hooks/useKeyboard.js'
+import { XIcon } from '@/icons'
 import styles from './Modal.module.css'
 
 /**
@@ -64,19 +65,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
             <div className={styles.header}>
               <h2 className={styles.title}>{title}</h2>
               <button className={styles.closeBtn} onClick={onClose} aria-label={t('common.close')}>
-                <svg
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2.5"
-                  strokeLinecap="round"
-                  aria-hidden="true"
-                >
-                  <line x1="18" y1="6" x2="6" y2="18" />
-                  <line x1="6" y1="6" x2="18" y2="18" />
-                </svg>
+                <XIcon size={20} />
               </button>
             </div>
             <div className={styles.body}>{children}</div>

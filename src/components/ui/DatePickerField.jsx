@@ -6,6 +6,8 @@ import 'react-day-picker/style.css'
 import { useTranslation } from 'react-i18next'
 import { parseDate, toISODate, formatDisplay } from '@/lib/dateUtils.js'
 import { FieldError } from '@/components/ui/FieldError.jsx'
+import { CalendarIcon } from '@/icons'
+import { CaptionDropdown } from '@/components/ui/DatePickerCaptionDropdown.jsx'
 import styles from './DatePickerField.module.css'
 
 /**
@@ -51,7 +53,11 @@ export function DatePickerField({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [value, min])
 
-  // Position popover below trigger (run when opening, useLayoutEffect to avoid flash)
+  // Year range for dropdown: from min (or this year) to end of next year
+  const startMonth = minDate || new Date(new Date().getFullYear(), 0, 1)
+  const endMonth = new Date(new Date().getFullYear() + 1, 11, 31)
+
+  // Position popover below trigger
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) return
     const rect = triggerRef.current.getBoundingClientRect()
@@ -104,6 +110,10 @@ export function DatePickerField({
           month={month}
           onMonthChange={setMonth}
           disabled={minDate ? { before: minDate } : undefined}
+          captionLayout="dropdown"
+          startMonth={startMonth}
+          endMonth={endMonth}
+          components={{ Dropdown: CaptionDropdown }}
         />
       </div>
     ) : null
@@ -129,21 +139,7 @@ export function DatePickerField({
           {displayValue || placeholder || 'dd/mm/yyyy'}
         </span>
         <span className={styles.calendarIcon} aria-hidden="true">
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-            <line x1="16" y1="2" x2="16" y2="6" />
-            <line x1="8" y1="2" x2="8" y2="6" />
-            <line x1="3" y1="10" x2="21" y2="10" />
-          </svg>
+          <CalendarIcon size={18} />
         </span>
       </button>
 

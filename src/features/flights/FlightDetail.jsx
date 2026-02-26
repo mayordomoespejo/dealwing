@@ -3,14 +3,8 @@ import { Modal } from '@/components/ui/Modal.jsx'
 import { Badge } from '@/components/ui/Badge.jsx'
 import { Button } from '@/components/ui/Button.jsx'
 import { useSaved } from '@/features/saved/useSaved.js'
-import {
-  formatPrice,
-  formatDuration,
-  formatTime,
-  formatDate,
-  formatCO2,
-  dealScoreColor,
-} from '@/lib/formatters.js'
+import { HeartIcon, SproutIcon, ClockIcon } from '@/icons'
+import { formatPrice, formatDuration, formatTime, formatDate, formatCO2 } from '@/lib/formatters.js'
 import styles from './FlightDetail.module.css'
 
 /**
@@ -24,13 +18,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
   if (!flight) return null
 
   const saved = isSaved(flight.id)
-  const scoreColor = dealScoreColor(flight.dealScore)
-  const scoreLabel =
-    flight.dealScore >= 70
-      ? t('formatters.greatDeal')
-      : flight.dealScore >= 40
-        ? t('formatters.goodDeal')
-        : t('formatters.fairDeal')
   const stopsLabel =
     flight.stops === 0
       ? t('formatters.direct')
@@ -64,37 +51,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Deal score card */}
-        <div className={styles.scoreCard} style={{ '--score-color': scoreColor }}>
-          <div className={styles.scoreGauge}>
-            <svg viewBox="0 0 100 60" className={styles.gaugeArc}>
-              <path
-                d="M 10 55 A 45 45 0 0 1 90 55"
-                fill="none"
-                stroke="var(--color-border)"
-                strokeWidth="8"
-                strokeLinecap="round"
-              />
-              <path
-                d="M 10 55 A 45 45 0 0 1 90 55"
-                fill="none"
-                stroke="var(--score-color)"
-                strokeWidth="8"
-                strokeLinecap="round"
-                strokeDasharray="141.4"
-                strokeDashoffset={141.4 * (1 - flight.dealScore / 100)}
-              />
-            </svg>
-            <span className={styles.gaugeValue}>{flight.dealScore}</span>
-          </div>
-          <div className={styles.scoreDetails}>
-            <span className={styles.scoreLabel} style={{ color: scoreColor }}>
-              {scoreLabel}
-            </span>
-            <p className={styles.scoreDesc}>{t('detail.dealScoreExplanation')}</p>
-          </div>
-        </div>
-
         {/* Outbound itinerary */}
         <ItinerarySection
           label={t('detail.outbound')}
@@ -117,7 +73,7 @@ export function FlightDetail({ flight, isOpen, onClose }) {
         {flight.co2Kg > 0 && (
           <div className={styles.co2Card}>
             <div className={styles.co2Header}>
-              <span className={styles.co2Icon}>🌱</span>
+              <SproutIcon size={24} className={styles.co2Icon} />
               <div>
                 <span className={styles.co2Value}>{formatCO2(flight.co2Kg)}</span>
                 <span className={styles.co2Label}> {t('detail.co2PerPassenger')}</span>
@@ -139,19 +95,7 @@ export function FlightDetail({ flight, isOpen, onClose }) {
             <Button
               variant={saved ? 'danger' : 'secondary'}
               onClick={() => (saved ? removeOffer(flight.id) : saveOffer(flight))}
-              icon={
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill={saved ? 'currentColor' : 'none'}
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
-                </svg>
-              }
+              icon={<HeartIcon size={16} fill={saved ? 'currentColor' : 'none'} />}
             >
               {saved ? t('detail.unsave') : t('detail.save')}
             </Button>
@@ -238,18 +182,7 @@ function ItinerarySection({ label, segments, duration }) {
             {/* Layover indicator */}
             {i < segments.length - 1 && (
               <div className={styles.layover}>
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12 6 12 12 16 14" />
-                </svg>
+                <ClockIcon size={12} />
                 {t('detail.layover', { iata: seg.arrival.iataCode })}
               </div>
             )}

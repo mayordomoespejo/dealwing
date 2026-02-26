@@ -1,9 +1,7 @@
-import { useState, useCallback } from 'react'
-import { AnimatePresence, motion } from 'framer-motion'
+import { useState, useCallback, useRef } from 'react'
 import { useTranslation } from 'react-i18next'
 import { SearchForm } from '@/features/search/SearchForm.jsx'
 import { FlightList } from '@/features/flights/FlightList.jsx'
-import { FlightFilters } from '@/features/flights/FlightFilters.jsx'
 import { FlightDetail } from '@/features/flights/FlightDetail.jsx'
 import { MapView } from '@/features/map/MapView.jsx'
 import { useFlightSearch } from '@/features/flights/hooks.js'
@@ -12,16 +10,12 @@ import { useToast } from '@/components/ui/Toast.jsx'
 import { useKeyboard } from '@/hooks/useKeyboard.js'
 import styles from './Home.module.css'
 
-const DEFAULT_FILTERS = { maxPrice: null, maxStops: 99, airlines: [] }
-
 export function Home() {
   const { t } = useTranslation()
   const [searchParams, setSearchParams] = useState(null)
   const [selectedFlight, setSelectedFlight] = useState(null)
   const [detailFlight, setDetailFlight] = useState(null)
-  const [filters, setFilters] = useState(DEFAULT_FILTERS)
-  const [sortBy, setSortBy] = useState('price')
-  const [sidebarOpen, setSidebarOpen] = useState(true)
+  const mapRef = useRef(null)
 
   const { data: flights = [], isLoading, error } = useFlightSearch(searchParams)
   const { isSaved, saveOffer, removeOffer } = useSaved()
@@ -30,16 +24,10 @@ export function Home() {
   const handleSearch = useCallback(params => {
     setSearchParams(params)
     setSelectedFlight(null)
-    setFilters(DEFAULT_FILTERS)
   }, [])
 
   const handleSelect = useCallback(flight => {
     setSelectedFlight(prev => (prev?.id === flight.id ? null : flight))
-  }, [])
-
-  /** Map click: always set selection to the clicked destination (previous is replaced in one go) */
-  const handleSelectOnMap = useCallback(flight => {
-    setSelectedFlight(flight)
   }, [])
 
   const handleSave = useCallback(
@@ -61,48 +49,15 @@ export function Home() {
   return (
     <div className={styles.page}>
       {/* Sidebar */}
-      <motion.aside
-        className={styles.sidebar}
-        animate={{
-          width: sidebarOpen ? 'var(--sidebar-width)' : '0px',
-          opacity: sidebarOpen ? 1 : 0,
-        }}
-        transition={{ duration: 0.25, ease: 'easeInOut' }}
-      >
+      <aside className={styles.sidebar}>
         <div className={styles.sidebarInner}>
-          {/* Search form */}
           <section className={styles.searchSection}>
             <SearchForm onSearch={handleSearch} loading={isLoading} />
           </section>
 
-          {/* Filters (only show when there are results) */}
-          <AnimatePresence>
-            {flights.length > 0 && (
-              <motion.section
-                key="filters"
-                className={styles.filtersSection}
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: 'auto' }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.2 }}
-              >
-                <FlightFilters
-                  flights={flights}
-                  filters={filters}
-                  onChange={setFilters}
-                  sortBy={sortBy}
-                  onSortChange={setSortBy}
-                />
-              </motion.section>
-            )}
-          </AnimatePresence>
-
-          {/* Results list */}
           <section className={styles.resultsSection}>
             <FlightList
               flights={flights}
-              filters={filters}
-              sortBy={sortBy}
               isLoading={isLoading}
               error={error}
               selectedId={selectedFlight?.id}
@@ -114,76 +69,16 @@ export function Home() {
             />
           </section>
         </div>
-      </motion.aside>
-
-      {/* Sidebar toggle */}
-      <button
-        className={styles.sidebarToggle}
-        onClick={() => setSidebarOpen(o => !o)}
-        aria-label={t(sidebarOpen ? 'home.collapseSidebar' : 'home.expandSidebar')}
-        title={t(sidebarOpen ? 'home.collapseSidebar' : 'home.expandSidebar')}
-      >
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="2.5"
-          strokeLinecap="round"
-          style={{
-            transform: sidebarOpen ? 'rotate(0deg)' : 'rotate(180deg)',
-            transition: 'transform 0.25s',
-          }}
-          aria-hidden="true"
-        >
-          <polyline points="15 18 9 12 15 6" />
-        </svg>
-      </button>
+      </aside>
 
       {/* Map */}
       <div className={styles.mapArea}>
         <MapView
+          ref={mapRef}
           flights={flights}
           selectedId={selectedFlight?.id}
-          onSelect={handleSelectOnMap}
           searchParams={searchParams}
         />
-
-        {/* Map overlay: selected flight quick info */}
-        <AnimatePresence>
-          {selectedFlight && (
-            <motion.div
-              className={styles.selectedBanner}
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              transition={{ duration: 0.2 }}
-            >
-              <div className={styles.bannerRoute}>
-                <strong>{selectedFlight.origin.iata}</strong>
-                {' → '}
-                <strong>{selectedFlight.destination.iata}</strong>
-                <span className={styles.bannerCity}>{selectedFlight.destination.city}</span>
-              </div>
-              <div className={styles.bannerMeta}>
-                <span className={styles.bannerPrice}>
-                  {new Intl.NumberFormat('en-US', {
-                    style: 'currency',
-                    currency: selectedFlight.currency,
-                    maximumFractionDigits: 0,
-                  }).format(selectedFlight.price)}
-                </span>
-                <button
-                  className={styles.bannerDetail}
-                  onClick={() => setDetailFlight(selectedFlight)}
-                >
-                  {t('home.viewDetails')}
-                </button>
-              </div>
-            </motion.div>
-          )}
-        </AnimatePresence>
       </div>
 
       {/* Flight detail modal */}

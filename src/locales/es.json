@@ -1,13 +1,12 @@
 {
   "nav": {
     "search": "Buscar",
-    "saved": "Guardados"
+    "saved": "Guardados",
+    "savedTrips": "Viajes guardados"
   },
   "theme": {
-    "label": "Tema",
-    "system": "Tema del sistema",
-    "light": "Tema claro",
-    "dark": "Tema oscuro"
+    "switchLight": "Cambiar a modo claro",
+    "switchDark": "Cambiar a modo oscuro"
   },
   "language": {
     "label": "Idioma",
@@ -19,8 +18,8 @@
     "oneWay": "Solo ida",
     "from": "Desde",
     "to": "Hasta",
-    "cityOrAirport": "Ciudad o aeropuerto",
-    "anyDestination": "Cualquier destino",
+    "cityOrAirport": "Vuela desde...",
+    "anyDestination": "Descubre el mundo",
     "departure": "Salida",
     "return": "Regreso",
     "dates": "Fechas",
@@ -30,7 +29,6 @@
     "datePlaceholderRange": "Desde – Hasta",
     "datePlaceholderSingle": "Fecha",
     "adults": "Pasajeros",
-    "currency": "Moneda",
     "searchFlights": "Buscar vuelos",
     "recentSearches": "Búsquedas recientes",
     "clearAll": "Borrar todo",
@@ -38,8 +36,24 @@
     "tripType": "Tipo de viaje",
     "swapAirports": "Intercambiar origen y destino",
     "clearAirport": "Limpiar selección de aeropuerto",
+    "removeSearch": "Quitar esta búsqueda del historial",
     "required": " *",
-    "airportSuggestions": "Sugerencias de aeropuerto para {{label}}"
+    "airportSuggestions": "Sugerencias de aeropuerto para {{label}}",
+    "minCharsAirport": "Escribe al menos 3 caracteres para buscar",
+    "airportSearchError": "No se encontraron aeropuertos. Prueba otros términos.",
+    "validation": {
+      "originRequired": "El origen es obligatorio",
+      "originIataLength": "Debe ser un código IATA de 3 letras",
+      "originIataFormat": "El código IATA debe ir en mayúsculas (ej. MAD)",
+      "destinationRequired": "El destino es obligatorio",
+      "destinationIataLength": "Debe ser un código IATA de 3 letras",
+      "destinationIataFormat": "El código IATA debe ir en mayúsculas (ej. JFK)",
+      "departureRequired": "La fecha de salida es obligatoria",
+      "dateNotPast": "La fecha no puede ser pasada",
+      "returnRequired": "La fecha de vuelta es obligatoria en viajes de ida y vuelta",
+      "returnAfterDeparture": "La fecha de vuelta debe ser posterior a la de ida",
+      "adultsRange": "Entre 1 y 9 pasajeros"
+    }
   },
   "filters": {
     "sortBy": "Ordenar por",
@@ -59,8 +73,7 @@
     "saveFlight": "Guardar vuelo",
     "removeFromSaved": "Quitar de guardados",
     "dealScore": "Puntuación: {{score}}/100",
-    "perPerson": "por persona",
-    "seatsLeft": "{{count}} asientos disponibles",
+    "perPerson": "/ pax",
     "error": "Algo salió mal",
     "errorLoading": "No se pudieron cargar los vuelos. Inténtalo de nuevo.",
     "searchPromptTitle": "Busca vuelos",

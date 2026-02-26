@@ -1,27 +1,39 @@
+/**
+ * Custom dropdown for react-day-picker caption (month/year).
+ * Renders like the app Select: trigger + list below with same style as Moneda select.
+ * Used via DayPicker components={{ Dropdown: CaptionDropdown }}.
+ */
 import { useState, useRef, useEffect } from 'react'
 import { ChevronDownIcon } from '@/icons'
-import styles from './Select.module.css'
+import styles from './DatePickerCaptionDropdown.module.css'
 
 /**
- * Custom select: trigger with padding, dropdown below (not over), chevron rotates when open.
- * Keyboard: ArrowDown/Up to move, Enter to select, Escape to close.
- * @param {string}          id
- * @param {string}          value       - current value
- * @param {Function}        onChange    - (value: string) => void
- * @param {Array<{value: string, label?: string}>} options
- * @param {string}          [className]
- * @param {boolean}         [disabled]
+ * @param {Object} props
+ * @param {{ value: number, label: string, disabled: boolean }[]} [props.options]
+ * @param {number} [props.value]
+ * @param {(e: { target: { value: string } }) => void} [props.onChange]
+ * @param {string} [props.name]
+ * @param {boolean} [props.disabled]
+ * @param {string} [props.className]
+ * @param {object} [props.components] - from DayPicker (unused, we render our UI)
+ * @param {object} [props.classNames] - from DayPicker (unused)
  */
-export function Select({ id, value, onChange, options, className = '', disabled = false }) {
+export function CaptionDropdown({
+  options = [],
+  value,
+  onChange,
+  name,
+  disabled = false,
+  className = '',
+}) {
   const [open, setOpen] = useState(false)
   const [activeIndex, setActiveIndex] = useState(-1)
   const containerRef = useRef(null)
   const dropdownRef = useRef(null)
 
   const selectedOption = options.find(o => o.value === value)
-  const displayLabel = selectedOption?.label ?? selectedOption?.value ?? value
+  const displayLabel = selectedOption?.label ?? (selectedOption ? String(selectedOption.value) : '')
 
-  // When opening, set active index to current value or 0
   useEffect(() => {
     if (open && options.length > 0) {
       const idx = options.findIndex(o => o.value === value)
@@ -31,14 +43,12 @@ export function Select({ id, value, onChange, options, className = '', disabled 
     }
   }, [open, value, options])
 
-  // Scroll active option into view when activeIndex changes
   useEffect(() => {
     if (!open || activeIndex < 0) return
     const optionEl = dropdownRef.current?.querySelector(`[data-option-index="${activeIndex}"]`)
     optionEl?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [open, activeIndex])
 
-  // Close on click outside
   useEffect(() => {
     if (!open) return
     function handleClickOutside(e) {
@@ -55,82 +65,69 @@ export function Select({ id, value, onChange, options, className = '', disabled 
   }
 
   function handleSelect(optionValue) {
-    onChange(optionValue)
     setOpen(false)
+    onChange?.({ target: { value: String(optionValue) } })
   }
 
   function handleTriggerKeyDown(e) {
     if (disabled) return
     switch (e.key) {
       case 'ArrowDown':
-      case 'Down': {
+      case 'Down':
         e.preventDefault()
         if (!open) {
           openList()
           return
         }
-        setActiveIndex(i => (i < options.length - 1 ? i + 1 : i))
+        setActiveIndex(i => {
+          let next = i < options.length - 1 ? i + 1 : i
+          while (next < options.length && options[next]?.disabled) next++
+          return Math.min(next, options.length - 1)
+        })
         break
-      }
       case 'ArrowUp':
-      case 'Up': {
+      case 'Up':
         e.preventDefault()
         if (!open) {
           openList()
           return
         }
-        setActiveIndex(i => (i > 0 ? i - 1 : i))
+        setActiveIndex(i => {
+          let prev = i > 0 ? i - 1 : i
+          while (prev >= 0 && options[prev]?.disabled) prev--
+          return Math.max(prev, 0)
+        })
         break
-      }
       case 'Enter':
-      case ' ': {
+      case ' ':
         e.preventDefault()
-        if (open && activeIndex >= 0 && options[activeIndex]) {
+        if (open && activeIndex >= 0 && options[activeIndex] && !options[activeIndex].disabled) {
           handleSelect(options[activeIndex].value)
         } else {
           setOpen(o => !o)
         }
         break
-      }
-      case 'Escape': {
+      case 'Escape':
         e.preventDefault()
         setOpen(false)
         break
-      }
-      case 'Home': {
-        if (open) {
-          e.preventDefault()
-          setActiveIndex(0)
-        }
-        break
-      }
-      case 'End': {
-        if (open) {
-          e.preventDefault()
-          setActiveIndex(options.length - 1)
-        }
-        break
-      }
       default:
         break
     }
   }
 
-  const activeValue = activeIndex >= 0 && options[activeIndex] ? options[activeIndex].value : null
-
   return (
     <div ref={containerRef} className={`${styles.container} ${className}`.trim()}>
       <button
         type="button"
-        id={id}
+        name={name}
         className={styles.trigger}
         onClick={() => setOpen(o => !o)}
         onKeyDown={handleTriggerKeyDown}
         disabled={disabled}
         aria-haspopup="listbox"
         aria-expanded={open}
-        aria-labelledby={id ? `${id}-label` : undefined}
-        aria-activedescendant={open && activeValue ? `${id}-option-${activeValue}` : undefined}
+        aria-label={name === 'months' ? 'Month' : 'Year'}
       >
         <span className={styles.triggerValue}>{displayLabel}</span>
         <span className={`${styles.chevron} ${open ? styles.chevronOpen : ''}`} aria-hidden="true">
@@ -142,23 +139,26 @@ export function Select({ id, value, onChange, options, className = '', disabled 
         <div
           className={styles.dropdown}
           role="listbox"
-          aria-activedescendant={activeValue ? `${id}-option-${activeValue}` : undefined}
-          id={id ? `${id}-listbox` : undefined}
+          aria-label={name === 'months' ? 'Month' : 'Year'}
         >
           <div ref={dropdownRef} className={styles.dropdownInner}>
-            {options.map((opt, index) => (
-              <div
-                key={opt.value}
-                id={id ? `${id}-option-${opt.value}` : undefined}
-                data-option-index={index}
-                role="option"
-                aria-selected={opt.value === value}
-                className={`${styles.option} ${opt.value === value ? styles.optionSelected : ''} ${index === activeIndex ? styles.optionActive : ''}`}
-                onClick={() => handleSelect(opt.value)}
-              >
-                {opt.label ?? opt.value}
-              </div>
-            ))}
+            {options.map((opt, index) => {
+              const isSelected = opt.value === value
+              const isActive = index === activeIndex
+              return (
+                <div
+                  key={opt.value}
+                  data-option-index={index}
+                  role="option"
+                  aria-selected={isSelected}
+                  aria-disabled={opt.disabled}
+                  className={`${styles.option} ${isSelected ? styles.optionSelected : ''} ${isActive ? styles.optionActive : ''} ${opt.disabled ? styles.optionDisabled : ''}`}
+                  onClick={() => !opt.disabled && handleSelect(opt.value)}
+                >
+                  {opt.label ?? String(opt.value)}
+                </div>
+              )
+            })}
           </div>
         </div>
       )}

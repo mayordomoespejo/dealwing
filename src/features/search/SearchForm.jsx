@@ -1,34 +1,27 @@
-import { useRef, useState } from 'react'
+import { useRef, useState, useMemo } from 'react'
 import { useForm, Controller } from 'react-hook-form'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
-import { searchSchema, defaultValues } from './schema.js'
+import { getSearchSchema, defaultValues } from './schema.js'
 import { AirportAutocomplete } from './AirportAutocomplete.jsx'
 import { useSearchHistory } from './useSearchHistory.js'
 import { Button } from '@/components/ui/Button.jsx'
 import { DateRangePickerField } from '@/components/ui/DateRangePickerField.jsx'
-import { Select } from '@/components/ui/Select.jsx'
+import { FieldError } from '@/components/ui/FieldError.jsx'
 import { formatDate } from '@/lib/formatters.js'
 import { useKeyboard } from '@/hooks/useKeyboard.js'
-import { PaperPlaneIcon } from '@/icons'
+import {
+  PaperPlaneIcon,
+  TakeoffIcon,
+  LandingIcon,
+  SwapIcon,
+  ClockIcon,
+  PlusIcon,
+  MinusIcon,
+  XIcon,
+} from '@/icons'
 import styles from './SearchForm.module.css'
-
-const PlaneIcon = () => (
-  <svg
-    width="16"
-    height="16"
-    viewBox="0 0 24 24"
-    fill="none"
-    stroke="currentColor"
-    strokeWidth="2"
-    strokeLinecap="round"
-    strokeLinejoin="round"
-    aria-hidden="true"
-  >
-    <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2c-.5.1-.9.5-1 1-.1.6.2 1.2.7 1.5L6.7 12l-3.3 3.5A1 1 0 0 0 4 17l1 .5.5 1c.2.3.5.5.8.6.4 0 .7-.2 1-.4L10.5 16l4.3 4.2c.3.3.7.5 1.2.4.6-.1 1-.5 1.1-1l.7-1.4Z" />
-  </svg>
-)
 
 const MIN_ADULTS = 1
 const MAX_ADULTS = 9
@@ -37,40 +30,77 @@ const clampAdults = v =>
 
 /**
  * Counter with editable input: local state while typing so user can enter any number 1–9.
+ * Shows error when user tries to go below 1 or above 9 (typing 0/10+ or clicking - at 1 / + at 9).
  */
-function AdultsCounter({ value, onChange, id, label, styles: css }) {
+function AdultsCounter({
+  value,
+  onChange,
+  id,
+  label,
+  styles: css,
+  error,
+  validationMessage,
+  onClearError,
+}) {
   const [inputStr, setInputStr] = useState(null)
+  const [attemptError, setAttemptError] = useState(false)
+  const inputRef = useRef(null)
   const displayValue = inputStr !== null ? inputStr : String(value)
+  const displayError = error || (attemptError ? validationMessage : null)
 
   const commit = next => {
     const n = clampAdults(next)
     onChange(n)
     setInputStr(null)
+    setAttemptError(false)
+  }
+
+  // Al hacer clic en el contenedor (no en + ni -), activar el input para escribir
+  // Solo activar el input al hacer clic en el contenedor, no al pulsar - o + (ni en su área/icono)
+  const handleContainerClick = e => {
+    if (e.target.closest('button')) return
+    if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
+    inputRef.current?.focus()
   }
 
   const handleChange = e => {
     const raw = e.target.value
     if (raw === '') {
       setInputStr('')
+      setAttemptError(false)
       return
     }
-    // Solo un dígito entre 1 y 9 (bloquea 0 y números de dos cifras por teclado)
-    const allowed = raw.replace(/[^1-9]/g, '').slice(0, 1)
-    if (allowed === '') {
+    const digits = raw.replace(/\D/g, '').slice(0, 2)
+    if (digits === '') {
       setInputStr('')
+      setAttemptError(true)
       return
     }
-    setInputStr(allowed)
-    onChange(parseInt(allowed, 10))
+    setInputStr(digits)
+    const num = parseInt(digits, 10)
+    if (num >= 1 && num <= 9) {
+      setAttemptError(false)
+      onChange(num)
+    } else {
+      setAttemptError(true)
+      // No actualizar value; el usuario ve el número inválido y el mensaje de error
+    }
   }
 
   const handleBlur = () => {
+    setAttemptError(false)
     if (inputStr === '' || inputStr === null) {
       commit(MIN_ADULTS)
+      onClearError?.()
       return
     }
     const n = parseInt(inputStr, 10)
-    commit(isNaN(n) ? MIN_ADULTS : n)
+    const finalN = isNaN(n) ? MIN_ADULTS : n
+    commit(finalN)
+    // Si el valor final está entre 1 y 9, quitar el error del formulario al perder el foco
+    if (finalN >= MIN_ADULTS && finalN <= MAX_ADULTS) {
+      onClearError?.()
+    }
   }
 
   const handleKeyDown = e => {
@@ -78,46 +108,76 @@ function AdultsCounter({ value, onChange, id, label, styles: css }) {
       e.target.blur()
       return
     }
-    // Bloquear 0 y cualquier carácter que no sea 1-9 al escribir
-    if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.length === 1 && !/[1-9]/.test(e.key)) {
+    if (!e.ctrlKey && !e.metaKey && !e.altKey && e.key.length === 1 && !/\d/.test(e.key)) {
       e.preventDefault()
+      setAttemptError(true)
     }
   }
 
+  const handleDecrement = () => {
+    if (value <= MIN_ADULTS) {
+      setAttemptError(true)
+      return
+    }
+    commit(value - 1)
+  }
+
+  const handleIncrement = () => {
+    if (value >= MAX_ADULTS) {
+      setAttemptError(true)
+      return
+    }
+    commit(value + 1)
+  }
+
   return (
-    <div className={css.counter}>
-      <button
-        type="button"
-        className={css.counterBtn}
-        onClick={() => commit(value - 1)}
-        aria-label="Decrease adults"
-        disabled={value <= MIN_ADULTS}
-      >
-        −
-      </button>
-      <input
-        type="text"
-        inputMode="numeric"
-        pattern="[1-9]"
-        maxLength={1}
-        id={id}
+    <div className={css.extrasFieldRelative}>
+      <div
+        className={`${css.counter} ${displayError ? css.counterError : ''}`.trim()}
+        onClick={handleContainerClick}
+        role="group"
         aria-label={label}
-        className={css.counterInput}
-        value={displayValue}
-        onChange={handleChange}
-        onBlur={handleBlur}
-        onKeyDown={handleKeyDown}
-        onFocus={() => setInputStr(displayValue)}
-      />
-      <button
-        type="button"
-        className={css.counterBtn}
-        onClick={() => commit(value + 1)}
-        aria-label="Increase adults"
-        disabled={value >= MAX_ADULTS}
       >
-        +
-      </button>
+        <button
+          type="button"
+          className={css.counterBtn}
+          onClick={e => {
+            e.stopPropagation()
+            handleDecrement()
+          }}
+          aria-label="Decrease adults"
+        >
+          <MinusIcon size={16} />
+        </button>
+        <input
+          ref={inputRef}
+          type="text"
+          inputMode="numeric"
+          pattern="[1-9]"
+          maxLength={2}
+          id={id}
+          aria-label={label}
+          aria-invalid={!!displayError}
+          className={css.counterInput}
+          value={displayValue}
+          onChange={handleChange}
+          onBlur={handleBlur}
+          onKeyDown={handleKeyDown}
+          onFocus={() => setInputStr(displayValue)}
+        />
+        <button
+          type="button"
+          className={css.counterBtn}
+          onClick={e => {
+            e.stopPropagation()
+            handleIncrement()
+          }}
+          aria-label="Increase adults"
+        >
+          <PlusIcon size={16} />
+        </button>
+      </div>
+      <FieldError>{displayError}</FieldError>
     </div>
   )
 }
@@ -130,13 +190,19 @@ function AdultsCounter({ value, onChange, id, label, styles: css }) {
 export function SearchForm({ onSearch, loading }) {
   const { t } = useTranslation()
   const originInputRef = useRef(null)
-  const { history, addSearch, clearHistory } = useSearchHistory()
+  const { history, addSearch, clearHistory, removeEntry } = useSearchHistory()
+  const [originLabel, setOriginLabel] = useState('')
+  const [destinationLabel, setDestinationLabel] = useState('')
+
+  // Schema con mensajes traducidos; se recalcula al cambiar idioma
+  const searchSchema = useMemo(() => getSearchSchema(t), [t])
 
   const {
     control,
     handleSubmit,
     watch,
     setValue,
+    clearErrors,
     formState: { errors, isSubmitting },
   } = useForm({
     resolver: zodResolver(searchSchema),
@@ -155,15 +221,19 @@ export function SearchForm({ onSearch, loading }) {
   })
 
   function onValid(data) {
-    addSearch(data)
+    addSearch({ ...data, originLabel, destinationLabel })
     onSearch(data)
   }
 
   function swapAirports() {
     const currentOrigin = origin
     const currentDest = destination
+    const currentOriginLabel = originLabel
+    const currentDestLabel = destinationLabel
     setValue('origin', currentDest || '')
     setValue('destination', currentOrigin || '')
+    setOriginLabel(currentDestLabel)
+    setDestinationLabel(currentOriginLabel)
   }
 
   function loadFromHistory(entry) {
@@ -173,7 +243,9 @@ export function SearchForm({ onSearch, loading }) {
     setValue('returnDate', entry.returnDate || '')
     setValue('adults', entry.adults)
     setValue('tripType', entry.tripType ?? 'round-trip')
-    setValue('currency', entry.currency ?? 'EUR')
+    setOriginLabel(entry.originLabel || entry.origin)
+    setDestinationLabel(entry.destinationLabel || entry.destination || '')
+    clearErrors()
   }
 
   return (
@@ -214,19 +286,7 @@ export function SearchForm({ onSearch, loading }) {
             aria-label={t('search.swapAirports')}
             disabled={!origin && !destination}
           >
-            <svg
-              width="16"
-              height="16"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2.5"
-              strokeLinecap="round"
-              aria-hidden="true"
-            >
-              <path d="M7 16V4m0 0L3 8m4-4 4 4" />
-              <path d="M17 8v12m0 0 4-4m-4 4-4-4" />
-            </svg>
+            <SwapIcon size={16} />
           </button>
         </div>
 
@@ -245,7 +305,9 @@ export function SearchForm({ onSearch, loading }) {
                   onChange={val => field.onChange(val)}
                   placeholder={t('search.cityOrAirport')}
                   error={errors.origin?.message}
-                  icon={<PlaneIcon />}
+                  icon={<TakeoffIcon size={16} />}
+                  externalLabel={originLabel}
+                  onLabelChange={setOriginLabel}
                 />
               )}
             />
@@ -263,22 +325,9 @@ export function SearchForm({ onSearch, loading }) {
                   onChange={val => field.onChange(val)}
                   placeholder={t('search.anyDestination')}
                   error={errors.destination?.message}
-                  icon={
-                    <svg
-                      width="16"
-                      height="16"
-                      viewBox="0 0 24 24"
-                      fill="none"
-                      stroke="currentColor"
-                      strokeWidth="2"
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      aria-hidden="true"
-                    >
-                      <circle cx="12" cy="12" r="10" />
-                      <circle cx="12" cy="12" r="3" />
-                    </svg>
-                  }
+                  icon={<LandingIcon size={16} />}
+                  externalLabel={destinationLabel}
+                  onLabelChange={setDestinationLabel}
                 />
               )}
             />
@@ -314,7 +363,7 @@ export function SearchForm({ onSearch, loading }) {
           </div>
         </div>
 
-        {/* Passengers + Currency row */}
+        {/* Passengers + Submit row: 1/3 pasajeros, 2/3 botón */}
         <div className={styles.extrasRow}>
           <div className={styles.extrasField}>
             <label className={styles.fieldLabel} htmlFor="adults">
@@ -329,43 +378,26 @@ export function SearchForm({ onSearch, loading }) {
                   label={t('search.adults')}
                   value={field.value}
                   onChange={field.onChange}
+                  error={errors.adults?.message}
+                  validationMessage={t('search.validation.adultsRange')}
+                  onClearError={() => clearErrors('adults')}
                   styles={styles}
                 />
               )}
             />
           </div>
-
-          <div className={styles.extrasField}>
-            <label className={styles.fieldLabel} id="currency-label" htmlFor="currency">
-              {t('search.currency')}
-            </label>
-            <Controller
-              name="currency"
-              control={control}
-              render={({ field }) => (
-                <Select
-                  id="currency"
-                  value={field.value}
-                  onChange={val => field.onChange(val)}
-                  options={['EUR', 'USD', 'GBP', 'JPY', 'AUD', 'CAD', 'CHF'].map(c => ({
-                    value: c,
-                  }))}
-                />
-              )}
-            />
+          <div className={styles.extrasButtonWrap}>
+            <Button
+              type="submit"
+              size="lg"
+              fullWidth
+              loading={loading || isSubmitting}
+              icon={<PaperPlaneIcon size={20} variant="inverse" />}
+            >
+              {t('search.searchFlights')}
+            </Button>
           </div>
         </div>
-
-        {/* Submit */}
-        <Button
-          type="submit"
-          size="lg"
-          fullWidth
-          loading={loading || isSubmitting}
-          icon={<PaperPlaneIcon size={20} variant="inverse" />}
-        >
-          {t('search.searchFlights')}
-        </Button>
       </form>
 
       {/* Search history */}
@@ -374,18 +406,7 @@ export function SearchForm({ onSearch, loading }) {
           <motion.div className={styles.history} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className={styles.historyHeader}>
               <span className={styles.historyTitle}>
-                <svg
-                  width="12"
-                  height="12"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <circle cx="12" cy="12" r="10" />
-                  <polyline points="12,6 12,12 16,14" />
-                </svg>
+                <ClockIcon size={12} />
                 {t('search.recentSearches')}
               </span>
               <button className={styles.clearBtn} onClick={clearHistory}>
@@ -394,21 +415,33 @@ export function SearchForm({ onSearch, loading }) {
             </div>
             <div className={styles.historyList}>
               {history.slice(0, 5).map(entry => (
-                <button
-                  key={entry.id}
-                  type="button"
-                  className={styles.historyItem}
-                  onClick={() => loadFromHistory(entry)}
-                >
-                  <span className={styles.historyRoute}>
-                    {entry.origin}
-                    {entry.destination ? ` → ${entry.destination}` : ` → ${t('search.anywhere')}`}
-                  </span>
-                  <span className={styles.historyDate}>
-                    {formatDate(entry.departureDate)}
-                    {entry.returnDate ? ` – ${formatDate(entry.returnDate)}` : ''}
-                  </span>
-                </button>
+                <div key={entry.id} className={styles.historyItemRow}>
+                  <button
+                    type="button"
+                    className={styles.historyItem}
+                    onClick={() => loadFromHistory(entry)}
+                  >
+                    <span className={styles.historyRoute}>
+                      {entry.origin}
+                      {entry.destination ? ` → ${entry.destination}` : ` → ${t('search.anywhere')}`}
+                    </span>
+                    <span className={styles.historyDate}>
+                      {formatDate(entry.departureDate)}
+                      {entry.returnDate ? ` – ${formatDate(entry.returnDate)}` : ''}
+                    </span>
+                  </button>
+                  <button
+                    type="button"
+                    className={styles.historyItemRemove}
+                    onClick={e => {
+                      e.stopPropagation()
+                      removeEntry(entry.id)
+                    }}
+                    aria-label={t('search.removeSearch')}
+                  >
+                    <XIcon size={16} />
+                  </button>
+                </div>
               ))}
             </div>
           </motion.div>

@@ -12,10 +12,6 @@
  */
 
 import { duffelPost } from './_duffel.js'
-import { mockOffersResponse } from './_mock.js'
-
-// Fall back to mock when no token is configured (e.g. CI, preview without secrets)
-const MOCK = !process.env.DUFFEL_ACCESS_TOKEN
 
 export default async function handler(req, res) {
   // CORS preflight
@@ -28,6 +24,12 @@ export default async function handler(req, res) {
     return res.status(405).json({ error: 'Method not allowed' })
   }
 
+  if (!process.env.DUFFEL_ACCESS_TOKEN) {
+    return res.status(503).json({
+      error: 'Duffel is not configured. Set DUFFEL_ACCESS_TOKEN in the server environment.',
+    })
+  }
+
   const { origin, destination, departureDate, returnDate, passengers = 1 } = req.body ?? {}
 
   if (!origin || !departureDate) {
@@ -35,10 +37,6 @@ export default async function handler(req, res) {
   }
 
   try {
-    if (MOCK) {
-      return res.status(200).json(mockOffersResponse({ origin, destination }))
-    }
-
     // Build slices — two for round-trip, one for one-way
     const slices = [{ origin, destination: destination || '', departure_date: departureDate }]
     if (returnDate && destination) {
