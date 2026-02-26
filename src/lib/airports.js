@@ -1,8 +1,4 @@
-// Major world airports with coordinates for map rendering
-// ~100 airports covering all key global regions
-
 export const AIRPORTS = [
-  // ── Europe ──────────────────────────────────────────────────────────────
   {
     iata: 'LHR',
     name: 'Heathrow Airport',
@@ -332,7 +328,6 @@ export const AIRPORTS = [
   },
   { iata: 'SOF', name: 'Sofia Airport', city: 'Sofia', country: 'BG', lat: 42.6952, lng: 23.4114 },
 
-  // ── Americas ─────────────────────────────────────────────────────────────
   {
     iata: 'JFK',
     name: 'John F. Kennedy International Airport',
@@ -542,7 +537,6 @@ export const AIRPORTS = [
     lng: -79.3835,
   },
 
-  // ── Asia-Pacific ─────────────────────────────────────────────────────────
   {
     iata: 'HND',
     name: 'Tokyo Haneda Airport',
@@ -744,7 +738,6 @@ export const AIRPORTS = [
     lng: 106.6519,
   },
 
-  // ── Middle East & Africa ─────────────────────────────────────────────────
   {
     iata: 'DXB',
     name: 'Dubai International Airport',
@@ -875,7 +868,6 @@ export const AIRPORTS = [
   },
 ]
 
-// O(1) lookup by IATA code
 export const AIRPORT_MAP = Object.fromEntries(AIRPORTS.map(a => [a.iata, a]))
 
 /**

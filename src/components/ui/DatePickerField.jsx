@@ -44,20 +44,16 @@ export function DatePickerField({
   const minDate = parseDate(min)
   const displayValue = selectedDate ? formatDisplay(selectedDate) : ''
 
-  // Calendar month: follow selected date or min or today
   const [month, setMonth] = useState(() => selectedDate || minDate || new Date())
   useEffect(() => {
     if (selectedDate) setMonth(selectedDate)
     else if (minDate) setMonth(minDate)
     else setMonth(new Date())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [value, min])
+  }, [minDate, selectedDate])
 
-  // Year range for dropdown: from min (or this year) to end of next year
   const startMonth = minDate || new Date(new Date().getFullYear(), 0, 1)
   const endMonth = new Date(new Date().getFullYear() + 1, 11, 31)
 
-  // Position popover below trigger
   useLayoutEffect(() => {
     if (!open || !triggerRef.current) return
     const rect = triggerRef.current.getBoundingClientRect()
@@ -68,7 +64,6 @@ export function DatePickerField({
     })
   }, [open])
 
-  // Close on click outside (trigger and popover are in different trees when using portal)
   useEffect(() => {
     if (!open) return
     function handleClickOutside(e) {

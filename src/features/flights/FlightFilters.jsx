@@ -34,7 +34,6 @@ export function FlightFilters({ flights, filters, onChange }) {
 
   return (
     <div className={styles.panel}>
-      {/* Price range */}
       <div className={styles.section}>
         <div className={styles.sectionHeaderRow}>
           <h3 className={styles.sectionTitle}>{t('filters.maxPrice')}</h3>
@@ -57,7 +56,6 @@ export function FlightFilters({ flights, filters, onChange }) {
         </div>
       </div>
 
-      {/* Stops */}
       <div className={styles.section}>
         <h3 className={styles.sectionTitle}>{t('filters.stops')}</h3>
         <div className={styles.checkboxGroup}>
@@ -80,7 +78,6 @@ export function FlightFilters({ flights, filters, onChange }) {
         </div>
       </div>
 
-      {/* Airlines */}
       {allAirlines.length > 1 && (
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>{t('filters.airlines')}</h3>
@@ -100,7 +97,6 @@ export function FlightFilters({ flights, filters, onChange }) {
         </div>
       )}
 
-      {/* Reset */}
       <button
         className={styles.resetBtn}
         onClick={() => onChange({ maxPrice: null, maxStops: 99, airlines: [] })}

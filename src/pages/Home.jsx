@@ -43,12 +43,10 @@ export function Home() {
     [isSaved, saveOffer, removeOffer, success, info, t]
   )
 
-  // Keyboard: Escape closes detail modal
   useKeyboard('Escape', () => setDetailFlight(null), { enabled: !!detailFlight })
 
   return (
     <div className={styles.page}>
-      {/* Sidebar */}
       <aside className={styles.sidebar}>
         <div className={styles.sidebarInner}>
           <section className={styles.searchSection}>
@@ -71,7 +69,6 @@ export function Home() {
         </div>
       </aside>
 
-      {/* Map */}
       <div className={styles.mapArea}>
         <MapView
           ref={mapRef}
@@ -81,7 +78,6 @@ export function Home() {
         />
       </div>
 
-      {/* Flight detail modal */}
       <FlightDetail
         flight={detailFlight}
         isOpen={!!detailFlight}

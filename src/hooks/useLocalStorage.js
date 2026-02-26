@@ -22,7 +22,7 @@ export function useLocalStorage(key, initialValue) {
         setStored(toStore)
         window.localStorage.setItem(key, JSON.stringify(toStore))
       } catch {
-        // Silently fail (e.g. private mode storage quota)
+        return
       }
     },
     [key, stored]
@@ -33,7 +33,7 @@ export function useLocalStorage(key, initialValue) {
       window.localStorage.removeItem(key)
       setStored(initialValue)
     } catch {
-      //
+      return
     }
   }, [key, initialValue])
 

@@ -17,7 +17,7 @@ export function useFlightSearch(searchParams) {
       return mapFlightOffersResponse(raw)
     },
     enabled: !!searchParams,
-    staleTime: 1000 * 60 * 5, // 5 min
+    staleTime: 1000 * 60 * 5,
     retry: 1,
     select: data => data,
   })

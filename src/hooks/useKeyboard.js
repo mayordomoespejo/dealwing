@@ -16,7 +16,6 @@ export function useKeyboard(key, handler, { ctrl, meta, shift, alt, enabled = tr
       if (shift && !e.shiftKey) return
       if (alt && !e.altKey) return
 
-      // Ignore when typing in inputs/textareas
       const tag = e.target?.tagName?.toLowerCase()
       if (
         key === '/' &&

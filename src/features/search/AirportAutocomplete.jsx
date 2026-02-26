@@ -59,7 +59,6 @@ export function AirportAutocomplete({
   const queryTrimmed = debouncedQuery.trim()
   const hasMinChars = queryTrimmed.length >= MIN_SEARCH_CHARS
 
-  // Sync external label (e.g. loaded from history) or clear when value is removed.
   useEffect(() => {
     if (!value) {
       setInputText('')
@@ -69,7 +68,6 @@ export function AirportAutocomplete({
     }
   }, [value, externalLabel])
 
-  // Fetch suggestions from BFF (AeroDataBox requires min 3 characters)
   const {
     data: suggestions = [],
     isError,
@@ -82,7 +80,7 @@ export function AirportAutocomplete({
       return res.data ?? []
     },
     enabled: hasMinChars && open,
-    staleTime: 1000 * 60 * 60, // 1h — airport names don't change
+    staleTime: 1000 * 60 * 60,
   })
 
   const select = useCallback(
@@ -103,7 +101,6 @@ export function AirportAutocomplete({
     setInputText(e.target.value)
     setOpen(true)
     setActiveIndex(-1)
-    // If user clears, reset value and label
     if (!text) {
       onChange('')
       onLabelChange?.('')
@@ -137,7 +134,6 @@ export function AirportAutocomplete({
   }
 
   function handleBlur() {
-    // Delay close to allow click on option
     setTimeout(() => {
       if (!listRef.current?.contains(document.activeElement)) {
         setOpen(false)
@@ -195,7 +191,6 @@ export function AirportAutocomplete({
         )}
       </div>
 
-      {/* Hint when user has typed but fewer than 3 characters */}
       {!error &&
         open &&
         !value &&
@@ -204,7 +199,6 @@ export function AirportAutocomplete({
           <FieldError>{t('search.minCharsAirport')}</FieldError>
         )}
 
-      {/* No results or API error */}
       {!error &&
         open &&
         !value &&

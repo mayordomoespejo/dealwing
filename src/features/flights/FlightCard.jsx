@@ -59,7 +59,6 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
         price: formatPrice(flight.price, flight.currency),
       })}
     >
-      {/* Top: airline + save */}
       <div className={styles.topRow}>
         <div className={styles.airline}>
           {flight.airlines?.[0] != null &&
@@ -105,7 +104,6 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
         </div>
       </div>
 
-      {/* Middle: route timeline */}
       <div className={styles.route}>
         <div className={styles.timeBlock}>
           <span className={styles.time}>{formatTime(firstSeg.departure.at)}</span>
@@ -130,7 +128,6 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
         </div>
       </div>
 
-      {/* Bottom: price + tags + CTA */}
       <div className={styles.bottomRow}>
         <div className={styles.badges}>
           {flight.co2Kg > 0 && (

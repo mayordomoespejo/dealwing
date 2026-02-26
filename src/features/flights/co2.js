@@ -20,10 +20,10 @@ import { haversineKm } from '@/lib/geo.js'
  * Sources: ICAO Carbon Emissions Calculator, atmosfair, myclimate.
  */
 
-const SHORT_HAUL_FACTOR = 0.255 // kg CO₂/km per passenger (economy, <1500 km)
-const LONG_HAUL_FACTOR = 0.195 // kg CO₂/km per passenger (economy, ≥1500 km)
-const RFI = 1.9 // Radiative Forcing Index
-const OVERHEAD = 1.11 // Infrastructure/indirect emissions overhead
+const SHORT_HAUL_FACTOR = 0.255
+const LONG_HAUL_FACTOR = 0.195
+const RFI = 1.9
+const OVERHEAD = 1.11
 
 /**
  * @param {string}   originIata
@@ -37,7 +37,6 @@ export function estimateCO2(originIata, destIata, segments = [], durationMin = 0
     let totalKm = 0
 
     if (segments.length > 1) {
-      // Multi-segment: sum each leg's distance
       for (let i = 0; i < segments.length; i++) {
         const from = getAirport(segments[i].departure.iataCode)
         const to = getAirport(segments[i].arrival.iataCode)
@@ -54,7 +53,6 @@ export function estimateCO2(originIata, destIata, segments = [], durationMin = 0
     }
 
     if (totalKm === 0) {
-      // Fallback: estimate distance from duration (~800 km/h cruise speed)
       totalKm = (durationMin / 60) * 800
     }
 

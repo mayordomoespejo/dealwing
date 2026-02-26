@@ -26,7 +26,6 @@
   cursor: not-allowed;
 }
 
-/* Sizes */
 .sm {
   height: 32px;
   padding: 0 var(--space-3);
@@ -51,7 +50,6 @@
   width: 100%;
 }
 
-/* Variants */
 .primary {
   background: var(--color-brand);
   color: #fff;
@@ -92,7 +90,6 @@
   filter: brightness(0.9);
 }
 
-/* Loading spinner */
 .spinner {
   width: 16px;
   height: 16px;

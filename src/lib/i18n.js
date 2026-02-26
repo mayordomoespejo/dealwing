@@ -18,7 +18,7 @@ i18n.use(initReactI18next).init({
   lng: defaultLang,
   fallbackLng: 'en',
   interpolation: {
-    escapeValue: false, // React already handles XSS escaping
+    escapeValue: false,
   },
 })
 

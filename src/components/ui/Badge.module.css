@@ -7,7 +7,6 @@
   white-space: nowrap;
 }
 
-/* Sizes */
 .sm {
   padding: 2px 8px;
   font-size: var(--text-xs);
@@ -18,7 +17,6 @@
   font-size: var(--text-sm);
 }
 
-/* Variants */
 .default {
   background: var(--color-bg-tertiary);
   color: var(--color-text-secondary);

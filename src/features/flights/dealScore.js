@@ -18,13 +18,10 @@
 export function computeDealScore(offer, { maxPrice, maxDuration }) {
   if (!maxPrice || maxPrice === 0) return 50
 
-  // Price component: 0 (expensive) → 1 (cheapest)
   const priceScore = maxPrice > 0 ? 1 - offer.price / maxPrice : 0
 
-  // Duration component: 0 (longest) → 1 (shortest)
   const durationScore = maxDuration > 0 ? 1 - offer.totalDurationMin / maxDuration : 0
 
-  // Stops component: direct=1, 1stop=0.5, 2+stops=0
   const stopsScore = offer.stops === 0 ? 1 : offer.stops === 1 ? 0.5 : 0
 
   const raw = priceScore * 60 + durationScore * 30 + stopsScore * 10

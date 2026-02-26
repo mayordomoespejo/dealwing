@@ -27,14 +27,12 @@
   margin-top: var(--space-1);
 }
 
-/* List */
 .list {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
 }
 
-/* Card */
 .card {
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
@@ -50,7 +48,6 @@
   box-shadow: var(--shadow-md);
 }
 
-/* Card header */
 .cardHeader {
   display: flex;
   align-items: flex-start;
@@ -84,7 +81,6 @@
   margin-left: var(--space-1);
 }
 
-/* Details */
 .details {
   display: flex;
   gap: var(--space-6);
@@ -111,7 +107,6 @@
   color: var(--color-text-primary);
 }
 
-/* Footer */
 .cardFooter {
   display: flex;
   align-items: center;
@@ -151,7 +146,6 @@
   letter-spacing: -0.02em;
 }
 
-/* Empty state: centrado en la vista, altura = viewport menos header (sin scroll) */
 .empty {
   display: flex;
   flex-direction: column;

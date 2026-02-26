@@ -62,7 +62,7 @@ Powered by **[Duffel](https://duffel.com)** (Sandbox).
 dealwing/
 ├── api/                         # Vercel Serverless Functions (BFF)
 │   ├── _duffel.js               # Duffel API helper (duffelPost)
-│   ├── _mock.js                 # Realistic mock data (no credentials needed)
+│   ├── _aerodatabox.js          # Airport provider helper
 │   ├── offers.js                # POST /api/offers → Duffel offer_requests
 │   └── locations.js             # GET /api/locations?q=... (local dataset)
 │

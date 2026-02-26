@@ -17,7 +17,6 @@ export function useSearchHistory() {
       searchedAt: new Date().toISOString(),
     }
     setHistory(prev => {
-      // Remove duplicate (same origin+destination+date)
       const filtered = prev.filter(
         h =>
           !(

@@ -92,6 +92,17 @@ export function formatCO2(kg) {
 }
 
 /**
+ * Converts a numeric deal score into a human-readable label.
+ * @param {number} score
+ * @returns {string}
+ */
+export function dealScoreLabel(score) {
+  if (score >= 70) return 'Great deal'
+  if (score >= 40) return 'Good deal'
+  return 'Fair price'
+}
+
+/**
  * Format a number of passengers.
  * e.g. 1 → "1 adult", 2 → "2 adults"
  */

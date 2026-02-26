@@ -16,7 +16,6 @@
   flex-shrink: 0;
 }
 
-/* Card skeleton layout */
 .card {
   background: var(--color-surface);
   border: 1px solid var(--color-border);

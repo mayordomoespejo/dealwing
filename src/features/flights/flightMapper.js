@@ -16,7 +16,6 @@ export function mapFlightOffer(rawOffer) {
   const outboundSlice = rawOffer.slices[0]
   const inboundSlice = rawOffer.slices[1] ?? null
 
-  // Duffel includes lat/lng on each airport object — use as fallback for unknown airports
   const duffelOrigin = outboundSlice.origin
   const duffelDest = outboundSlice.destination
 
@@ -32,7 +31,6 @@ export function mapFlightOffer(rawOffer) {
   const outStops = outboundSegments.length - 1
   const inStops = inboundSegments ? inboundSegments.length - 1 : 0
 
-  // Deduplicated carrier codes and names across all segments (order preserved)
   const allSegments = [...outboundSegments, ...(inboundSegments ?? [])]
   const seenCodes = new Set()
   const airlines = []
@@ -52,7 +50,6 @@ export function mapFlightOffer(rawOffer) {
   const pricePerPax = totalPrice / passengerCount
   const currency = rawOffer.total_currency
 
-  // Use Duffel's emissions when provided; fall back to our own estimate
   const co2Kg = rawOffer.total_emissions_kg
     ? Math.round(parseFloat(rawOffer.total_emissions_kg) / passengerCount)
     : estimateCO2(originIata, destIata, outboundSegments, outDurationMin)
@@ -93,12 +90,12 @@ export function mapFlightOffer(rawOffer) {
         }
       : null,
     totalDurationMin: outDurationMin + inDurationMin,
-    stops: outStops, // outbound stops (primary sort key)
+    stops: outStops,
     airlines,
     airlineNames,
     airlineLogoUrls,
     isRoundTrip: !!inboundSlice,
-    dealScore: 0, // filled after normalization
+    dealScore: 0,
     co2Kg,
     _raw: rawOffer,
   }
@@ -130,7 +127,7 @@ function mapSegment(seg) {
     flightNumber: `${carrier.iata_code}${seg.marketing_carrier_flight_number}`,
     aircraftCode: seg.aircraft?.iata_code ?? '',
     duration: seg.duration,
-    stops: seg.stops?.length ?? 0, // technical stops within segment
+    stops: seg.stops?.length ?? 0,
   }
 }
 

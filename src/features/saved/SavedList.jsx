@@ -61,7 +61,6 @@ export function SavedList() {
                 exit={{ opacity: 0, scale: 0.95, height: 0, marginBottom: 0 }}
                 transition={{ duration: 0.2 }}
               >
-                {/* Route header */}
                 <div className={styles.cardHeader}>
                   <div className={styles.route}>
                     <span className={styles.routeIata}>{offer.origin.iata}</span>
@@ -73,7 +72,6 @@ export function SavedList() {
                   </div>
                 </div>
 
-                {/* Details row */}
                 <div className={styles.details}>
                   <div className={styles.detail}>
                     <span className={styles.detailLabel}>{t('saved.departs')}</span>
@@ -94,7 +92,6 @@ export function SavedList() {
                   </div>
                 </div>
 
-                {/* Badges + Price */}
                 <div className={styles.cardFooter}>
                   <div className={styles.badges}>
                     <Badge variant={offer.stops === 0 ? 'success' : 'default'}>{stopsLabel}</Badge>

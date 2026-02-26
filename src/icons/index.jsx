@@ -1,12 +1,13 @@
 /**
- * Hoja de iconos genérica del proyecto.
- * Exporta componentes de iconos reutilizables para favicon, header, etc.
+ * @typedef {Object} IconProps
+ * @property {number} [size]
+ * @property {string} [className]
  */
 
 /**
- * Icono de avión de papel (logo DealWing).
- * - Por defecto: relleno blanco, contorno (stroke) en currentColor (para el logo en header).
- * - variant="inverse": relleno de marca, contorno blanco (para botón primario: colores inversos al logo).
+ * DealWing paper plane logo icon.
+ * @param {IconProps & {variant?: 'inverse'}} props
+ * @returns {JSX.Element}
  */
 export function PaperPlaneIcon({ size = 28, className, variant, ...props }) {
   const isInverse = variant === 'inverse'
@@ -16,7 +17,7 @@ export function PaperPlaneIcon({ size = 28, className, variant, ...props }) {
       height={size}
       viewBox="0 -4.15 57.875 57.875"
       xmlns="http://www.w3.org/2000/svg"
-      fill={isInverse ? 'var(--color-brand)' : '#ffffff'}
+      fill={isInverse ? 'var(--color-brand)' : 'var(--color-surface)'}
       stroke={isInverse ? '#ffffff' : 'currentColor'}
       className={className}
       aria-hidden="true"
@@ -47,9 +48,9 @@ export function PaperPlaneIcon({ size = 28, className, variant, ...props }) {
 }
 
 /**
- * Icono de globo/mundo.
- * Útil para estados vacíos de búsqueda (ej. "Busca vuelos").
- * Todo blanco; solo las líneas (contorno y continentes) en color de marca.
+ * Globe icon used in empty states.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
  */
 export function GlobeIcon({ size = 48, className, ...props }) {
   return (
@@ -62,26 +63,22 @@ export function GlobeIcon({ size = 48, className, ...props }) {
       aria-hidden="true"
       {...props}
     >
-      {/* Círculo base del globo — blanco */}
       <path
         d="M514.5 516.6m-484.5 0a484.5 484.5 0 1 0 969 0 484.5 484.5 0 1 0-969 0Z"
-        fill="#ffffff"
+        fill="transparent"
       />
-      {/* Anillo exterior — línea color de marca */}
       <path
         d="M514.5 1011c-66.7 0-131.5-13.1-192.5-38.9-58.9-24.9-111.8-60.6-157.2-106-45.4-45.4-81.1-98.3-106-157.2-25.8-61-38.9-125.7-38.9-192.5S33 384.9 58.8 323.9c24.9-58.9 60.6-111.8 106-157.2 45.4-45.4 98.3-81.1 157.2-106 61-25.8 125.7-38.9 192.5-38.9S646 35.2 707 61c58.9 24.9 111.8 60.6 157.2 106 45.4 45.4 81.1 98.3 106 157.2 25.8 61 38.9 125.7 38.9 192.5S996 648.2 970.2 709.2c-24.9 58.9-60.6 111.8-106 157.2-45.4 45.4-98.3 81.1-157.2 106-61 25.6-125.7 38.6-192.5 38.6z m0-968.9c-64.1 0-126.2 12.5-184.7 37.3-56.5 23.9-107.2 58.1-150.8 101.7-43.6 43.6-77.8 94.3-101.7 150.8C52.6 390.4 40 452.5 40 516.6s12.5 126.2 37.3 184.7c23.9 56.5 58.1 107.2 101.7 150.8 43.6 43.6 94.3 77.8 150.8 101.7 58.5 24.7 120.6 37.3 184.7 37.3s126.2-12.5 184.7-37.3c56.5-23.9 107.2-58.1 150.8-101.7s77.8-94.3 101.7-150.8c24.7-58.5 37.3-120.6 37.3-184.7s-12.5-126.2-37.3-184.7c-23.9-56.5-58.1-107.2-101.7-150.8-43.6-43.6-94.3-77.8-150.8-101.7-58.5-24.7-120.6-37.3-184.7-37.3z"
         fill="none"
         stroke="var(--color-brand)"
         strokeWidth="24"
       />
-      {/* Continentes — solo línea en color de marca */}
       <path
         d="M528 32.8c-59.5 70.5-113.4 163.3 15.1 163.3 207.4 0 153.4 152.8-78.8 163.7-232.3 10.9-166.8 174.7-35.8 191 80.6 10.1 109.4 51.1 119.8 90.1v1.5c0 21.4 2.1 41.8 5.8 60.7v0.4c0 2.4 0.5 4.6 1.4 6.5 14.2 64.5 47.9 77.2 87.3 77.2 52.2 0 87.2-108.9 93.5-168.8 9.7-90.8 101.9-90.2 96.1-204.2-1.7-32.9 84.3-34.1 148.2-29C924.5 185.8 744 38.7 528 32.8z"
         fill="none"
         stroke="var(--color-brand)"
         strokeWidth="20"
       />
-      {/* Detalle adicional del mapa — solo línea en color de marca */}
       <path
         d="M642.7 797.4c-36.4 0-80.2-9.6-96.9-84.1-1.1-2.8-1.7-5.9-1.8-9.1-3.8-20.2-5.8-40.9-5.8-61.7v-0.3c-13-47-49.4-73.7-111-81.4-34.9-4.4-67.4-18.9-91.4-40.9-23.8-21.8-36.8-49-35.8-74.7 0.7-18 8.4-43.8 41.4-64.6 28.4-17.9 69.6-28.2 122.4-30.7 76.5-3.6 124-21.9 150.4-36.7 30.6-17.1 48.6-38.6 48.1-57.4-0.5-22.9-32.1-49.6-119.2-49.6-45.4 0-73.7-11.6-84.3-34.4-8.3-17.9-5-41.9 9.9-71.2 11-21.6 28.4-46.6 51.7-74.2 2-2.3 4.9-3.6 7.9-3.5 54 1.5 106.9 11.6 157.2 30.1 48.7 17.9 94.1 43.4 135 75.7 40.5 32 75.6 69.9 104.4 112.7 29.2 43.5 51.2 91 65.3 141.3 0.9 3.1 0.2 6.5-1.9 9.1-2.1 2.5-5.3 3.9-8.5 3.6-69.5-5.6-121.1-0.8-134.8 12.5-2.5 2.4-2.7 4.4-2.7 6 3.4 67-26 98.2-52 125.7-20.6 21.9-40.1 42.5-44.1 80-3.7 34.9-15.7 78-30.5 110-20.5 44.4-45.7 67.8-73 67.8zM532.5 42.9c-46.2 55.5-65.9 98.2-55.6 120.4 8.8 18.8 40.8 22.8 66.2 22.8 43 0 77.2 6.3 101.6 18.7 23.7 12.1 37.1 30 37.5 50.5 0.6 26.8-20.6 54.3-58.3 75.3-28.3 15.8-78.8 35.4-159.2 39.2-89 4.2-143.1 32.6-144.8 76.1-0.8 19.8 9.9 41.4 29.3 59.2 21 19.3 49.6 32 80.4 35.8 70.2 8.8 113.4 41.6 128.2 97.5 0.2 0.8 0.3 1.7 0.3 2.6v1.5c0 19.8 1.9 39.6 5.6 58.8 0.1 0.6 0.2 1.3 0.2 1.9v0.4c0 0.9 0.2 1.7 0.5 2.4 0.3 0.6 0.5 1.3 0.7 2 12.6 57.5 40.2 69.3 77.6 69.3 25.1 0 45.2-35.2 54.9-56.1 16.9-36.6 26.1-78.8 28.7-103.7 4.7-44.2 27.5-68.3 49.4-91.6 25.5-27 49.6-52.6 46.6-111-0.4-8 2.6-15.4 8.7-21.3 11-10.6 32.2-17 65-19.4 24.1-1.8 50-1 70.8 0.2-13.6-43.2-33.2-84.1-58.6-121.9-27.6-41.1-61.3-77.5-100.2-108.2-39.2-31-82.8-55.4-129.6-72.6-46.7-17.2-95.8-26.9-145.9-28.8z"
         fill="none"
@@ -93,8 +90,9 @@ export function GlobeIcon({ size = 48, className, ...props }) {
 }
 
 /**
- * Icono de corazón (contorno).
- * Útil para favoritos, "me gusta", etc. El trazo usa currentColor para heredar el color del texto.
+ * Heart icon.
+ * @param {IconProps & {fill?: string}} props
+ * @returns {JSX.Element}
  */
 export function HeartIcon({ size = 24, fill = 'none', className, ...props }) {
   return (
@@ -118,8 +116,9 @@ export function HeartIcon({ size = 24, fill = 'none', className, ...props }) {
 }
 
 /**
- * Icono de brote (planta que germina).
- * Útil para sostenibilidad, eco, crecimiento. Usa currentColor para heredar el color del texto.
+ * Sustainability sprout icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
  */
 export function SproutIcon({ size = 24, className, ...props }) {
   return (
@@ -142,8 +141,9 @@ export function SproutIcon({ size = 24, className, ...props }) {
 }
 
 /**
- * Icono de sol (círculo con rayos).
- * Útil para modo claro, tema diurno o toggle de tema. El trazo usa currentColor.
+ * Sun icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
  */
 export function SunIcon({ size = 24, className, ...props }) {
   return (
@@ -169,8 +169,86 @@ export function SunIcon({ size = 24, className, ...props }) {
 }
 
 /**
- * Icono de despegue (avión en ángulo de despegue).
- * Útil para salidas, despegues, vuelos. Usa currentColor para heredar el color del texto.
+ * Moon icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
+export function MoonIcon({ size = 24, className, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+    </svg>
+  )
+}
+
+/**
+ * Calendar icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
+export function CalendarIcon({ size = 24, className, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
+      <line x1="16" y1="2" x2="16" y2="6" />
+      <line x1="8" y1="2" x2="8" y2="6" />
+      <line x1="3" y1="10" x2="21" y2="10" />
+    </svg>
+  )
+}
+
+/**
+ * Clock icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
+export function ClockIcon({ size = 24, className, ...props }) {
+  return (
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      className={className}
+      aria-hidden="true"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="10" />
+      <polyline points="12,6 12,12 16,14" />
+    </svg>
+  )
+}
+
+/**
+ * Takeoff icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
  */
 export function TakeoffIcon({ size = 24, className, ...props }) {
   return (
@@ -195,8 +273,9 @@ export function TakeoffIcon({ size = 24, className, ...props }) {
 }
 
 /**
- * Icono de aterrizaje (avión en ángulo de aterrizaje).
- * Útil para llegadas, aterrizajes, vuelos. Usa currentColor para heredar el color del texto.
+ * Landing icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
  */
 export function LandingIcon({ size = 24, className, ...props }) {
   return (
@@ -220,115 +299,11 @@ export function LandingIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Luna (modo oscuro). Trazo currentColor. */
-export function MoonIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
-    </svg>
-  )
-}
-
-/** Calendario. Útil para selectores de fecha. Trazo currentColor. */
-export function CalendarIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-      <line x1="16" y1="2" x2="16" y2="6" />
-      <line x1="8" y1="2" x2="8" y2="6" />
-      <line x1="3" y1="10" x2="21" y2="10" />
-    </svg>
-  )
-}
-
-/** Reloj. Útil para historial, escalas, tiempos. Trazo currentColor. */
-export function ClockIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <polyline points="12,6 12,12 16,14" />
-    </svg>
-  )
-}
-
-/** Avión (Feather). Útil para campo de origen. Trazo currentColor. */
-export function PlaneIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M17.8 19.2 16 11l3.5-3.5C21 6 21 4 19 2c-2-2-4-2-5.5-.5L10 5 1.8 6.2c-.5.1-.9.5-1 1-.1.6.2 1.2.7 1.5L6.7 12l-3.3 3.5A1 1 0 0 0 4 17l1 .5.5 1c.2.3.5.5.8.6.4 0 .7-.2 1-.4L10.5 16l4.3 4.2c.3.3.7.5 1.2.4.6-.1 1-.5 1.1-1l.7-1.4Z" />
-    </svg>
-  )
-}
-
-/** Diana / destino. Útil para campo de destino. Trazo currentColor. */
-export function TargetIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="3" />
-    </svg>
-  )
-}
-
-/** Intercambio / swap. Útil para invertir origen y destino. Trazo currentColor. */
+/**
+ * Swap icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function SwapIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -349,7 +324,11 @@ export function SwapIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Papelera / eliminar. Trazo currentColor. */
+/**
+ * Trash icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function TrashIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -369,7 +348,11 @@ export function TrashIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Plus / más. Útil para contadores (ej. pasajeros). Trazo currentColor. */
+/**
+ * Plus icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function PlusIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -391,7 +374,11 @@ export function PlusIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Minus / menos. Útil para contadores (ej. pasajeros). Trazo currentColor. */
+/**
+ * Minus icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function MinusIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -413,7 +400,11 @@ export function MinusIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Chevron abajo. Útil para selects y dropdowns. Trazo currentColor. */
+/**
+ * Down chevron icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function ChevronDownIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -434,27 +425,11 @@ export function ChevronDownIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Chevron izquierda. Útil para colapsar sidebar, navegar atrás. Trazo currentColor. */
-export function ChevronLeftIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2.5"
-      strokeLinecap="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <polyline points="15 18 9 12 15 6" />
-    </svg>
-  )
-}
-
-/** Info (círculo con i). Útil para toasts informativos. Trazo currentColor. */
+/**
+ * Info icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function InfoIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -475,7 +450,11 @@ export function InfoIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Check en círculo. Útil para toasts de éxito. Trazo currentColor. */
+/**
+ * Check-circle icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function CheckCircleIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -495,7 +474,11 @@ export function CheckCircleIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** X en círculo. Útil para toasts de error. Trazo currentColor. */
+/**
+ * X-circle icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function XCircleIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -516,7 +499,11 @@ export function XCircleIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Triángulo de alerta. Útil para toasts de aviso. Trazo currentColor. */
+/**
+ * Warning triangle icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function TriangleAlertIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -537,7 +524,11 @@ export function TriangleAlertIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** X (aspa). Útil para cerrar modals, descartar. Trazo currentColor. */
+/**
+ * X icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function XIcon({ size = 24, className, ...props }) {
   return (
     <svg
@@ -558,7 +549,11 @@ export function XIcon({ size = 24, className, ...props }) {
   )
 }
 
-/** Spinner de carga. Útil para botones en estado loading. Trazo currentColor. */
+/**
+ * Spinner icon.
+ * @param {IconProps} props
+ * @returns {JSX.Element}
+ */
 export function SpinnerIcon({ size = 16, className, ...props }) {
   return (
     <svg
@@ -574,56 +569,6 @@ export function SpinnerIcon({ size = 16, className, ...props }) {
     >
       <circle cx="12" cy="12" r="10" strokeOpacity="0.25" />
       <path d="M12 2a10 10 0 0 1 10 10" />
-    </svg>
-  )
-}
-
-/**
- * Icono de casa / home.
- * Navegación a inicio. Trazo con currentColor.
- */
-export function HomeIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
-      <polyline points="9,22 9,12 15,12 15,22" />
-    </svg>
-  )
-}
-/**
- * Icono de flecha hacia la derecha.
- * Útil para navegación, "siguiente", enlaces. El trazo usa currentColor.
- */
-export function ArrowRightIcon({ size = 24, className, ...props }) {
-  return (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      width={size}
-      height={size}
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={className}
-      aria-hidden="true"
-      {...props}
-    >
-      <path d="M6 12H18M18 12L13 7M18 12L13 17" />
     </svg>
   )
 }

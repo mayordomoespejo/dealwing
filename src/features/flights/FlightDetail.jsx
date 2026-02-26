@@ -28,7 +28,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
   return (
     <Modal isOpen={isOpen} onClose={onClose} title={t('detail.title')} size="lg">
       <div className={styles.content}>
-        {/* Route summary header */}
         <div className={styles.summary}>
           <div className={styles.summaryRoute}>
             <div className={styles.summaryCity}>
@@ -51,7 +50,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
           </div>
         </div>
 
-        {/* Outbound itinerary */}
         <ItinerarySection
           label={t('detail.outbound')}
           segments={flight.outbound.segments}
@@ -59,7 +57,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
           stops={flight.outbound.stops}
         />
 
-        {/* Return itinerary */}
         {flight.inbound && (
           <ItinerarySection
             label={t('detail.return')}
@@ -69,7 +66,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
           />
         )}
 
-        {/* CO₂ estimate */}
         {flight.co2Kg > 0 && (
           <div className={styles.co2Card}>
             <div className={styles.co2Header}>
@@ -83,7 +79,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
           </div>
         )}
 
-        {/* Price + CTA */}
         <div className={styles.footer}>
           <div className={styles.footerPrice}>
             <span className={styles.footerPriceValue}>
@@ -103,7 +98,6 @@ export function FlightDetail({ flight, isOpen, onClose }) {
               variant="primary"
               size="lg"
               onClick={() => {
-                // In a real app: open booking link / affiliate URL
                 alert(t('detail.bookingSoon'))
               }}
             >
@@ -116,7 +110,14 @@ export function FlightDetail({ flight, isOpen, onClose }) {
   )
 }
 
-/* ── Itinerary Section ─────────────────────────────────────────────────── */
+/**
+ * Renders a flight itinerary section with segment-level timing details.
+ * @param {object} props
+ * @param {string} props.label
+ * @param {object[]} props.segments
+ * @param {string} props.duration
+ * @returns {JSX.Element}
+ */
 function ItinerarySection({ label, segments, duration }) {
   const { t } = useTranslation()
 
@@ -131,14 +132,12 @@ function ItinerarySection({ label, segments, duration }) {
         {segments.map((seg, i) => (
           <div key={seg.id} className={styles.segmentWrapper}>
             <div className={styles.segment}>
-              {/* Timeline dot */}
               <div className={styles.timeline}>
                 <div className={styles.dot} />
                 {i < segments.length - 1 && <div className={styles.line} />}
               </div>
 
               <div className={styles.segContent}>
-                {/* Departure */}
                 <div className={styles.segRow}>
                   <div className={styles.segTime}>
                     <span className={styles.segTimeVal}>{formatTime(seg.departure.at)}</span>
@@ -154,14 +153,12 @@ function ItinerarySection({ label, segments, duration }) {
                   </div>
                 </div>
 
-                {/* Flight info */}
                 <div className={styles.segFlightInfo}>
                   <span className={styles.segFlight}>{seg.flightNumber}</span>
                   <span className={styles.segAircraft}>{seg.aircraftCode}</span>
                   <span className={styles.segDuration}>{formatDuration(seg.duration)}</span>
                 </div>
 
-                {/* Arrival */}
                 <div className={styles.segRow}>
                   <div className={styles.segTime}>
                     <span className={styles.segTimeVal}>{formatTime(seg.arrival.at)}</span>
@@ -179,7 +176,6 @@ function ItinerarySection({ label, segments, duration }) {
               </div>
             </div>
 
-            {/* Layover indicator */}
             {i < segments.length - 1 && (
               <div className={styles.layover}>
                 <ClockIcon size={12} />

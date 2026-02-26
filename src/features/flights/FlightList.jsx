@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { FlightCard } from './FlightCard.jsx'
 import { FlightCardSkeleton } from '@/components/ui/Skeleton.jsx'
-import { GlobeIcon } from '@/icons/index.jsx'
+import { GlobeIcon } from '@/icons'
 import { computePriceStats } from './dealScore.js'
 import { formatPrice } from '@/lib/formatters.js'
 import styles from './FlightList.module.css'
@@ -28,7 +28,6 @@ export function FlightList({
 
   const stats = useMemo(() => computePriceStats(sorted), [sorted])
 
-  // Loading state
   if (isLoading) {
     return (
       <div className={styles.list}>
@@ -42,7 +41,6 @@ export function FlightList({
     )
   }
 
-  // Error state
   if (error) {
     return (
       <div className={styles.empty}>
@@ -53,7 +51,6 @@ export function FlightList({
     )
   }
 
-  // Empty state — no search yet
   if (!searchParams) {
     return (
       <div className={styles.empty}>
@@ -68,7 +65,6 @@ export function FlightList({
     )
   }
 
-  // No results
   if (!sorted.length) {
     return (
       <div className={styles.empty}>
@@ -81,7 +77,6 @@ export function FlightList({
 
   return (
     <div className={styles.list}>
-      {/* Header with stats */}
       <div className={styles.listHeader}>
         <span className={styles.resultCount}>{t('flights.results', { count: sorted.length })}</span>
         <div className={styles.priceInsights}>
@@ -101,7 +96,6 @@ export function FlightList({
         </div>
       </div>
 
-      {/* Flight cards */}
       <AnimatePresence mode="popLayout" initial={false}>
         {sorted.map(flight => (
           <FlightCard

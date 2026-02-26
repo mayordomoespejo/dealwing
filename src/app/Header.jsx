@@ -16,7 +16,6 @@ export function Header() {
   const ThemeIcon = theme === 'dark' ? SunIcon : MoonIcon
   const toggleTheme = () => setTheme(theme === 'dark' ? 'light' : 'dark')
 
-  // Second nav link: on home → "Viajes guardados" (to /saved); on saved → "Buscar vuelos" (to /)
   const isSavedPage = pathname === '/saved'
   const otherPageTo = isSavedPage ? '/' : '/saved'
   const otherPageLabel = isSavedPage ? t('search.searchFlights') : t('nav.savedTrips')
@@ -49,7 +48,7 @@ export function Header() {
             className={({ isActive }) => `${styles.navLink} ${isActive ? styles.active : ''}`}
           >
             <OtherPageIcon size={16} />
-            {otherPageLabel}
+            <span className={styles.navLinkLabel}>{otherPageLabel}</span>
           </NavLink>
 
           <div className={styles.controls}>

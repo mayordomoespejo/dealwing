@@ -5,7 +5,6 @@
   position: relative;
 }
 
-/* Sidebar — ancho fijo, no plegable */
 .sidebar {
   width: var(--sidebar-width);
   height: 100%;
@@ -28,7 +27,6 @@
   gap: var(--space-4);
 }
 
-/* Sidebar sections */
 .searchSection {
   flex-shrink: 0;
 }
@@ -43,7 +41,6 @@
   min-height: 0;
 }
 
-/* Map area */
 .mapArea {
   flex: 1;
   min-width: 0;
@@ -51,7 +48,6 @@
   overflow: hidden;
 }
 
-/* Mobile layout */
 @media (max-width: 768px) {
   .page {
     flex-direction: column;

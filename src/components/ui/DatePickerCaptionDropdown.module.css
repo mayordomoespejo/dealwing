@@ -1,5 +1,3 @@
-/* Same look as Select (Moneda): trigger + dropdown list below */
-
 .container {
   position: relative;
   width: 100%;
@@ -7,7 +5,6 @@
   flex: 1 1 0;
 }
 
-/* Mes y año mismo tamaño; mismo estilo que el trigger del Select */
 .trigger {
   width: 100%;
   min-height: 36px;
@@ -59,7 +56,6 @@
   transform: rotate(180deg);
 }
 
-/* Lista debajo, mismo estilo que el Select de moneda */
 .dropdown {
   position: absolute;
   top: 100%;

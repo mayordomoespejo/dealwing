@@ -22,7 +22,6 @@
   outline: none;
 }
 
-/* Sizes */
 .sm {
   max-width: 400px;
 }
@@ -76,7 +75,6 @@
   padding: var(--space-5) var(--space-6);
 }
 
-/* Mobile: bottom drawer */
 @media (max-width: 640px) {
   .overlay {
     align-items: flex-end;

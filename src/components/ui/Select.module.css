@@ -54,7 +54,6 @@
   transform: rotate(180deg);
 }
 
-/* Dropdown appears below the trigger, does not cover it */
 .dropdown {
   position: absolute;
   top: 100%;

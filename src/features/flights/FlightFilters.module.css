@@ -39,7 +39,6 @@
   color: var(--color-brand);
 }
 
-/* Slider */
 .slider {
   -webkit-appearance: none;
   width: 100%;
@@ -73,7 +72,6 @@
   color: var(--color-text-tertiary);
 }
 
-/* Checkbox / Radio group */
 .checkboxGroup {
   display: flex;
   flex-direction: column;
@@ -98,7 +96,6 @@
   cursor: pointer;
 }
 
-/* Reset */
 .resetBtn {
   padding: var(--space-2) 0;
   font-size: var(--text-sm);

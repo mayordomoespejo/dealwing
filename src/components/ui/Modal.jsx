@@ -15,7 +15,6 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
   const { t } = useTranslation()
   const dialogRef = useRef(null)
 
-  // Trap focus inside modal
   useEffect(() => {
     if (!isOpen) return
     const prev = document.activeElement
@@ -23,7 +22,6 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
     return () => prev?.focus()
   }, [isOpen])
 
-  // Prevent body scroll
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden'

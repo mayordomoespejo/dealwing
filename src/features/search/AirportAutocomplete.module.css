@@ -107,7 +107,6 @@
   outline-offset: 2px;
 }
 
-/* Dropdown */
 .dropdown {
   position: absolute;
   top: calc(100% + 4px);

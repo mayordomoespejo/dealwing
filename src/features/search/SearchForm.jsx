@@ -55,8 +55,6 @@ function AdultsCounter({
     setAttemptError(false)
   }
 
-  // Al hacer clic en el contenedor (no en + ni -), activar el input para escribir
-  // Solo activar el input al hacer clic en el contenedor, no al pulsar - o + (ni en su área/icono)
   const handleContainerClick = e => {
     if (e.target.closest('button')) return
     if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return
@@ -83,7 +81,6 @@ function AdultsCounter({
       onChange(num)
     } else {
       setAttemptError(true)
-      // No actualizar value; el usuario ve el número inválido y el mensaje de error
     }
   }
 
@@ -97,7 +94,6 @@ function AdultsCounter({
     const n = parseInt(inputStr, 10)
     const finalN = isNaN(n) ? MIN_ADULTS : n
     commit(finalN)
-    // Si el valor final está entre 1 y 9, quitar el error del formulario al perder el foco
     if (finalN >= MIN_ADULTS && finalN <= MAX_ADULTS) {
       onClearError?.()
     }
@@ -194,7 +190,6 @@ export function SearchForm({ onSearch, loading }) {
   const [originLabel, setOriginLabel] = useState('')
   const [destinationLabel, setDestinationLabel] = useState('')
 
-  // Schema con mensajes traducidos; se recalcula al cambiar idioma
   const searchSchema = useMemo(() => getSearchSchema(t), [t])
 
   const {
@@ -214,7 +209,6 @@ export function SearchForm({ onSearch, loading }) {
   const origin = watch('origin')
   const destination = watch('destination')
 
-  // Keyboard shortcut: "/" focuses origin input
   useKeyboard('/', e => {
     e.preventDefault()
     originInputRef.current?.querySelector('input')?.focus()
@@ -251,7 +245,6 @@ export function SearchForm({ onSearch, loading }) {
   return (
     <div className={styles.wrapper}>
       <form className={styles.form} onSubmit={handleSubmit(onValid)} noValidate>
-        {/* Trip type toggle + swap button */}
         <div className={styles.tripTypeRow}>
           <Controller
             name="tripType"
@@ -290,7 +283,6 @@ export function SearchForm({ onSearch, loading }) {
           </button>
         </div>
 
-        {/* Origin / Destination row */}
         <div className={styles.airportsRow}>
           <div ref={originInputRef} className={styles.airportField}>
             <Controller
@@ -300,7 +292,6 @@ export function SearchForm({ onSearch, loading }) {
                 <AirportAutocomplete
                   name="origin"
                   label={t('search.from')}
-                  required
                   value={field.value}
                   onChange={val => field.onChange(val)}
                   placeholder={t('search.cityOrAirport')}
@@ -334,12 +325,11 @@ export function SearchForm({ onSearch, loading }) {
           </div>
         </div>
 
-        {/* Dates: single range input (departure – return or just departure for one-way) */}
         <div className={styles.datesRow}>
           <div className={styles.dateFieldFull}>
             <DateRangePickerField
               id="dateRange"
-              label={t('search.dates')}
+              label={tripType === 'one-way' ? t('search.date') : t('search.dates')}
               value={{
                 departureDate: watch('departureDate'),
                 returnDate: watch('returnDate') || '',
@@ -363,7 +353,6 @@ export function SearchForm({ onSearch, loading }) {
           </div>
         </div>
 
-        {/* Passengers + Submit row: 1/3 pasajeros, 2/3 botón */}
         <div className={styles.extrasRow}>
           <div className={styles.extrasField}>
             <label className={styles.fieldLabel} htmlFor="adults">
@@ -400,7 +389,6 @@ export function SearchForm({ onSearch, loading }) {
         </div>
       </form>
 
-      {/* Search history */}
       <AnimatePresence>
         {history.length > 0 && (
           <motion.div className={styles.history} initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
@@ -422,8 +410,10 @@ export function SearchForm({ onSearch, loading }) {
                     onClick={() => loadFromHistory(entry)}
                   >
                     <span className={styles.historyRoute}>
-                      {entry.origin}
-                      {entry.destination ? ` → ${entry.destination}` : ` → ${t('search.anywhere')}`}
+                      {entry.originLabel || entry.origin}
+                      {entry.destination
+                        ? ` → ${entry.destinationLabel || entry.destination}`
+                        : ` → ${t('search.anywhere')}`}
                     </span>
                     <span className={styles.historyDate}>
                       {formatDate(entry.departureDate)}

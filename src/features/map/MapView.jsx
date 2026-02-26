@@ -34,7 +34,6 @@ export const MapView = forwardRef(function MapView(
     <div className={styles.wrapper}>
       <div ref={containerRef} className={styles.map} aria-label={t('map.ariaLabel')} />
 
-      {/* Attribution overlay for OpenFreeMap */}
       <div className={styles.attribution}>
         Map ©{' '}
         <a href="https://openfreemap.org" target="_blank" rel="noopener">
@@ -46,7 +45,6 @@ export const MapView = forwardRef(function MapView(
         </a>
       </div>
 
-      {/* Legend */}
       <div className={styles.legend}>
         <div className={styles.legendItem}>
           <span className={styles.legendIcon}>

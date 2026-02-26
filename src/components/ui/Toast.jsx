@@ -4,8 +4,6 @@ import { useTranslation } from 'react-i18next'
 import { InfoIcon, CheckCircleIcon, XCircleIcon, TriangleAlertIcon } from '@/icons'
 import styles from './Toast.module.css'
 
-/* ── Context ──────────────────────────────────────────────────────────────── */
-
 const ToastContext = createContext(null)
 
 let uid = 0
@@ -65,8 +63,6 @@ const ICONS = {
   error: <XCircleIcon size={16} />,
   warning: <TriangleAlertIcon size={16} />,
 }
-
-/* ── Hook ─────────────────────────────────────────────────────────────────── */
 
 export function useToast() {
   const addToast = useContext(ToastContext)

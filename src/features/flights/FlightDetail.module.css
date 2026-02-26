@@ -4,7 +4,6 @@
   gap: var(--space-5);
 }
 
-/* Summary */
 .summary {
   display: flex;
   flex-direction: column;
@@ -55,7 +54,6 @@
   gap: var(--space-2);
 }
 
-/* Itinerary */
 .itinerary {
   background: var(--color-bg-tertiary);
   border-radius: var(--radius-xl);
@@ -99,7 +97,6 @@
   gap: var(--space-3);
 }
 
-/* Timeline */
 .timeline {
   display: flex;
   flex-direction: column;
@@ -128,7 +125,6 @@
   min-height: 60px;
 }
 
-/* Segment content */
 .segContent {
   flex: 1;
   padding-bottom: var(--space-4);
@@ -202,7 +198,6 @@
   color: var(--color-text-tertiary);
 }
 
-/* Layover */
 .layover {
   display: flex;
   align-items: center;
@@ -216,7 +211,6 @@
   margin: var(--space-2) 0 var(--space-2) var(--space-5);
 }
 
-/* CO₂ */
 .co2Card {
   background: color-mix(in srgb, var(--color-success) 6%, var(--color-surface));
   border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);
@@ -253,7 +247,6 @@
   line-height: var(--leading-relaxed);
 }
 
-/* Footer */
 .footer {
   display: flex;
   align-items: center;

@@ -13,7 +13,7 @@ import styles from './DateRangePickerField.module.css'
 /**
  * Single input for departure + return date range.
  * - One trigger showing "from – to" or "from" for one-way.
- * - Calendar in range mode with "Hoy" (Today) shortcut.
+ * - Calendar in range mode with a "Today" shortcut.
  *
  * @param {string}   id             - for label and a11y
  * @param {{ departureDate: string, returnDate: string }} value
@@ -24,8 +24,8 @@ import styles from './DateRangePickerField.module.css'
  * @param {string}   [error]
  * @param {string}   [className]
  * @param {string}   [placeholder]
- * @param {string}   [todayLabel]   - e.g. "Hoy" / "Today"
- * @param {string}   [clearLabel]   - e.g. "Borrar" / "Clear"
+ * @param {string}   [todayLabel]   - e.g. "Today"
+ * @param {string}   [clearLabel]   - e.g. "Clear"
  */
 export function DateRangePickerField({
   id,
@@ -65,13 +65,15 @@ export function DateRangePickerField({
 
   const [month, setMonth] = useState(() => fromDate || minDate || new Date())
   useEffect(() => {
-    if (fromDate) setMonth(fromDate)
-    else if (minDate) setMonth(minDate)
+    const parsedDepartureDate = parseDate(departureDate)
+    const parsedMinDate = parseDate(min)
+
+    if (parsedDepartureDate) setMonth(parsedDepartureDate)
+    else if (parsedMinDate) setMonth(parsedMinDate)
     else setMonth(new Date())
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    // Depend on string props so we don't get new Date() refs on every render (infinite loop)
   }, [departureDate, min])
 
-  // Year range for dropdown: from min (or this year) to end of next year
   const startMonth = minDate || new Date(new Date().getFullYear(), 0, 1)
   const endMonth = new Date(new Date().getFullYear() + 1, 11, 31)
 
@@ -103,14 +105,11 @@ export function DateRangePickerField({
     const hasExistingRange = tripType === 'round-trip' && fromDate && toDate
 
     if (tripType === 'round-trip' && range.to) {
-      // Dos fechas en la selección actual: la anterior es salida, la posterior es vuelta
       const start = range.from.getTime() <= range.to.getTime() ? range.from : range.to
       const end = range.from.getTime() <= range.to.getTime() ? range.to : range.from
       departureDate = toISODate(start)
       returnDateStr = toISODate(end)
     } else if (hasExistingRange && !range.to) {
-      // Tercera selección: ya hay salida y vuelta, se clica otra fecha.
-      // La vuelta actual actúa como "segunda" (pivot): si la tercera es anterior → salida=tercera, vuelta=pivot; si es posterior → salida=pivot, vuelta=tercera
       const pivot = toDate
       const clicked = range.from
       const start = pivot.getTime() <= clicked.getTime() ? pivot : clicked
@@ -118,7 +117,6 @@ export function DateRangePickerField({
       departureDate = toISODate(start)
       returnDateStr = toISODate(end)
     } else {
-      // Una sola fecha = salida. En solo ida, si el usuario clica otro día, viene como range.to
       const dateToUse = tripType === 'one-way' && range.to ? range.to : range.from
       departureDate = toISODate(dateToUse)
     }

@@ -1,7 +1,4 @@
-/* ─── DealWing Design Tokens ─────────────────────────────────────────────── */
-
 :root {
-  /* Brand palette — naranja intenso */
   --color-brand-50: #fff7ed;
   --color-brand-100: #ffedd5;
   --color-brand-200: #fed7aa;
@@ -13,7 +10,6 @@
   --color-brand-800: #9a3412;
   --color-brand-900: #7c2d12;
 
-  /* Neutral palette */
   --color-gray-50: #f8fafc;
   --color-gray-100: #f1f5f9;
   --color-gray-200: #e2e8f0;
@@ -25,7 +21,6 @@
   --color-gray-800: #1e293b;
   --color-gray-900: #0f172a;
 
-  /* Status */
   --color-success: #10b981;
   --color-success-light: #d1fae5;
   --color-warning: #f59e0b;
@@ -35,12 +30,10 @@
   --color-info: var(--color-brand-500);
   --color-info-light: var(--color-brand-50);
 
-  /* Deal score colors */
   --color-deal-great: #10b981;
   --color-deal-good: #f59e0b;
   --color-deal-fair: #ef4444;
 
-  /* ── Semantic (light theme) ── */
   --color-bg: var(--color-gray-50);
   --color-bg-secondary: #ffffff;
   --color-bg-tertiary: var(--color-gray-100);
@@ -57,7 +50,6 @@
   --color-brand-hover: var(--color-brand-700);
   --color-brand-subtle: var(--color-brand-50);
 
-  /* ── Spacing ── */
   --space-0: 0px;
   --space-1: 4px;
   --space-2: 8px;
@@ -71,18 +63,17 @@
   --space-16: 64px;
   --space-20: 80px;
 
-  /* ── Typography ── */
   --font-sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
   --font-mono: 'JetBrains Mono', 'Fira Code', 'Cascadia Code', monospace;
 
-  --text-xs: 0.75rem; /* 12px */
-  --text-sm: 0.875rem; /* 14px */
-  --text-base: 1rem; /* 16px */
-  --text-lg: 1.125rem; /* 18px */
-  --text-xl: 1.25rem; /* 20px */
-  --text-2xl: 1.5rem; /* 24px */
-  --text-3xl: 1.875rem; /* 30px */
-  --text-4xl: 2.25rem; /* 36px */
+  --text-xs: 0.75rem;
+  --text-sm: 0.875rem;
+  --text-base: 1rem;
+  --text-lg: 1.125rem;
+  --text-xl: 1.25rem;
+  --text-2xl: 1.5rem;
+  --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem;
 
   --leading-tight: 1.25;
   --leading-snug: 1.375;
@@ -94,7 +85,6 @@
   --font-semibold: 600;
   --font-bold: 700;
 
-  /* ── Border radius ── */
   --radius-sm: 4px;
   --radius-md: 8px;
   --radius-lg: 12px;
@@ -102,7 +92,6 @@
   --radius-2xl: 24px;
   --radius-full: 9999px;
 
-  /* ── Shadows ── */
   --shadow-xs: 0 1px 2px 0 rgb(0 0 0 / 0.04);
   --shadow-sm: 0 1px 3px 0 rgb(0 0 0 / 0.08), 0 1px 2px -1px rgb(0 0 0 / 0.06);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.08), 0 2px 4px -2px rgb(0 0 0 / 0.06);
@@ -110,7 +99,6 @@
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.06);
   --shadow-brand: 0 4px 14px 0 rgb(234 88 12 / 0.35);
 
-  /* ── Transitions ── */
   --duration-fast: 120ms;
   --duration-normal: 200ms;
   --duration-slow: 300ms;
@@ -119,12 +107,10 @@
   --ease-out: cubic-bezier(0, 0, 0.2, 1);
   --ease-in: cubic-bezier(0.4, 0, 1, 1);
 
-  /* ── Layout ── */
   --header-height: 60px;
   --sidebar-width: 400px;
   --max-width: 1440px;
 
-  /* ── Z-index scale ── */
   --z-base: 0;
   --z-dropdown: 100;
   --z-sticky: 200;
@@ -133,9 +119,6 @@
   --z-toast: 500;
 }
 
-/* ─── Dark mode ──────────────────────────────────────────────────────────── */
-/* Controlled by ThemeContext: data-theme is set on <html> by JS            */
-/* (system preference is read via matchMedia and applied as dark/light)      */
 :root[data-theme='dark'] {
   --color-bg: var(--color-gray-900);
   --color-bg-secondary: var(--color-gray-800);

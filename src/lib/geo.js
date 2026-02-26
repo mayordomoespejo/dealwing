@@ -27,15 +27,12 @@ export function arcCoordinates(from, to, steps = 80) {
   const [x0, y0] = from
   const [x1, y1] = to
 
-  // Midpoint
   const mx = (x0 + x1) / 2
   const my = (y0 + y1) / 2
 
-  // Elevate the control point to create the arc curvature
   const dist = Math.sqrt((x1 - x0) ** 2 + (y1 - y0) ** 2)
-  const elevation = Math.min(dist * 0.25, 20) // cap at 20° lat
+  const elevation = Math.min(dist * 0.25, 20)
 
-  // Perpendicular offset (always curve northward for Southern → Northern routes)
   const cx = mx
   const cy = my + elevation
 

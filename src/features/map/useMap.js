@@ -3,11 +3,8 @@ import maplibregl from 'maplibre-gl'
 import { getAirport } from '@/lib/airports.js'
 import { arcCoordinates, getBounds } from '@/lib/geo.js'
 
-// Free, no-API-key tile style from OpenFreeMap (OpenMapTiles schema: name_en, name_es, name)
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
 
-// Layer IDs that show text labels (symbol layers with text-field). Liberty style uses
-// name:latin/name:nonlatin for scripts and coalesce(name_en, name) for default language.
 const LABEL_LAYER_IDS_LINE = [
   'waterway_line_label',
   'water_name_line_label',
@@ -33,7 +30,6 @@ const LABEL_LAYER_IDS_POINT = [
   'label_country_1',
 ]
 
-// Expressions: prefer name_es when language is 'es', else name_en. OpenMapTiles has name_es/name_en/name.
 const separatorLine = ' '
 const separatorPoint = '\n'
 
@@ -55,9 +51,8 @@ function textFieldExpressionEs(separator) {
   ]
 }
 
-// Brand colors (match CSS --color-brand / --color-brand-400)
-const BRAND = '#ea580c' // --color-brand-600
-const DARK = '#1e293b' // --color-gray-800
+const BRAND = '#ea580c'
+const DARK = '#1e293b'
 const ROUTE_COLOR = '#ea580c'
 const ROUTE_SELECTED_COLOR = '#ea580c'
 
@@ -76,10 +71,8 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
   const originMarkerRef = useRef(null)
   const routesAddedRef = useRef(false)
   const isStyleLoadedRef = useRef(false)
-  // Tracks the last set of flight IDs to skip fitBounds on selection-only changes
   const prevFlightIdsRef = useRef('')
 
-  // Initialize map once
   useEffect(() => {
     if (!containerRef.current || mapRef.current) return
 
@@ -109,7 +102,6 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
     }
   }, [containerRef])
 
-  // Apply map label language (OpenMapTiles: name_es, name_en, name) when style is ready
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
@@ -139,7 +131,6 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
     }
   }, [language])
 
-  // Update routes + markers when flights or selection changes
   useEffect(() => {
     const map = mapRef.current
     if (!map) return
@@ -149,19 +140,16 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
 
       if (!flights.length || !searchParams?.origin) return
 
-      // Prefer local dataset; fall back to coords embedded in the mapped flight offer
       const originAirport = getAirport(searchParams.origin) ?? flights[0]?.origin
       if (!originAirport?.lat || !originAirport?.lng) return
 
       const originCoords = [originAirport.lng, originAirport.lat]
 
-      // Origin pulse marker
       const originEl = createOriginMarker()
       originMarkerRef.current = new maplibregl.Marker({ element: originEl })
         .setLngLat([originAirport.lng, originAirport.lat])
         .addTo(map)
 
-      // Unique destinations from flights (with valid coordinates)
       const uniqueDests = [
         ...new Map(
           flights
@@ -174,8 +162,6 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
 
       const allPoints = [originCoords, ...uniqueDests.map(d => [d.lng, d.lat])]
 
-      // One feature per unique route (origin → destination) to avoid stacking multiple
-      // lines on the same path when several flights share the same route.
       const routeKeyToFeature = new Map()
       flights
         .filter(f => f.destination?.lat && f.destination?.lng)
@@ -194,14 +180,12 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
               },
             })
           } else {
-            // Keep selected=true if any flight on this route is selected
             const f = routeKeyToFeature.get(key)
             if (isSelected) f.properties.selected = true
           }
         })
       const routeFeatures = [...routeKeyToFeature.values()]
 
-      // One marker per unique destination (not clickable)
       uniqueDests.forEach(dest => {
         const destEl = createDestMarker(dest.iata)
         const marker = new maplibregl.Marker({ element: destEl, anchor: 'bottom', offset: [0, 6] })
@@ -210,7 +194,6 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
         destMarkersRef.current.push(marker)
       })
 
-      // Route lines (still MapLibre layers — they sit behind the DOM markers)
       if (map.getSource('routes')) {
         map.getSource('routes').setData({ type: 'FeatureCollection', features: routeFeatures })
       } else {
@@ -297,8 +280,6 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
   return { flyToOrigin, flyToDest }
 }
 
-/* ── DOM helpers ─────────────────────────────────────────────────────────── */
-
 function clearMarkersAndRoutes(map, destMarkersRef, originMarkerRef, routesAddedRef) {
   destMarkersRef.current.forEach(m => m.remove())
   destMarkersRef.current = []
@@ -322,7 +303,6 @@ function injectMarkerStyles() {
   const style = document.createElement('style')
   style.id = 'map-marker-style'
   style.textContent = `
-    /* ── Destination badge marker (RMU only, not clickable) ── */
     .map-dest-pin {
       display: flex;
       flex-direction: column;
@@ -362,7 +342,6 @@ function injectMarkerStyles() {
       border: 2.5px solid #fff;
       margin-top: -1px;
     }
-    /* ── Origin pulse keyframes ── */
     @keyframes mapPulse {
       0%   { transform: scale(1);   opacity: 0.6; }
       100% { transform: scale(2.5); opacity: 0;   }

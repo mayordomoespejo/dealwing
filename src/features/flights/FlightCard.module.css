@@ -30,7 +30,6 @@
   border-color: var(--color-brand);
 }
 
-/* Top row */
 .topRow {
   display: flex;
   align-items: center;
@@ -43,13 +42,11 @@
   gap: var(--space-2);
 }
 
-/* SVG logo (known airlines) */
 .airlineLogoSvg {
   display: block;
   flex-shrink: 0;
 }
 
-/* Fallback img (unknown airlines) */
 .airlineLogoImg {
   width: 18px;
   height: 18px;
@@ -91,7 +88,6 @@
   color: var(--color-error);
 }
 
-/* Route timeline — padding y bordes forman parte del diseño del bloque */
 .route {
   display: flex;
   align-items: center;
@@ -193,7 +189,6 @@
   color: var(--color-text-tertiary);
 }
 
-/* Bottom row */
 .bottomRow {
   display: flex;
   align-items: flex-end;

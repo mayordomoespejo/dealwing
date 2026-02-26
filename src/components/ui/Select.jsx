@@ -21,7 +21,6 @@ export function Select({ id, value, onChange, options, className = '', disabled 
   const selectedOption = options.find(o => o.value === value)
   const displayLabel = selectedOption?.label ?? selectedOption?.value ?? value
 
-  // When opening, set active index to current value or 0
   useEffect(() => {
     if (open && options.length > 0) {
       const idx = options.findIndex(o => o.value === value)
@@ -31,14 +30,12 @@ export function Select({ id, value, onChange, options, className = '', disabled 
     }
   }, [open, value, options])
 
-  // Scroll active option into view when activeIndex changes
   useEffect(() => {
     if (!open || activeIndex < 0) return
     const optionEl = dropdownRef.current?.querySelector(`[data-option-index="${activeIndex}"]`)
     optionEl?.scrollIntoView({ block: 'nearest', behavior: 'smooth' })
   }, [open, activeIndex])
 
-  // Close on click outside
   useEffect(() => {
     if (!open) return
     function handleClickOutside(e) {
