@@ -44,7 +44,8 @@ export function estimateCO2(originIata, destIata, segments = [], durationMin = 0
           totalKm += haversineKm(from.lat, from.lng, to.lat, to.lng)
         }
       }
-    } else {
+    }
+    if (segments.length <= 1) {
       const origin = getAirport(originIata)
       const dest = getAirport(destIata)
       if (origin && dest) {

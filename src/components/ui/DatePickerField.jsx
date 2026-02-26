@@ -46,9 +46,15 @@ export function DatePickerField({
 
   const [month, setMonth] = useState(() => selectedDate || minDate || new Date())
   useEffect(() => {
-    if (selectedDate) setMonth(selectedDate)
-    else if (minDate) setMonth(minDate)
-    else setMonth(new Date())
+    if (selectedDate) {
+      setMonth(selectedDate)
+      return
+    }
+    if (minDate) {
+      setMonth(minDate)
+      return
+    }
+    setMonth(new Date())
   }, [minDate, selectedDate])
 
   const startMonth = minDate || new Date(new Date().getFullYear(), 0, 1)
@@ -67,9 +73,7 @@ export function DatePickerField({
   useEffect(() => {
     if (!open) return
     function handleClickOutside(e) {
-      const inTrigger = triggerRef.current?.contains(e.target)
-      const inPopover = popoverRef.current?.contains(e.target)
-      if (!inTrigger && !inPopover) setOpen(false)
+      if (!popoverRef.current?.contains(e.target)) setOpen(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -114,7 +118,7 @@ export function DatePickerField({
     ) : null
 
   return (
-    <div className={`${styles.wrapper} ${className}`.trim()}>
+    <div className={`${styles.wrapper} ${className}`.trim()} onMouseDown={e => e.stopPropagation()}>
       {label && (
         <label className={styles.label} htmlFor={id}>
           {label}

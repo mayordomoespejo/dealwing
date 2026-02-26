@@ -35,7 +35,8 @@ async function request(url, { params, ...options } = {}) {
   const contentType = res.headers.get('Content-Type') ?? ''
   if (contentType.includes('application/json')) {
     data = await res.json()
-  } else {
+  }
+  if (!contentType.includes('application/json')) {
     data = await res.text()
   }
 

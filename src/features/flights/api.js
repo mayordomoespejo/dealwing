@@ -16,6 +16,5 @@ export async function searchFlightOffers(params) {
     passengers: adults,
   })
 
-  console.log('[searchFlightOffers] response', response)
   return response
 }

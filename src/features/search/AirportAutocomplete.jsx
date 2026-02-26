@@ -63,7 +63,9 @@ export function AirportAutocomplete({
     if (!value) {
       setInputText('')
       setSelectedLabel('')
-    } else if (externalLabel) {
+      return
+    }
+    if (externalLabel) {
       setSelectedLabel(externalLabel)
     }
   }, [value, externalLabel])
@@ -110,26 +112,23 @@ export function AirportAutocomplete({
   function handleKeyDown(e) {
     if (!open || suggestions.length === 0) return
 
-    switch (e.key) {
-      case 'ArrowDown':
-        e.preventDefault()
-        setActiveIndex(i => Math.min(i + 1, suggestions.length - 1))
-        break
-      case 'ArrowUp':
-        e.preventDefault()
-        setActiveIndex(i => Math.max(i - 1, -1))
-        break
-      case 'Enter':
-        e.preventDefault()
-        if (activeIndex >= 0) {
-          select(suggestions[activeIndex])
-        }
-        break
-      case 'Escape':
-        setOpen(false)
-        break
-      default:
-        break
+    if (e.key === 'ArrowDown') {
+      e.preventDefault()
+      setActiveIndex(i => Math.min(i + 1, suggestions.length - 1))
+      return
+    }
+    if (e.key === 'ArrowUp') {
+      e.preventDefault()
+      setActiveIndex(i => Math.max(i - 1, -1))
+      return
+    }
+    if (e.key === 'Enter') {
+      e.preventDefault()
+      if (activeIndex >= 0) select(suggestions[activeIndex])
+      return
+    }
+    if (e.key === 'Escape') {
+      setOpen(false)
     }
   }
 

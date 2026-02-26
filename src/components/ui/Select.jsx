@@ -25,9 +25,9 @@ export function Select({ id, value, onChange, options, className = '', disabled 
     if (open && options.length > 0) {
       const idx = options.findIndex(o => o.value === value)
       setActiveIndex(idx >= 0 ? idx : 0)
-    } else {
-      setActiveIndex(-1)
+      return
     }
+    setActiveIndex(-1)
   }, [open, value, options])
 
   useEffect(() => {
@@ -58,58 +58,46 @@ export function Select({ id, value, onChange, options, className = '', disabled 
 
   function handleTriggerKeyDown(e) {
     if (disabled) return
-    switch (e.key) {
-      case 'ArrowDown':
-      case 'Down': {
-        e.preventDefault()
-        if (!open) {
-          openList()
-          return
-        }
-        setActiveIndex(i => (i < options.length - 1 ? i + 1 : i))
-        break
+    if (e.key === 'ArrowDown' || e.key === 'Down') {
+      e.preventDefault()
+      if (!open) {
+        openList()
+        return
       }
-      case 'ArrowUp':
-      case 'Up': {
-        e.preventDefault()
-        if (!open) {
-          openList()
-          return
-        }
-        setActiveIndex(i => (i > 0 ? i - 1 : i))
-        break
+      setActiveIndex(i => (i < options.length - 1 ? i + 1 : i))
+      return
+    }
+    if (e.key === 'ArrowUp' || e.key === 'Up') {
+      e.preventDefault()
+      if (!open) {
+        openList()
+        return
       }
-      case 'Enter':
-      case ' ': {
-        e.preventDefault()
-        if (open && activeIndex >= 0 && options[activeIndex]) {
-          handleSelect(options[activeIndex].value)
-        } else {
-          setOpen(o => !o)
-        }
-        break
+      setActiveIndex(i => (i > 0 ? i - 1 : i))
+      return
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      if (open && activeIndex >= 0 && options[activeIndex]) {
+        handleSelect(options[activeIndex].value)
+        return
       }
-      case 'Escape': {
-        e.preventDefault()
-        setOpen(false)
-        break
-      }
-      case 'Home': {
-        if (open) {
-          e.preventDefault()
-          setActiveIndex(0)
-        }
-        break
-      }
-      case 'End': {
-        if (open) {
-          e.preventDefault()
-          setActiveIndex(options.length - 1)
-        }
-        break
-      }
-      default:
-        break
+      setOpen(o => !o)
+      return
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      setOpen(false)
+      return
+    }
+    if (e.key === 'Home' && open) {
+      e.preventDefault()
+      setActiveIndex(0)
+      return
+    }
+    if (e.key === 'End' && open) {
+      e.preventDefault()
+      setActiveIndex(options.length - 1)
     }
   }
 

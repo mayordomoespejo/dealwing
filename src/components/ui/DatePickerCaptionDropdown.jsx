@@ -38,9 +38,9 @@ export function CaptionDropdown({
     if (open && options.length > 0) {
       const idx = options.findIndex(o => o.value === value)
       setActiveIndex(idx >= 0 ? idx : 0)
-    } else {
-      setActiveIndex(-1)
+      return
     }
+    setActiveIndex(-1)
   }, [open, value, options])
 
   useEffect(() => {
@@ -71,48 +71,44 @@ export function CaptionDropdown({
 
   function handleTriggerKeyDown(e) {
     if (disabled) return
-    switch (e.key) {
-      case 'ArrowDown':
-      case 'Down':
-        e.preventDefault()
-        if (!open) {
-          openList()
-          return
-        }
-        setActiveIndex(i => {
-          let next = i < options.length - 1 ? i + 1 : i
-          while (next < options.length && options[next]?.disabled) next++
-          return Math.min(next, options.length - 1)
-        })
-        break
-      case 'ArrowUp':
-      case 'Up':
-        e.preventDefault()
-        if (!open) {
-          openList()
-          return
-        }
-        setActiveIndex(i => {
-          let prev = i > 0 ? i - 1 : i
-          while (prev >= 0 && options[prev]?.disabled) prev--
-          return Math.max(prev, 0)
-        })
-        break
-      case 'Enter':
-      case ' ':
-        e.preventDefault()
-        if (open && activeIndex >= 0 && options[activeIndex] && !options[activeIndex].disabled) {
-          handleSelect(options[activeIndex].value)
-        } else {
-          setOpen(o => !o)
-        }
-        break
-      case 'Escape':
-        e.preventDefault()
-        setOpen(false)
-        break
-      default:
-        break
+    if (e.key === 'ArrowDown' || e.key === 'Down') {
+      e.preventDefault()
+      if (!open) {
+        openList()
+        return
+      }
+      setActiveIndex(i => {
+        let next = i < options.length - 1 ? i + 1 : i
+        while (next < options.length && options[next]?.disabled) next++
+        return Math.min(next, options.length - 1)
+      })
+      return
+    }
+    if (e.key === 'ArrowUp' || e.key === 'Up') {
+      e.preventDefault()
+      if (!open) {
+        openList()
+        return
+      }
+      setActiveIndex(i => {
+        let prev = i > 0 ? i - 1 : i
+        while (prev >= 0 && options[prev]?.disabled) prev--
+        return Math.max(prev, 0)
+      })
+      return
+    }
+    if (e.key === 'Enter' || e.key === ' ') {
+      e.preventDefault()
+      if (open && activeIndex >= 0 && options[activeIndex] && !options[activeIndex].disabled) {
+        handleSelect(options[activeIndex].value)
+        return
+      }
+      setOpen(o => !o)
+      return
+    }
+    if (e.key === 'Escape') {
+      e.preventDefault()
+      setOpen(false)
     }
   }
 

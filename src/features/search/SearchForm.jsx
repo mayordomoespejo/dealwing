@@ -79,9 +79,9 @@ function AdultsCounter({
     if (num >= 1 && num <= 9) {
       setAttemptError(false)
       onChange(num)
-    } else {
-      setAttemptError(true)
+      return
     }
+    setAttemptError(true)
   }
 
   const handleBlur = () => {

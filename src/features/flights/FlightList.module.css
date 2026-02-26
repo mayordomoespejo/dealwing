@@ -55,6 +55,7 @@
 }
 
 .empty {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -85,6 +86,12 @@
 .hint {
   font-size: var(--text-xs);
   color: var(--color-text-tertiary);
+}
+
+@media (max-width: 768px) {
+  .hint {
+    display: none;
+  }
 }
 
 kbd {

@@ -74,7 +74,15 @@
   border-radius: var(--radius-xl);
   box-shadow: var(--shadow-lg);
   padding: var(--space-3);
-  min-width: 280px;
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+/* Inner wrapper: natural calendar width; parent sets width and scales this so it fits and stays centered */
+.popoverInner {
+  width: 280px;
+  flex-shrink: 0;
 }
 
 .footer {

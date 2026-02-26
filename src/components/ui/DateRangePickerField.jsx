@@ -68,9 +68,15 @@ export function DateRangePickerField({
     const parsedDepartureDate = parseDate(departureDate)
     const parsedMinDate = parseDate(min)
 
-    if (parsedDepartureDate) setMonth(parsedDepartureDate)
-    else if (parsedMinDate) setMonth(parsedMinDate)
-    else setMonth(new Date())
+    if (parsedDepartureDate) {
+      setMonth(parsedDepartureDate)
+      return
+    }
+    if (parsedMinDate) {
+      setMonth(parsedMinDate)
+      return
+    }
+    setMonth(new Date())
     // Depend on string props so we don't get new Date() refs on every render (infinite loop)
   }, [departureDate, min])
 
@@ -90,9 +96,7 @@ export function DateRangePickerField({
   useEffect(() => {
     if (!open) return
     function handleClickOutside(e) {
-      const inTrigger = triggerRef.current?.contains(e.target)
-      const inPopover = popoverRef.current?.contains(e.target)
-      if (!inTrigger && !inPopover) setOpen(false)
+      if (!popoverRef.current?.contains(e.target)) setOpen(false)
     }
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
@@ -109,17 +113,23 @@ export function DateRangePickerField({
       const end = range.from.getTime() <= range.to.getTime() ? range.to : range.from
       departureDate = toISODate(start)
       returnDateStr = toISODate(end)
-    } else if (hasExistingRange && !range.to) {
+    }
+    if (hasExistingRange && !range.to) {
       const pivot = toDate
       const clicked = range.from
       const start = pivot.getTime() <= clicked.getTime() ? pivot : clicked
       const end = pivot.getTime() <= clicked.getTime() ? clicked : pivot
       departureDate = toISODate(start)
       returnDateStr = toISODate(end)
-    } else {
-      const dateToUse = tripType === 'one-way' && range.to ? range.to : range.from
-      departureDate = toISODate(dateToUse)
+      onChange({ departureDate, returnDate: returnDateStr })
+      return
     }
+    if (tripType === 'round-trip' && range.to) {
+      onChange({ departureDate, returnDate: returnDateStr })
+      return
+    }
+    const dateToUse = tripType === 'one-way' && range.to ? range.to : range.from
+    departureDate = toISODate(dateToUse)
     onChange({ departureDate, returnDate: returnDateStr })
   }
 
@@ -149,51 +159,61 @@ export function DateRangePickerField({
           position: 'fixed',
           top: popoverRect.top,
           left: popoverRect.left,
-          minWidth: Math.max(popoverRect.width, 280),
+          width: popoverRect.width,
+          maxWidth: popoverRect.width,
         }}
       >
-        <DayPicker
-          mode="range"
-          locale={locale}
-          selected={selectedRange}
-          onSelect={handleSelect}
-          month={month}
-          onMonthChange={setMonth}
-          disabled={minDate ? { before: minDate } : undefined}
-          numberOfMonths={1}
-          captionLayout="dropdown"
-          startMonth={startMonth}
-          endMonth={endMonth}
-          components={{ Dropdown: CaptionDropdown }}
-          formatters={{
-            formatCaption: date => date.toLocaleDateString(i18n.language, { month: 'long' }),
+        <div
+          className={styles.popoverInner}
+          style={{
+            // Scale down the calendar when the input is narrower than the natural calendar width
+            transform: `scale(${Math.min(1, popoverRect.width / 280)})`,
+            transformOrigin: 'top center',
           }}
-        />
-        <div className={styles.footer}>
-          <button
-            type="button"
-            className={styles.todayBtn}
-            onClick={handleToday}
-            aria-label={todayLabel}
-          >
-            {todayLabel}
-          </button>
-          {fromDate && (
+        >
+          <DayPicker
+            mode="range"
+            locale={locale}
+            selected={selectedRange}
+            onSelect={handleSelect}
+            month={month}
+            onMonthChange={setMonth}
+            disabled={minDate ? { before: minDate } : undefined}
+            numberOfMonths={1}
+            captionLayout="dropdown"
+            startMonth={startMonth}
+            endMonth={endMonth}
+            components={{ Dropdown: CaptionDropdown }}
+            formatters={{
+              formatCaption: date => date.toLocaleDateString(i18n.language, { month: 'long' }),
+            }}
+          />
+          <div className={styles.footer}>
             <button
               type="button"
-              className={styles.clearBtn}
-              onClick={handleClear}
-              aria-label={clearLabel}
+              className={styles.todayBtn}
+              onClick={handleToday}
+              aria-label={todayLabel}
             >
-              {clearLabel}
+              {todayLabel}
             </button>
-          )}
+            {fromDate && (
+              <button
+                type="button"
+                className={styles.clearBtn}
+                onClick={handleClear}
+                aria-label={clearLabel}
+              >
+                {clearLabel}
+              </button>
+            )}
+          </div>
         </div>
       </div>
     ) : null
 
   return (
-    <div className={`${styles.wrapper} ${className}`.trim()}>
+    <div className={`${styles.wrapper} ${className}`.trim()} onMouseDown={e => e.stopPropagation()}>
       {label && (
         <label className={styles.label} htmlFor={id}>
           {label}

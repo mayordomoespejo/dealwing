@@ -124,11 +124,11 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
       })
     }
 
-    if (isStyleLoadedRef.current) {
-      applyMapLanguage()
-    } else {
+    if (!isStyleLoadedRef.current) {
       map.once('style.load', applyMapLanguage)
+      return
     }
+    applyMapLanguage()
   }, [language])
 
   useEffect(() => {
@@ -179,10 +179,10 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
                 coordinates: arcCoordinates(originCoords, destCoords),
               },
             })
-          } else {
-            const f = routeKeyToFeature.get(key)
-            if (isSelected) f.properties.selected = true
+            return
           }
+          const f = routeKeyToFeature.get(key)
+          if (isSelected) f.properties.selected = true
         })
       const routeFeatures = [...routeKeyToFeature.values()]
 
@@ -194,9 +194,11 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
         destMarkersRef.current.push(marker)
       })
 
-      if (map.getSource('routes')) {
-        map.getSource('routes').setData({ type: 'FeatureCollection', features: routeFeatures })
-      } else {
+      const routesSource = map.getSource('routes')
+      if (routesSource) {
+        routesSource.setData({ type: 'FeatureCollection', features: routeFeatures })
+      }
+      if (!routesSource) {
         map.addSource('routes', {
           type: 'geojson',
           data: { type: 'FeatureCollection', features: routeFeatures },
@@ -247,21 +249,21 @@ export function useMap({ containerRef, flights, selectedId, searchParams, langua
 
     function scheduleUpdate() {
       map.resize()
-      if (map.isStyleLoaded()) {
-        map.once('idle', update)
-      } else {
+      if (!map.isStyleLoaded()) {
         map.once('style.load', () => map.once('idle', update))
+        return
       }
+      map.once('idle', update)
     }
 
-    if (isStyleLoadedRef.current) {
-      scheduleUpdate()
-    } else {
+    if (!isStyleLoadedRef.current) {
       map.once('style.load', () => {
         isStyleLoadedRef.current = true
         scheduleUpdate()
       })
+      return
     }
+    scheduleUpdate()
   }, [flights, selectedId, searchParams])
 
   const flyToOrigin = useCallback(iata => {

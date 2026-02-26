@@ -77,6 +77,10 @@
   padding: 2px 5px;
   letter-spacing: 0.05em;
   pointer-events: none;
+  min-width: 45px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .clearBtn {

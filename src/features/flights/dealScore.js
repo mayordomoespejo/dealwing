@@ -44,9 +44,8 @@ export function computePriceStats(offers) {
   const mid = Math.floor(prices.length / 2)
   if (prices.length % 2 === 0) {
     median = (prices[mid - 1] + prices[mid]) / 2
-  } else {
-    median = prices[mid]
   }
+  if (prices.length % 2 !== 0) median = prices[mid]
 
   return { min, median, max, mean: Math.round(mean) }
 }
