@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "search": "Buscar",
+    "saved": "Guardados"
+  },
+  "theme": {
+    "label": "Tema",
+    "system": "Tema del sistema",
+    "light": "Tema claro",
+    "dark": "Tema oscuro"
+  },
+  "language": {
+    "label": "Idioma",
+    "en": "EN",
+    "es": "ES"
+  },
+  "search": {
+    "roundTrip": "Ida y vuelta",
+    "oneWay": "Solo ida",
+    "from": "Desde",
+    "to": "Hasta",
+    "cityOrAirport": "Ciudad o aeropuerto",
+    "anyDestination": "Cualquier destino",
+    "departure": "Salida",
+    "return": "Regreso",
+    "dates": "Fechas",
+    "today": "Hoy",
+    "clearDates": "Borrar",
+    "datePlaceholder": "dd/mm/aaaa",
+    "datePlaceholderRange": "Desde – Hasta",
+    "datePlaceholderSingle": "Fecha",
+    "adults": "Pasajeros",
+    "currency": "Moneda",
+    "searchFlights": "Buscar vuelos",
+    "recentSearches": "Búsquedas recientes",
+    "clearAll": "Borrar todo",
+    "anywhere": "Cualquier destino",
+    "tripType": "Tipo de viaje",
+    "swapAirports": "Intercambiar origen y destino",
+    "clearAirport": "Limpiar selección de aeropuerto",
+    "required": " *",
+    "airportSuggestions": "Sugerencias de aeropuerto para {{label}}"
+  },
+  "filters": {
+    "sortBy": "Ordenar por",
+    "price": "Precio",
+    "duration": "Duración",
+    "bestDeal": "Mejor oferta",
+    "maxPrice": "Precio máximo",
+    "any": "Cualquiera",
+    "stops": "Escalas",
+    "directOnly": "Solo directo",
+    "max1Stop": "Máx. 1 escala",
+    "airlines": "Aerolíneas",
+    "resetFilters": "Restablecer filtros"
+  },
+  "flights": {
+    "viewDetails": "Ver detalles",
+    "saveFlight": "Guardar vuelo",
+    "removeFromSaved": "Quitar de guardados",
+    "dealScore": "Puntuación: {{score}}/100",
+    "perPerson": "por persona",
+    "seatsLeft": "{{count}} asientos disponibles",
+    "error": "Algo salió mal",
+    "errorLoading": "No se pudieron cargar los vuelos. Inténtalo de nuevo.",
+    "searchPromptTitle": "Busca vuelos",
+    "searchPromptHint": "Introduce tu origen y las fechas para descubrir las mejores ofertas.",
+    "searchProTip": "Consejo: pulsa / para enfocar la búsqueda.",
+    "noFlightsTitle": "No se encontraron vuelos",
+    "noFlightsHint": "Prueba a ajustar los filtros o las fechas.",
+    "results_one": "{{count}} vuelo",
+    "results_other": "{{count}} vuelos",
+    "ofTotal": "(de {{total}})",
+    "from": "desde",
+    "avg": "media",
+    "ariaLabel": "Vuelo de {{origin}} a {{destination}}, {{price}}"
+  },
+  "detail": {
+    "title": "Detalles del vuelo",
+    "roundTrip": "Ida y vuelta",
+    "oneWay": "Solo ida",
+    "dealScoreExplanation": "Puntuado respecto al conjunto de resultados. Basado en precio, duración y escalas.",
+    "outbound": "Ida",
+    "return": "Vuelta",
+    "terminal": "Terminal {{n}}",
+    "layover": "Escala en {{iata}}",
+    "co2PerPassenger": "por pasajero",
+    "co2Disclaimer": "Estimación aproximada basada en factores de emisión medios (método simplificado ICAO). Las emisiones reales varían según aeronave, factor de ocupación y ruta.",
+    "perPersonTotal": "por persona, total",
+    "unsave": "Quitar guardado",
+    "save": "Guardar",
+    "bookNow": "Reservar →",
+    "bookingSoon": "¡La integración de reservas estará disponible pronto!"
+  },
+  "saved": {
+    "title": "Vuelos guardados",
+    "subtitle_one": "{{count}} vuelo guardado",
+    "subtitle_other": "{{count}} vuelos guardados",
+    "clearAll": "Borrar todo",
+    "noFlightsTitle": "No hay vuelos guardados",
+    "noFlightsHint": "Guarda vuelos desde los resultados de búsqueda para compararlos aquí.",
+    "searchFlights": "Buscar vuelos",
+    "departs": "Sale",
+    "duration": "Duración",
+    "airline": "Aerolínea",
+    "savedOn": "Guardado el {{date}}",
+    "details": "Detalles",
+    "removeSaved": "Quitar vuelo guardado"
+  },
+  "map": {
+    "ariaLabel": "Mapa de destinos de vuelo",
+    "origin": "Origen",
+    "destination": "Destino"
+  },
+  "home": {
+    "collapseSidebar": "Colapsar barra lateral",
+    "expandSidebar": "Expandir barra lateral",
+    "viewDetails": "Ver detalles →",
+    "flightSaved": "¡Vuelo guardado!",
+    "flightRemoved": "Vuelo eliminado de guardados"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Página no encontrada",
+    "message": "Parece que este vuelo fue cancelado. Volvamos a encontrar tu camino.",
+    "backToSearch": "Volver a la búsqueda"
+  },
+  "common": {
+    "close": "Cerrar",
+    "dismissNotification": "Descartar notificación"
+  },
+  "formatters": {
+    "direct": "Directo",
+    "oneStop": "1 escala",
+    "stops": "{{count}} escalas",
+    "greatDeal": "Gran oferta",
+    "goodDeal": "Buena oferta",
+    "fairDeal": "Oferta regular"
+  }
+}

@@ -1,9 +1,11 @@
 import { useState, useEffect, useRef, useCallback, useId } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { motion, AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { searchAirports } from '@/lib/airports.js'
 import { queryKeys } from '@/lib/queryKeys.js'
 import { http } from '@/lib/http.js'
+import { FieldError } from '@/components/ui/FieldError.jsx'
 import styles from './AirportAutocomplete.module.css'
 
 const MOCK = import.meta.env.VITE_MOCK_API === 'true'
@@ -40,6 +42,7 @@ export function AirportAutocomplete({
   label,
   icon,
 }) {
+  const { t } = useTranslation()
   const id = useId()
   const listboxId = `${id}-listbox`
   const inputRef = useRef(null)
@@ -53,7 +56,6 @@ export function AirportAutocomplete({
 
   // When value is cleared externally, reset the input text.
   useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
     if (!value) setInputText('')
   }, [value])
 
@@ -173,7 +175,7 @@ export function AirportAutocomplete({
               setInputText('')
               inputRef.current?.focus()
             }}
-            aria-label="Clear airport selection"
+            aria-label={t('search.clearAirport')}
           >
             ×
           </button>
@@ -186,7 +188,7 @@ export function AirportAutocomplete({
             ref={listRef}
             id={listboxId}
             role="listbox"
-            aria-label={`Airport suggestions for ${label || name}`}
+            aria-label={t('search.airportSuggestions', { label: label || name })}
             className={styles.dropdown}
             initial={{ opacity: 0, y: -4 }}
             animate={{ opacity: 1, y: 0 }}
@@ -222,11 +224,7 @@ export function AirportAutocomplete({
         )}
       </AnimatePresence>
 
-      {error && (
-        <span className={styles.errorMsg} role="alert">
-          {error}
-        </span>
-      )}
+      {error && <FieldError>{error}</FieldError>}
     </div>
   )
 }

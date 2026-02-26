@@ -1,0 +1,140 @@
+{
+  "nav": {
+    "search": "Search",
+    "saved": "Saved"
+  },
+  "theme": {
+    "label": "Theme",
+    "system": "System theme",
+    "light": "Light theme",
+    "dark": "Dark theme"
+  },
+  "language": {
+    "label": "Language",
+    "en": "EN",
+    "es": "ES"
+  },
+  "search": {
+    "roundTrip": "Round trip",
+    "oneWay": "One way",
+    "from": "From",
+    "to": "To",
+    "cityOrAirport": "City or airport",
+    "anyDestination": "Any destination",
+    "departure": "Departure",
+    "return": "Return",
+    "dates": "Dates",
+    "today": "Today",
+    "clearDates": "Clear",
+    "datePlaceholder": "dd/mm/yyyy",
+    "datePlaceholderRange": "From – To",
+    "datePlaceholderSingle": "Date",
+    "adults": "Passengers",
+    "currency": "Currency",
+    "searchFlights": "Search flights",
+    "recentSearches": "Recent searches",
+    "clearAll": "Clear all",
+    "anywhere": "Anywhere",
+    "tripType": "Trip type",
+    "swapAirports": "Swap origin and destination",
+    "clearAirport": "Clear airport selection",
+    "required": " *",
+    "airportSuggestions": "Airport suggestions for {{label}}"
+  },
+  "filters": {
+    "sortBy": "Sort by",
+    "price": "Price",
+    "duration": "Duration",
+    "bestDeal": "Best deal",
+    "maxPrice": "Max price",
+    "any": "Any",
+    "stops": "Stops",
+    "directOnly": "Direct only",
+    "max1Stop": "Max 1 stop",
+    "airlines": "Airlines",
+    "resetFilters": "Reset filters"
+  },
+  "flights": {
+    "viewDetails": "View details",
+    "saveFlight": "Save flight",
+    "removeFromSaved": "Remove from saved",
+    "dealScore": "Deal score: {{score}}/100",
+    "perPerson": "per person",
+    "seatsLeft": "{{count}} seats left",
+    "error": "Something went wrong",
+    "errorLoading": "Failed to load flights. Please try again.",
+    "searchPromptTitle": "Search for flights",
+    "searchPromptHint": "Enter your origin and dates above to discover great deals.",
+    "searchProTip": "Pro tip: press / to focus the search.",
+    "noFlightsTitle": "No flights found",
+    "noFlightsHint": "Try adjusting your filters or dates.",
+    "results_one": "{{count}} flight",
+    "results_other": "{{count}} flights",
+    "ofTotal": "(of {{total}})",
+    "from": "from",
+    "avg": "avg",
+    "ariaLabel": "Flight from {{origin}} to {{destination}}, {{price}}"
+  },
+  "detail": {
+    "title": "Flight details",
+    "roundTrip": "Round trip",
+    "oneWay": "One way",
+    "dealScoreExplanation": "Scored relative to all results for this search. Based on price, duration, and stops.",
+    "outbound": "Outbound",
+    "return": "Return",
+    "terminal": "Terminal {{n}}",
+    "layover": "Layover at {{iata}}",
+    "co2PerPassenger": "per passenger",
+    "co2Disclaimer": "Approximate estimate based on average emission factors (ICAO simplified method). Actual emissions vary by aircraft, load factor, and routing.",
+    "perPersonTotal": "per person, total",
+    "unsave": "Unsave",
+    "save": "Save",
+    "bookNow": "Book now →",
+    "bookingSoon": "Booking integration coming soon!"
+  },
+  "saved": {
+    "title": "Saved flights",
+    "subtitle_one": "{{count}} flight saved",
+    "subtitle_other": "{{count}} flights saved",
+    "clearAll": "Clear all",
+    "noFlightsTitle": "No saved flights",
+    "noFlightsHint": "Save flights from the search results to compare them here.",
+    "searchFlights": "Search flights",
+    "departs": "Departs",
+    "duration": "Duration",
+    "airline": "Airline",
+    "savedOn": "Saved {{date}}",
+    "details": "Details",
+    "removeSaved": "Remove saved flight"
+  },
+  "map": {
+    "ariaLabel": "Flight destinations map",
+    "origin": "Origin",
+    "destination": "Destination"
+  },
+  "home": {
+    "collapseSidebar": "Collapse sidebar",
+    "expandSidebar": "Expand sidebar",
+    "viewDetails": "View details →",
+    "flightSaved": "Flight saved!",
+    "flightRemoved": "Flight removed from saved"
+  },
+  "notFound": {
+    "code": "404",
+    "title": "Page not found",
+    "message": "Looks like this flight got cancelled. Let's get you back on track.",
+    "backToSearch": "Back to search"
+  },
+  "common": {
+    "close": "Close",
+    "dismissNotification": "Dismiss notification"
+  },
+  "formatters": {
+    "direct": "Direct",
+    "oneStop": "1 stop",
+    "stops": "{{count}} stops",
+    "greatDeal": "Great deal",
+    "goodDeal": "Good deal",
+    "fairDeal": "Fair deal"
+  }
+}

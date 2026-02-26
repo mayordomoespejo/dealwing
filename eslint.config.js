@@ -34,6 +34,10 @@ export default defineConfig([
       'react-refresh/only-export-components': 'off',
       // Suppress incompatible-library warnings from react-hook-form's watch()
       'react-hooks/incompatible-library': 'off',
+      // setState inside effects is intentional for syncing derived state (e.g. calendar month)
+      'react-hooks/set-state-in-effect': 'off',
+      // Ref mutation during render is intentional for stale-closure avoidance (flightsRef pattern)
+      'react-hooks/refs': 'off',
     },
   },
 

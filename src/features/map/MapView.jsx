@@ -1,4 +1,5 @@
 import { useRef } from 'react'
+import { useTranslation } from 'react-i18next'
 import { useMap } from './useMap.js'
 import styles from './MapView.module.css'
 
@@ -11,6 +12,7 @@ import styles from './MapView.module.css'
  * @param {object}   searchParams
  */
 export function MapView({ flights = [], selectedId, onSelect, searchParams }) {
+  const { t, i18n } = useTranslation()
   const containerRef = useRef(null)
 
   useMap({
@@ -19,11 +21,12 @@ export function MapView({ flights = [], selectedId, onSelect, searchParams }) {
     selectedId,
     onSelect,
     searchParams,
+    language: i18n.language,
   })
 
   return (
     <div className={styles.wrapper}>
-      <div ref={containerRef} className={styles.map} aria-label="Flight destinations map" />
+      <div ref={containerRef} className={styles.map} aria-label={t('map.ariaLabel')} />
 
       {/* Attribution overlay for OpenFreeMap */}
       <div className={styles.attribution}>
@@ -41,11 +44,11 @@ export function MapView({ flights = [], selectedId, onSelect, searchParams }) {
       <div className={styles.legend}>
         <div className={styles.legendItem}>
           <span className={styles.legendDotOrigin} />
-          Origin
+          {t('map.origin')}
         </div>
         <div className={styles.legendItem}>
           <span className={styles.legendDotDest} />
-          Destination
+          {t('map.destination')}
         </div>
       </div>
     </div>

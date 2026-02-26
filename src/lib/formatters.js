@@ -73,6 +73,7 @@ export function formatDate(dateTimeStr) {
 /**
  * Format stops count to human-readable string.
  * e.g. 0 → "Direct", 1 → "1 stop", 2 → "2 stops"
+ * Components that need translated output use t('formatters.*') directly.
  */
 export function formatStops(stops) {
   if (stops === 0) return 'Direct'

@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react'
 import { createPortal } from 'react-dom'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { useKeyboard } from '@/hooks/useKeyboard.js'
 import styles from './Modal.module.css'
 
@@ -10,6 +11,7 @@ import styles from './Modal.module.css'
  * On mobile (< 640px): slides up from the bottom as a drawer.
  */
 export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
+  const { t } = useTranslation()
   const dialogRef = useRef(null)
 
   // Trap focus inside modal
@@ -61,7 +63,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
           >
             <div className={styles.header}>
               <h2 className={styles.title}>{title}</h2>
-              <button className={styles.closeBtn} onClick={onClose} aria-label="Close">
+              <button className={styles.closeBtn} onClick={onClose} aria-label={t('common.close')}>
                 <svg
                   width="20"
                   height="20"

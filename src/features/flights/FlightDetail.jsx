@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import { Modal } from '@/components/ui/Modal.jsx'
 import { Badge } from '@/components/ui/Badge.jsx'
 import { Button } from '@/components/ui/Button.jsx'
@@ -7,10 +8,8 @@ import {
   formatDuration,
   formatTime,
   formatDate,
-  formatStops,
   formatCO2,
   dealScoreColor,
-  dealScoreLabel,
 } from '@/lib/formatters.js'
 import styles from './FlightDetail.module.css'
 
@@ -19,15 +18,28 @@ import styles from './FlightDetail.module.css'
  * Shows segments, timelines, deal score breakdown, CO₂ estimate.
  */
 export function FlightDetail({ flight, isOpen, onClose }) {
+  const { t } = useTranslation()
   const { isSaved, saveOffer, removeOffer } = useSaved()
 
   if (!flight) return null
 
   const saved = isSaved(flight.id)
   const scoreColor = dealScoreColor(flight.dealScore)
+  const scoreLabel =
+    flight.dealScore >= 70
+      ? t('formatters.greatDeal')
+      : flight.dealScore >= 40
+        ? t('formatters.goodDeal')
+        : t('formatters.fairDeal')
+  const stopsLabel =
+    flight.stops === 0
+      ? t('formatters.direct')
+      : flight.stops === 1
+        ? t('formatters.oneStop')
+        : t('formatters.stops', { count: flight.stops })
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose} title="Flight details" size="lg">
+    <Modal isOpen={isOpen} onClose={onClose} title={t('detail.title')} size="lg">
       <div className={styles.content}>
         {/* Route summary header */}
         <div className={styles.summary}>
@@ -44,10 +56,10 @@ export function FlightDetail({ flight, isOpen, onClose }) {
           </div>
 
           <div className={styles.summaryMeta}>
-            <Badge variant="default">{flight.isRoundTrip ? 'Round trip' : 'One way'}</Badge>
-            <Badge variant={flight.stops === 0 ? 'success' : 'default'}>
-              {formatStops(flight.stops)}
+            <Badge variant="default">
+              {t(flight.isRoundTrip ? 'detail.roundTrip' : 'detail.oneWay')}
             </Badge>
+            <Badge variant={flight.stops === 0 ? 'success' : 'default'}>{stopsLabel}</Badge>
             <Badge variant="info">{flight.airlineNames.join(', ')}</Badge>
           </div>
         </div>
@@ -77,17 +89,15 @@ export function FlightDetail({ flight, isOpen, onClose }) {
           </div>
           <div className={styles.scoreDetails}>
             <span className={styles.scoreLabel} style={{ color: scoreColor }}>
-              {dealScoreLabel(flight.dealScore)}
+              {scoreLabel}
             </span>
-            <p className={styles.scoreDesc}>
-              Scored relative to all results for this search. Based on price, duration, and stops.
-            </p>
+            <p className={styles.scoreDesc}>{t('detail.dealScoreExplanation')}</p>
           </div>
         </div>
 
         {/* Outbound itinerary */}
         <ItinerarySection
-          label="Outbound"
+          label={t('detail.outbound')}
           segments={flight.outbound.segments}
           duration={flight.outbound.duration}
           stops={flight.outbound.stops}
@@ -96,7 +106,7 @@ export function FlightDetail({ flight, isOpen, onClose }) {
         {/* Return itinerary */}
         {flight.inbound && (
           <ItinerarySection
-            label="Return"
+            label={t('detail.return')}
             segments={flight.inbound.segments}
             duration={flight.inbound.duration}
             stops={flight.inbound.stops}
@@ -110,13 +120,10 @@ export function FlightDetail({ flight, isOpen, onClose }) {
               <span className={styles.co2Icon}>🌱</span>
               <div>
                 <span className={styles.co2Value}>{formatCO2(flight.co2Kg)}</span>
-                <span className={styles.co2Label}> per passenger</span>
+                <span className={styles.co2Label}> {t('detail.co2PerPassenger')}</span>
               </div>
             </div>
-            <p className={styles.co2Disclaimer}>
-              ⚠️ Approximate estimate based on average emission factors (ICAO simplified method).
-              Actual emissions vary by aircraft, load factor, and routing.
-            </p>
+            <p className={styles.co2Disclaimer}>⚠️ {t('detail.co2Disclaimer')}</p>
           </div>
         )}
 
@@ -126,7 +133,7 @@ export function FlightDetail({ flight, isOpen, onClose }) {
             <span className={styles.footerPriceValue}>
               {formatPrice(flight.price, flight.currency)}
             </span>
-            <span className={styles.footerPriceLabel}>per person, total</span>
+            <span className={styles.footerPriceLabel}>{t('detail.perPersonTotal')}</span>
           </div>
           <div className={styles.footerActions}>
             <Button
@@ -146,17 +153,17 @@ export function FlightDetail({ flight, isOpen, onClose }) {
                 </svg>
               }
             >
-              {saved ? 'Unsave' : 'Save'}
+              {saved ? t('detail.unsave') : t('detail.save')}
             </Button>
             <Button
               variant="primary"
               size="lg"
               onClick={() => {
                 // In a real app: open booking link / affiliate URL
-                alert('Booking integration coming soon!')
+                alert(t('detail.bookingSoon'))
               }}
             >
-              Book now →
+              {t('detail.bookNow')}
             </Button>
           </div>
         </div>
@@ -167,6 +174,8 @@ export function FlightDetail({ flight, isOpen, onClose }) {
 
 /* ── Itinerary Section ─────────────────────────────────────────────────── */
 function ItinerarySection({ label, segments, duration }) {
+  const { t } = useTranslation()
+
   return (
     <div className={styles.itinerary}>
       <div className={styles.itineraryHeader}>
@@ -194,7 +203,9 @@ function ItinerarySection({ label, segments, duration }) {
                   <div className={styles.segPlace}>
                     <span className={styles.segIata}>{seg.departure.iataCode}</span>
                     {seg.departure.terminal && (
-                      <span className={styles.segTerminal}>Terminal {seg.departure.terminal}</span>
+                      <span className={styles.segTerminal}>
+                        {t('detail.terminal', { n: seg.departure.terminal })}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -215,7 +226,9 @@ function ItinerarySection({ label, segments, duration }) {
                   <div className={styles.segPlace}>
                     <span className={styles.segIata}>{seg.arrival.iataCode}</span>
                     {seg.arrival.terminal && (
-                      <span className={styles.segTerminal}>Terminal {seg.arrival.terminal}</span>
+                      <span className={styles.segTerminal}>
+                        {t('detail.terminal', { n: seg.arrival.terminal })}
+                      </span>
                     )}
                   </div>
                 </div>
@@ -237,7 +250,7 @@ function ItinerarySection({ label, segments, duration }) {
                   <circle cx="12" cy="12" r="10" />
                   <polyline points="12 6 12 12 16 14" />
                 </svg>
-                Layover at {seg.arrival.iataCode}
+                {t('detail.layover', { iata: seg.arrival.iataCode })}
               </div>
             )}
           </div>

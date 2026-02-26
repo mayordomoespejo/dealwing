@@ -1,14 +1,13 @@
 import { motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/Badge.jsx'
 import { Button } from '@/components/ui/Button.jsx'
 import {
   formatPrice,
   formatDuration,
-  formatStops,
   formatTime,
   formatCO2,
   dealScoreColor,
-  dealScoreLabel,
 } from '@/lib/formatters.js'
 import styles from './FlightCard.module.css'
 
@@ -25,12 +24,26 @@ const AIRLINE_LOGO_BASE = 'https://content.r9cdn.net/rimg/provider-logos/airline
  * @param {boolean}  isSaved       - if true, heart is filled
  */
 export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave, isSaved }) {
+  const { t } = useTranslation()
+
   const outSeg = flight.outbound.segments
   const firstSeg = outSeg[0]
   const lastSeg = outSeg.at(-1)
 
   const scoreColor = dealScoreColor(flight.dealScore)
-  const scoreLabel = dealScoreLabel(flight.dealScore)
+  const scoreLabel =
+    flight.dealScore >= 70
+      ? t('formatters.greatDeal')
+      : flight.dealScore >= 40
+        ? t('formatters.goodDeal')
+        : t('formatters.fairDeal')
+
+  const stopsLabel =
+    flight.stops === 0
+      ? t('formatters.direct')
+      : flight.stops === 1
+        ? t('formatters.oneStop')
+        : t('formatters.stops', { count: flight.stops })
 
   function handleKeyDown(e) {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -51,7 +64,11 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
       role="button"
       tabIndex={0}
       aria-pressed={isSelected}
-      aria-label={`Flight from ${flight.origin.city} to ${flight.destination.city}, ${formatPrice(flight.price, flight.currency)}`}
+      aria-label={t('flights.ariaLabel', {
+        origin: flight.origin.city,
+        destination: flight.destination.city,
+        price: formatPrice(flight.price, flight.currency),
+      })}
     >
       {/* Top: airline + deal score + save */}
       <div className={styles.topRow}>
@@ -71,7 +88,7 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
           <span
             className={styles.dealScore}
             style={{ '--score-color': scoreColor }}
-            title={`Deal score: ${flight.dealScore}/100`}
+            title={t('flights.dealScore', { score: flight.dealScore })}
           >
             {flight.dealScore}
           </span>
@@ -82,7 +99,7 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
               e.stopPropagation()
               onSave?.(flight)
             }}
-            aria-label={isSaved ? 'Remove from saved' : 'Save flight'}
+            aria-label={isSaved ? t('flights.removeFromSaved') : t('flights.saveFlight')}
             aria-pressed={isSaved}
           >
             <svg
@@ -116,7 +133,7 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
             </div>
             <div className={`${styles.routeDot} ${styles.routeDotEnd}`} />
           </div>
-          <span className={styles.stopsLabel}>{formatStops(flight.stops)}</span>
+          <span className={styles.stopsLabel}>{stopsLabel}</span>
         </div>
 
         <div className={`${styles.timeBlock} ${styles.timeBlockRight}`}>
@@ -129,7 +146,7 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
       <div className={styles.bottomRow}>
         <div className={styles.badges}>
           <Badge variant={flight.stops === 0 ? 'success' : 'default'} size="sm">
-            {formatStops(flight.stops)}
+            {stopsLabel}
           </Badge>
           {flight.co2Kg > 0 && (
             <Badge variant="default" size="sm" title="Approximate CO₂ per passenger">
@@ -138,14 +155,14 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
           )}
           {flight.seatsAvailable <= 5 && (
             <Badge variant="warning" size="sm">
-              {flight.seatsAvailable} seats left
+              {t('flights.seatsLeft', { count: flight.seatsAvailable })}
             </Badge>
           )}
         </div>
 
         <div className={styles.priceBlock}>
           <span className={styles.price}>{formatPrice(flight.price, flight.currency)}</span>
-          <span className={styles.priceLabel}>per person</span>
+          <span className={styles.priceLabel}>{t('flights.perPerson')}</span>
         </div>
       </div>
 
@@ -163,7 +180,7 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
         }}
       >
         <Button variant="secondary" size="sm">
-          View details
+          {t('flights.viewDetails')}
         </Button>
       </div>
     </motion.article>

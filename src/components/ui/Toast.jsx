@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import styles from './Toast.module.css'
 
 /* ── Context ──────────────────────────────────────────────────────────────── */
@@ -9,6 +10,7 @@ const ToastContext = createContext(null)
 let uid = 0
 
 export function ToastProvider({ children }) {
+  const { t } = useTranslation()
   const [toasts, setToasts] = useState([])
 
   const addToast = useCallback(({ message, type = 'info', duration = 4000 }) => {
@@ -44,7 +46,7 @@ export function ToastProvider({ children }) {
               <button
                 className={styles.close}
                 onClick={() => removeToast(toast.id)}
-                aria-label="Dismiss notification"
+                aria-label={t('common.dismissNotification')}
               >
                 ×
               </button>

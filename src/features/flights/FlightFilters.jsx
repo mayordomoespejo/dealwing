@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next'
 import styles from './FlightFilters.module.css'
 import { computePriceStats } from './dealScore.js'
 import { formatPrice } from '@/lib/formatters.js'
@@ -12,6 +13,8 @@ import { formatPrice } from '@/lib/formatters.js'
  * @param {Function} onSortChange
  */
 export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange }) {
+  const { t } = useTranslation()
+
   if (!flights.length) return null
 
   const stats = computePriceStats(flights)
@@ -33,12 +36,12 @@ export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange
     <div className={styles.panel}>
       {/* Sort */}
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Sort by</h3>
+        <h3 className={styles.sectionTitle}>{t('filters.sortBy')}</h3>
         <div className={styles.sortBtns}>
           {[
-            { key: 'price', label: 'Price' },
-            { key: 'duration', label: 'Duration' },
-            { key: 'dealScore', label: 'Best deal' },
+            { key: 'price', label: t('filters.price') },
+            { key: 'duration', label: t('filters.duration') },
+            { key: 'dealScore', label: t('filters.bestDeal') },
           ].map(({ key, label }) => (
             <button
               key={key}
@@ -54,9 +57,9 @@ export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange
       {/* Price range */}
       <div className={styles.section}>
         <div className={styles.sectionHeaderRow}>
-          <h3 className={styles.sectionTitle}>Max price</h3>
+          <h3 className={styles.sectionTitle}>{t('filters.maxPrice')}</h3>
           <span className={styles.sectionValue}>
-            {filters.maxPrice ? formatPrice(filters.maxPrice, currency) : 'Any'}
+            {filters.maxPrice ? formatPrice(filters.maxPrice, currency) : t('filters.any')}
           </span>
         </div>
         <input
@@ -76,12 +79,12 @@ export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange
 
       {/* Stops */}
       <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>Stops</h3>
+        <h3 className={styles.sectionTitle}>{t('filters.stops')}</h3>
         <div className={styles.checkboxGroup}>
           {[
-            { value: 0, label: 'Direct only' },
-            { value: 1, label: 'Max 1 stop' },
-            { value: 99, label: 'Any' },
+            { value: 0, label: t('filters.directOnly') },
+            { value: 1, label: t('filters.max1Stop') },
+            { value: 99, label: t('filters.any') },
           ].map(({ value, label }) => (
             <label key={value} className={styles.checkboxLabel}>
               <input
@@ -100,7 +103,7 @@ export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange
       {/* Airlines */}
       {allAirlines.length > 1 && (
         <div className={styles.section}>
-          <h3 className={styles.sectionTitle}>Airlines</h3>
+          <h3 className={styles.sectionTitle}>{t('filters.airlines')}</h3>
           <div className={styles.checkboxGroup}>
             {allAirlines.map((code, i) => (
               <label key={code} className={styles.checkboxLabel}>
@@ -122,7 +125,7 @@ export function FlightFilters({ flights, filters, onChange, sortBy, onSortChange
         className={styles.resetBtn}
         onClick={() => onChange({ maxPrice: null, maxStops: 99, airlines: [] })}
       >
-        Reset filters
+        {t('filters.resetFilters')}
       </button>
     </div>
   )

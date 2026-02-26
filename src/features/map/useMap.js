@@ -4,13 +4,63 @@ import { getAirport } from '@/lib/airports.js'
 import { arcCoordinates, getBounds } from '@/lib/geo.js'
 import { formatPrice } from '@/lib/formatters.js'
 
-// Free, no-API-key tile style from OpenFreeMap
+// Free, no-API-key tile style from OpenFreeMap (OpenMapTiles schema: name_en, name_es, name)
 const MAP_STYLE = 'https://tiles.openfreemap.org/styles/liberty'
 
-const ORIGIN_MARKER_COLOR = '#2563eb'
-const DEST_MARKER_COLOR = '#1e293b'
-const ROUTE_COLOR = '#60a5fa'
-const ROUTE_SELECTED_COLOR = '#2563eb'
+// Layer IDs that show text labels (symbol layers with text-field). Liberty style uses
+// name:latin/name:nonlatin for scripts and coalesce(name_en, name) for default language.
+const LABEL_LAYER_IDS_LINE = [
+  'waterway_line_label',
+  'water_name_line_label',
+  'highway-name-path',
+  'highway-name-minor',
+  'highway-name-major',
+]
+const LABEL_LAYER_IDS_POINT = [
+  'water_name_point_label',
+  'poi_r20',
+  'poi_r7',
+  'poi_r1',
+  'poi_transit',
+  'airport',
+  'label_other',
+  'label_village',
+  'label_town',
+  'label_state',
+  'label_city',
+  'label_city_capital',
+  'label_country_3',
+  'label_country_2',
+  'label_country_1',
+]
+
+// Expressions: prefer name_es when language is 'es', else name_en. OpenMapTiles has name_es/name_en/name.
+const separatorLine = ' '
+const separatorPoint = '\n'
+
+function textFieldExpressionEn(separator) {
+  return [
+    'case',
+    ['has', 'name:nonlatin'],
+    ['concat', ['get', 'name:latin'], separator, ['get', 'name:nonlatin']],
+    ['coalesce', ['get', 'name_en'], ['get', 'name']],
+  ]
+}
+
+function textFieldExpressionEs(separator) {
+  return [
+    'case',
+    ['has', 'name:nonlatin'],
+    ['concat', ['get', 'name:latin'], separator, ['get', 'name:nonlatin']],
+    ['coalesce', ['get', 'name_es'], ['get', 'name_en'], ['get', 'name']],
+  ]
+}
+
+// Brand colors (match CSS --color-brand / --color-brand-400)
+const ORIGIN_MARKER_COLOR = '#ea580c' // --color-brand (brand-600)
+const DEST_MARKER_COLOR = '#1e293b' // neutral dark
+const ROUTE_COLOR = '#ea580c' // brand: routes use brand color
+const ROUTE_SELECTED_COLOR = '#ea580c' // brand: selected route same color, higher opacity/width
 
 /**
  * Manages a MapLibre GL map instance with flight routes and markers.
@@ -20,13 +70,24 @@ const ROUTE_SELECTED_COLOR = '#2563eb'
  * @param {string|null}      selectedId - currently selected flight id
  * @param {Function}         onSelect   - (flight) => void — called when marker is clicked
  * @param {object|null}      searchParams - current search params (for origin)
+ * @param {string}           [language]   - i18n language code ('es', 'en') for map labels
  */
-export function useMap({ containerRef, flights, selectedId, onSelect, searchParams }) {
+export function useMap({
+  containerRef,
+  flights,
+  selectedId,
+  onSelect,
+  searchParams,
+  language = 'en',
+}) {
   const mapRef = useRef(null)
-  const markersRef = useRef([]) // price bubble markers
+  const markersRef = useRef([])
   const originMarkerRef = useRef(null)
   const routesAddedRef = useRef(false)
+  const destLayersAddedRef = useRef(false)
   const isStyleLoadedRef = useRef(false)
+  const flightsRef = useRef(flights)
+  flightsRef.current = flights
 
   // Initialize map once
   useEffect(() => {
@@ -56,8 +117,43 @@ export function useMap({ containerRef, flights, selectedId, onSelect, searchPara
       mapRef.current = null
       isStyleLoadedRef.current = false
       routesAddedRef.current = false
+      destLayersAddedRef.current = false
     }
   }, [containerRef])
+
+  // Apply map label language (OpenMapTiles: name_es, name_en, name) when style is ready and when language changes
+  useEffect(() => {
+    const map = mapRef.current
+    if (!map) return
+
+    function applyMapLanguage() {
+      if (!map.getStyle() || !map.isStyleLoaded()) return
+      const useSpanish = language === 'es'
+      const exprLine = useSpanish
+        ? textFieldExpressionEs(separatorLine)
+        : textFieldExpressionEn(separatorLine)
+      const exprPoint = useSpanish
+        ? textFieldExpressionEs(separatorPoint)
+        : textFieldExpressionEn(separatorPoint)
+
+      LABEL_LAYER_IDS_LINE.forEach(layerId => {
+        if (map.getLayer(layerId)) {
+          map.setLayoutProperty(layerId, 'text-field', exprLine)
+        }
+      })
+      LABEL_LAYER_IDS_POINT.forEach(layerId => {
+        if (map.getLayer(layerId)) {
+          map.setLayoutProperty(layerId, 'text-field', exprPoint)
+        }
+      })
+    }
+
+    if (isStyleLoadedRef.current) {
+      applyMapLanguage()
+    } else {
+      map.once('style.load', applyMapLanguage)
+    }
+  }, [language])
 
   // Update routes + markers when flights or selection changes
   useEffect(() => {
@@ -65,7 +161,7 @@ export function useMap({ containerRef, flights, selectedId, onSelect, searchPara
     if (!map) return
 
     function update() {
-      clearMarkersAndRoutes(map, markersRef, originMarkerRef, routesAddedRef)
+      clearMarkersAndRoutes(map, markersRef, originMarkerRef, routesAddedRef, destLayersAddedRef)
 
       if (!flights.length || !searchParams?.origin) return
 
@@ -74,57 +170,56 @@ export function useMap({ containerRef, flights, selectedId, onSelect, searchPara
 
       const originCoords = [originAirport.lng, originAirport.lat]
 
-      // Origin marker (blue pulse dot)
+      // Origin marker (brand pulse dot) — DOM marker is fine for a single point
       const originEl = createOriginMarker()
       originMarkerRef.current = new maplibregl.Marker({ element: originEl })
-        .setLngLat(originCoords)
+        .setLngLat({ lng: originAirport.lng, lat: originAirport.lat })
         .addTo(map)
 
-      // Build GeoJSON for all routes
       const routeFeatures = []
+      const destPointFeatures = []
       const destPoints = [originCoords]
 
       flights.forEach(flight => {
-        const dest = getAirport(flight.destination.iata)
+        const dest = getAirport(flight.destination?.iata)
         if (!dest) return
 
         const destCoords = [dest.lng, dest.lat]
         destPoints.push(destCoords)
-
         const isSelected = flight.id === selectedId
-        const arc = arcCoordinates(originCoords, destCoords)
+        const priceFormatted = formatPrice(flight.price, flight.currency)
+        const label = `${flight.destination.iata}\n${priceFormatted}`
 
         routeFeatures.push({
           type: 'Feature',
           id: flight.id,
+          properties: { id: flight.id, selected: isSelected },
+          geometry: { type: 'LineString', coordinates: arcCoordinates(originCoords, destCoords) },
+        })
+
+        // Same coordinates as the route endpoint — rendered as map layers so they stay in sync
+        destPointFeatures.push({
+          type: 'Feature',
+          id: flight.id,
           properties: {
             id: flight.id,
+            iata: flight.destination.iata,
+            priceFormatted,
+            label,
             selected: isSelected,
           },
-          geometry: { type: 'LineString', coordinates: arc },
+          geometry: { type: 'Point', coordinates: destCoords },
         })
-
-        // Price bubble marker
-        const markerEl = createPriceMarker(flight, isSelected, () => onSelect?.(flight))
-        const marker = new maplibregl.Marker({ element: markerEl, anchor: 'bottom' })
-          .setLngLat(destCoords)
-          .addTo(map)
-        markersRef.current.push(marker)
       })
 
-      // Add route source + layers
+      // Routes source + layers
       if (map.getSource('routes')) {
-        map.getSource('routes').setData({
-          type: 'FeatureCollection',
-          features: routeFeatures,
-        })
+        map.getSource('routes').setData({ type: 'FeatureCollection', features: routeFeatures })
       } else {
         map.addSource('routes', {
           type: 'geojson',
           data: { type: 'FeatureCollection', features: routeFeatures },
         })
-
-        // Background unselected routes
         map.addLayer({
           id: 'routes-bg',
           type: 'line',
@@ -138,8 +233,6 @@ export function useMap({ containerRef, flights, selectedId, onSelect, searchPara
             'line-dasharray': [2, 3],
           },
         })
-
-        // Selected route (bright, solid)
         map.addLayer({
           id: 'routes-selected',
           type: 'line',
@@ -152,11 +245,65 @@ export function useMap({ containerRef, flights, selectedId, onSelect, searchPara
             'line-opacity': 0.9,
           },
         })
-
         routesAddedRef.current = true
       }
 
-      // Fit bounds to show all destinations
+      // Destination points: same GeoJSON coords as route ends — circle + symbol layers (no DOM markers)
+      if (map.getSource('destination-points')) {
+        map.getSource('destination-points').setData({
+          type: 'FeatureCollection',
+          features: destPointFeatures,
+        })
+      } else {
+        map.addSource('destination-points', {
+          type: 'geojson',
+          data: { type: 'FeatureCollection', features: destPointFeatures },
+        })
+        map.addLayer({
+          id: 'destinations-circle',
+          type: 'circle',
+          source: 'destination-points',
+          paint: {
+            'circle-radius': 14,
+            'circle-color': ['case', ['get', 'selected'], ORIGIN_MARKER_COLOR, DEST_MARKER_COLOR],
+            'circle-stroke-width': 2,
+            'circle-stroke-color': '#fff',
+          },
+        })
+        map.addLayer({
+          id: 'destinations-label',
+          type: 'symbol',
+          source: 'destination-points',
+          layout: {
+            'text-field': ['get', 'label'],
+            'text-size': 12,
+            'text-offset': [0, -1.8],
+            'text-anchor': 'top',
+            'text-max-width': 8,
+            'text-line-height': 1.2,
+          },
+          paint: {
+            'text-color': '#ffffff',
+            'text-halo-color': 'rgba(0,0,0,0.5)',
+            'text-halo-width': 1,
+          },
+        })
+        destLayersAddedRef.current = true
+
+        map.on('click', 'destinations-circle', e => {
+          const f = e.features?.[0]
+          if (!f) return
+          const flight = flightsRef.current.find(x => x.id === f.properties.id)
+          if (flight) onSelect?.(flight)
+        })
+        map.on('mouseenter', 'destinations-circle', () => {
+          map.getCanvas().style.cursor = 'pointer'
+        })
+        map.on('mouseleave', 'destinations-circle', () => {
+          map.getCanvas().style.cursor = ''
+        })
+      }
+
       if (destPoints.length > 1) {
         const bounds = getBounds(destPoints)
         map.fitBounds(bounds, {
@@ -168,31 +315,25 @@ export function useMap({ containerRef, flights, selectedId, onSelect, searchPara
       }
     }
 
+    // Run update when the map is ready and has laid out (so marker positions are correct)
+    function scheduleUpdate() {
+      map.resize() // use current container dimensions before positioning markers
+      if (map.isStyleLoaded()) {
+        map.once('idle', update)
+      } else {
+        map.once('style.load', () => map.once('idle', update))
+      }
+    }
+
     if (isStyleLoadedRef.current) {
-      update()
+      scheduleUpdate()
     } else {
-      map.once('style.load', update)
+      map.once('style.load', () => {
+        isStyleLoadedRef.current = true
+        scheduleUpdate()
+      })
     }
   }, [flights, selectedId, onSelect, searchParams])
-
-  // Fly to selected destination
-  useEffect(() => {
-    const map = mapRef.current
-    if (!map || !selectedId || !flights.length) return
-
-    const flight = flights.find(f => f.id === selectedId)
-    if (!flight) return
-
-    const dest = getAirport(flight.destination.iata)
-    if (!dest) return
-
-    map.flyTo({
-      center: [dest.lng, dest.lat],
-      zoom: Math.max(map.getZoom(), 4),
-      duration: 800,
-      essential: true,
-    })
-  }, [selectedId, flights])
 
   const flyToOrigin = useCallback(iata => {
     const map = mapRef.current
@@ -206,16 +347,29 @@ export function useMap({ containerRef, flights, selectedId, onSelect, searchPara
 
 /* ── DOM helpers ─────────────────────────────────────────────────────────── */
 
-function clearMarkersAndRoutes(map, markersRef, originMarkerRef, routesAddedRef) {
-  // Remove price markers
+function clearMarkersAndRoutes(
+  map,
+  markersRef,
+  originMarkerRef,
+  routesAddedRef,
+  destLayersAddedRef
+) {
   markersRef.current.forEach(m => m.remove())
   markersRef.current = []
 
-  // Remove origin marker
   originMarkerRef.current?.remove()
   originMarkerRef.current = null
 
-  // Remove route layers/source
+  if (destLayersAddedRef.current) {
+    map.off('click', 'destinations-circle')
+    map.off('mouseenter', 'destinations-circle')
+    map.off('mouseleave', 'destinations-circle')
+    if (map.getLayer('destinations-label')) map.removeLayer('destinations-label')
+    if (map.getLayer('destinations-circle')) map.removeLayer('destinations-circle')
+    if (map.getSource('destination-points')) map.removeSource('destination-points')
+    destLayersAddedRef.current = false
+  }
+
   if (routesAddedRef.current) {
     if (map.getLayer('routes-selected')) map.removeLayer('routes-selected')
     if (map.getLayer('routes-bg')) map.removeLayer('routes-bg')
@@ -262,68 +416,6 @@ function createOriginMarker() {
     `
     document.head.appendChild(style)
   }
-
-  return el
-}
-
-function createPriceMarker(flight, isSelected, onClick) {
-  const price = formatPrice(flight.price, flight.currency)
-  const el = document.createElement('button')
-  el.type = 'button'
-  el.setAttribute('aria-label', `${flight.destination.city} — ${price}`)
-
-  const baseStyle = `
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 3px;
-    padding: 5px 10px;
-    border-radius: 999px;
-    font-family: Inter, system-ui, sans-serif;
-    font-size: 13px;
-    font-weight: 700;
-    cursor: pointer;
-    border: 2px solid white;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.25);
-    transition: transform 150ms ease, box-shadow 150ms ease;
-    white-space: nowrap;
-    outline: none;
-    position: relative;
-  `
-
-  if (isSelected) {
-    el.style.cssText = `${baseStyle}
-      background: #2563eb;
-      color: white;
-      transform: scale(1.1);
-      box-shadow: 0 4px 16px rgba(37,99,235,0.5), 0 2px 8px rgba(0,0,0,0.25);
-      z-index: 10;
-    `
-  } else {
-    el.style.cssText = `${baseStyle}
-      background: #1e293b;
-      color: white;
-    `
-
-    el.addEventListener('mouseenter', () => {
-      el.style.transform = 'scale(1.08)'
-      el.style.boxShadow = '0 4px 12px rgba(0,0,0,0.35)'
-    })
-    el.addEventListener('mouseleave', () => {
-      el.style.transform = 'scale(1)'
-      el.style.boxShadow = '0 2px 8px rgba(0,0,0,0.25)'
-    })
-  }
-
-  el.innerHTML = `
-    <span style="font-size:10px;opacity:0.8">${flight.destination.iata}</span>
-    <span>${price}</span>
-  `
-
-  el.addEventListener('click', e => {
-    e.stopPropagation()
-    onClick()
-  })
 
   return el
 }

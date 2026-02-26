@@ -1,7 +1,9 @@
 import { useMemo } from 'react'
 import { AnimatePresence } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { FlightCard } from './FlightCard.jsx'
 import { FlightCardSkeleton } from '@/components/ui/Skeleton.jsx'
+import { GlobeIcon } from '@/icons/index.jsx'
 import { computePriceStats } from './dealScore.js'
 import { formatPrice } from '@/lib/formatters.js'
 import styles from './FlightList.module.css'
@@ -37,6 +39,8 @@ export function FlightList({
   isSaved,
   searchParams,
 }) {
+  const { t } = useTranslation()
+
   const filteredAndSorted = useMemo(() => {
     if (!flights?.length) return []
 
@@ -85,10 +89,8 @@ export function FlightList({
     return (
       <div className={styles.empty}>
         <div className={styles.emptyIcon}>✈️</div>
-        <h3 className={styles.emptyTitle}>Something went wrong</h3>
-        <p className={styles.emptyText}>
-          {error.message ?? 'Failed to load flights. Please try again.'}
-        </p>
+        <h3 className={styles.emptyTitle}>{t('flights.error')}</h3>
+        <p className={styles.emptyText}>{error.message ?? t('flights.errorLoading')}</p>
       </div>
     )
   }
@@ -97,14 +99,12 @@ export function FlightList({
   if (!searchParams) {
     return (
       <div className={styles.empty}>
-        <div className={styles.emptyIcon}>🗺️</div>
-        <h3 className={styles.emptyTitle}>Search for flights</h3>
+        <GlobeIcon size={48} className={styles.emptyIcon} />
+        <h3 className={styles.emptyTitle}>{t('flights.searchPromptTitle')}</h3>
         <p className={styles.emptyText}>
-          Enter your origin and dates above to discover great deals.
+          {t('flights.searchPromptHint')}
           <br />
-          <span className={styles.hint}>
-            Pro tip: press <kbd>/</kbd> to focus the search.
-          </span>
+          <span className={styles.hint}>{t('flights.searchProTip')}</span>
         </p>
       </div>
     )
@@ -115,8 +115,8 @@ export function FlightList({
     return (
       <div className={styles.empty}>
         <div className={styles.emptyIcon}>🔍</div>
-        <h3 className={styles.emptyTitle}>No flights found</h3>
-        <p className={styles.emptyText}>Try adjusting your filters or dates.</p>
+        <h3 className={styles.emptyTitle}>{t('flights.noFlightsTitle')}</h3>
+        <p className={styles.emptyText}>{t('flights.noFlightsHint')}</p>
       </div>
     )
   }
@@ -126,20 +126,21 @@ export function FlightList({
       {/* Header with stats */}
       <div className={styles.listHeader}>
         <span className={styles.resultCount}>
-          {filteredAndSorted.length} {filteredAndSorted.length === 1 ? 'flight' : 'flights'}
-          {flights.length !== filteredAndSorted.length && ` (of ${flights.length})`}
+          {t('flights.results', { count: filteredAndSorted.length })}
+          {flights.length !== filteredAndSorted.length &&
+            ` ${t('flights.ofTotal', { total: flights.length })}`}
         </span>
         {filteredAndSorted.length > 0 && (
           <div className={styles.priceInsights}>
             <span className={styles.insightItem}>
-              <span className={styles.insightLabel}>from</span>
+              <span className={styles.insightLabel}>{t('flights.from')}</span>
               <span className={styles.insightValue}>
                 {formatPrice(stats.min, flights[0]?.currency)}
               </span>
             </span>
             <span className={styles.insightDivider}>·</span>
             <span className={styles.insightItem}>
-              <span className={styles.insightLabel}>avg</span>
+              <span className={styles.insightLabel}>{t('flights.avg')}</span>
               <span className={styles.insightValue}>
                 {formatPrice(stats.mean, flights[0]?.currency)}
               </span>

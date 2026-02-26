@@ -1,5 +1,6 @@
 import { useState, useCallback } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
+import { useTranslation } from 'react-i18next'
 import { SearchForm } from '@/features/search/SearchForm.jsx'
 import { FlightList } from '@/features/flights/FlightList.jsx'
 import { FlightFilters } from '@/features/flights/FlightFilters.jsx'
@@ -14,6 +15,7 @@ import styles from './Home.module.css'
 const DEFAULT_FILTERS = { maxPrice: null, maxStops: 99, airlines: [] }
 
 export function Home() {
+  const { t } = useTranslation()
   const [searchParams, setSearchParams] = useState(null)
   const [selectedFlight, setSelectedFlight] = useState(null)
   const [detailFlight, setDetailFlight] = useState(null)
@@ -35,17 +37,22 @@ export function Home() {
     setSelectedFlight(prev => (prev?.id === flight.id ? null : flight))
   }, [])
 
+  /** Map click: always set selection to the clicked destination (previous is replaced in one go) */
+  const handleSelectOnMap = useCallback(flight => {
+    setSelectedFlight(flight)
+  }, [])
+
   const handleSave = useCallback(
     flight => {
       if (isSaved(flight.id)) {
         removeOffer(flight.id)
-        info('Flight removed from saved')
+        info(t('home.flightRemoved'))
       } else {
         saveOffer(flight)
-        success('Flight saved!')
+        success(t('home.flightSaved'))
       }
     },
-    [isSaved, saveOffer, removeOffer, success, info]
+    [isSaved, saveOffer, removeOffer, success, info, t]
   )
 
   // Keyboard: Escape closes detail modal
@@ -113,8 +120,8 @@ export function Home() {
       <button
         className={styles.sidebarToggle}
         onClick={() => setSidebarOpen(o => !o)}
-        aria-label={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
-        title={sidebarOpen ? 'Collapse sidebar' : 'Expand sidebar'}
+        aria-label={t(sidebarOpen ? 'home.collapseSidebar' : 'home.expandSidebar')}
+        title={t(sidebarOpen ? 'home.collapseSidebar' : 'home.expandSidebar')}
       >
         <svg
           width="16"
@@ -139,7 +146,7 @@ export function Home() {
         <MapView
           flights={flights}
           selectedId={selectedFlight?.id}
-          onSelect={handleSelect}
+          onSelect={handleSelectOnMap}
           searchParams={searchParams}
         />
 
@@ -171,7 +178,7 @@ export function Home() {
                   className={styles.bannerDetail}
                   onClick={() => setDetailFlight(selectedFlight)}
                 >
-                  View details →
+                  {t('home.viewDetails')}
                 </button>
               </div>
             </motion.div>
