@@ -4,6 +4,8 @@
 
 DealWing is a full-stack portfolio project that helps users discover affordable flights through a beautiful split-view interface: a smart search form on the left, a live map with arc routes and price bubbles on the right.
 
+Powered by **[Duffel](https://duffel.com)** (Sandbox).
+
 ---
 
 ## Features
@@ -45,7 +47,7 @@ DealWing is a full-stack portfolio project that helps users discover affordable 
 | Animations    | Framer Motion v12                                        |
 | Styling       | CSS Modules + CSS custom properties                      |
 | BFF           | Vercel Serverless Functions (`/api/`)                    |
-| Flight API    | Amadeus Self-Service (test environment)                  |
+| Flight API    | Duffel (Sandbox)                                         |
 | Testing       | Vitest + Testing Library + Playwright                    |
 | Lint/Format   | ESLint 9 + Prettier                                      |
 | Git hooks     | Husky v9 + lint-staged                                   |
@@ -59,10 +61,10 @@ DealWing is a full-stack portfolio project that helps users discover affordable 
 ```
 dealwing/
 ├── api/                         # Vercel Serverless Functions (BFF)
-│   ├── _amadeus.js              # OAuth2 token helper + amadeusGet()
+│   ├── _duffel.js               # Duffel API helper (duffelPost)
 │   ├── _mock.js                 # Realistic mock data (no credentials needed)
-│   ├── flight-offers.js         # GET /api/flight-offers
-│   └── locations.js             # GET /api/locations?q=...
+│   ├── offers.js                # POST /api/offers → Duffel offer_requests
+│   └── locations.js             # GET /api/locations?q=... (local dataset)
 │
 ├── src/
 │   ├── app/                     # Router, providers, layout, header
@@ -105,20 +107,17 @@ npm install
 cp .env.example .env.local
 ```
 
-For **local development with mock data** (no Amadeus account needed):
+For **local development with mock data** (no Duffel account needed):
 
 ```env
 VITE_MOCK_API=true
 ```
 
-For **real Amadeus data** (register at https://developers.amadeus.com/self-service):
+For **real Duffel data** (register at https://app.duffel.com, then grab an access token):
 
 ```env
 VITE_MOCK_API=false
-AMADEUS_CLIENT_ID=your_client_id
-AMADEUS_CLIENT_SECRET=your_client_secret
-AMADEUS_ENV=test
-AMADEUS_MOCK_MODE=false
+DUFFEL_ACCESS_TOKEN=duffel_test_your_token_here
 ```
 
 ### 3. Run locally
@@ -127,7 +126,7 @@ AMADEUS_MOCK_MODE=false
 # Mock mode — frontend only, no backend needed
 npm run dev
 
-# Real Amadeus — start Vercel dev server (frontend + /api functions)
+# Real Duffel — start Vercel dev server (frontend + /api functions)
 npx vercel dev
 ```
 
@@ -137,13 +136,10 @@ Open [http://localhost:5173](http://localhost:5173) (or port shown in terminal).
 
 ## Environment Variables
 
-| Variable                | Description                                 | Default         |
-| ----------------------- | ------------------------------------------- | --------------- |
-| `VITE_MOCK_API`         | `"true"` → skip BFF, use built-in mock data | `"true"` in dev |
-| `AMADEUS_CLIENT_ID`     | Amadeus API client ID                       | —               |
-| `AMADEUS_CLIENT_SECRET` | Amadeus API client secret                   | —               |
-| `AMADEUS_ENV`           | `"test"` or `"production"`                  | `"test"`        |
-| `AMADEUS_MOCK_MODE`     | `"true"` → BFF returns mock data            | `"false"`       |
+| Variable              | Description                                 | Default         |
+| --------------------- | ------------------------------------------- | --------------- |
+| `VITE_MOCK_API`       | `"true"` → skip BFF, use built-in mock data | `"true"` in dev |
+| `DUFFEL_ACCESS_TOKEN` | Duffel access token (never sent to browser) | —               |
 
 ---
 
@@ -168,17 +164,17 @@ npm run test:e2e      # Playwright end-to-end
 
 DealWing proxies all external calls through a small BFF layer (`/api/`) so API keys are never exposed in the browser.
 
-### Amadeus Self-Service endpoints used
+### Duffel endpoints used
 
-| Endpoint                           | Purpose                         |
-| ---------------------------------- | ------------------------------- |
-| `POST /v1/security/oauth2/token`   | OAuth2 token (cached in-memory) |
-| `GET /v2/shopping/flight-offers`   | Search flight offers            |
-| `GET /v1/reference-data/locations` | Airport autocomplete            |
+| Endpoint                   | Purpose              |
+| -------------------------- | -------------------- |
+| `POST /air/offer_requests` | Search flight offers |
+
+Airport autocomplete is served from a local static dataset — Duffel does not provide a free airport search endpoint.
 
 ### Mock mode
 
-Set `VITE_MOCK_API=true` (default in development) to use the built-in mock dataset — no Amadeus account required. Includes ~20 realistic offers from **MAD**, **LHR**, and **JFK** origins.
+Set `VITE_MOCK_API=true` (default in development) to use the built-in mock dataset — no Duffel account required. Includes ~20 realistic offers from **MAD**, **LHR**, and **JFK** origins.
 
 ---
 
@@ -186,9 +182,7 @@ Set `VITE_MOCK_API=true` (default in development) to use the built-in mock datas
 
 1. Push to GitHub and import the repo in [Vercel](https://vercel.com)
 2. Set environment variables in Vercel dashboard:
-   - `AMADEUS_CLIENT_ID`
-   - `AMADEUS_CLIENT_SECRET`
-   - `AMADEUS_ENV` = `test`
+   - `DUFFEL_ACCESS_TOKEN` — your Duffel access token
    - `VITE_MOCK_API` = `false`
 3. Deploy — Vercel auto-detects Vite + the `/api/` serverless functions
 
@@ -197,7 +191,7 @@ Set `VITE_MOCK_API=true` (default in development) to use the built-in mock datas
 ## Roadmap
 
 - [ ] **Explore mode** — cheapest destinations from any origin (no fixed destination)
-- [ ] **Price calendar** — heatmap of cheapest days (Amadeus Flight Dates API)
+- [ ] **Price calendar** — heatmap of cheapest days
 - [ ] **Multi-city** — add a leg builder for complex itineraries
 - [ ] **Booking links** — affiliate redirects (Kayak, Google Flights)
 - [ ] **Price alerts** — notify when a saved search drops in price
@@ -207,4 +201,4 @@ Set `VITE_MOCK_API=true` (default in development) to use the built-in mock datas
 
 ## License
 
-MIT — Built for portfolio purposes. Not affiliated with Amadeus IT Group.
+MIT — Built for portfolio purposes. Not affiliated with Duffel.com Ltd.
