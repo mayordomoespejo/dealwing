@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm install --save-dev vitest jsdom @testing-library/react @testing-library/jest-dom @testing-library/user-event prettier eslint-config-prettier husky lint-staged @playwright/test)",
+      "Bash(npx husky init)",
+      "Bash(npm run test)",
+      "Bash(npm run build)",
+      "Bash(git add -A)"
+    ]
+  }
+}
