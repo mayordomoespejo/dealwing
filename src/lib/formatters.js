@@ -61,15 +61,32 @@ export function formatTime(dateTimeStr) {
 }
 
 /**
- * Format a datetime string to a date.
- * e.g. "2025-08-01T09:55:00" → "Aug 1"
+ * Format a datetime string to a short date: "27 feb" / "27 Aug"
+ * Always day-first, abbreviated month, no year.
  * @param {string | null | undefined} dateTimeStr
  * @returns {string}
  */
 export function formatDate(dateTimeStr) {
   if (!dateTimeStr) return '—'
   const date = new Date(dateTimeStr)
-  return date.toLocaleDateString(i18n.language, { month: 'short', day: 'numeric' })
+  const day = date.getDate()
+  const month = date.toLocaleString(i18n.language, { month: 'short' })
+  return `${day} ${month}`
+}
+
+/**
+ * Format a datetime string to a full date with year: "27 feb 2026" / "27 Aug 2026"
+ * Always day-first, abbreviated month, with year.
+ * @param {string | null | undefined} dateTimeStr
+ * @returns {string}
+ */
+export function formatDateFull(dateTimeStr) {
+  if (!dateTimeStr) return '—'
+  const date = new Date(dateTimeStr)
+  const day = date.getDate()
+  const month = date.toLocaleString(i18n.language, { month: 'short' })
+  const year = date.getFullYear()
+  return `${day} ${month} ${year}`
 }
 
 /**

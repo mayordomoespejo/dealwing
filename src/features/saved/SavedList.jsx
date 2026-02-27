@@ -8,7 +8,14 @@ import { FlightDetail } from '@/features/flights/FlightDetail.jsx'
 import { Modal } from '@/components/ui/Modal.jsx'
 import { Badge } from '@/components/ui/Badge.jsx'
 import { Button } from '@/components/ui/Button.jsx'
-import { formatPrice, formatDuration, formatTime, formatDate, formatCO2 } from '@/lib/formatters.js'
+import {
+  formatPrice,
+  formatDuration,
+  formatTime,
+  formatDate,
+  formatDateFull,
+  formatCO2,
+} from '@/lib/formatters.js'
 import { SproutIcon, TrashIcon, PaperPlaneIcon, HeartIcon, TakeoffIcon, LandingIcon } from '@/icons'
 import styles from './SavedList.module.css'
 
@@ -192,7 +199,7 @@ function SavedFlightCard({ entry, onOpen, onRequestRemove }) {
 
         <div className={styles.footerRight}>
           <span className={styles.savedAt}>
-            {t('saved.savedOn', { date: new Date(savedAt).toLocaleDateString() })}
+            {t('saved.savedOn', { date: formatDateFull(savedAt) })}
           </span>
           <button
             className={styles.trashBtn}

@@ -1,6 +1,7 @@
 /**
  * Shared date helpers for date picker components.
  */
+import i18n from './i18n.js'
 
 /**
  * Converts YYYY-MM-DD string to Date at noon local to avoid timezone shifts.
@@ -24,11 +25,15 @@ export function toISODate(date) {
 }
 
 /**
- * Format date for display (locale string).
+ * Format date for display: "27 feb 2026" / "27 Aug 2026"
+ * Always day-first, abbreviated month, with year.
  */
 export function formatDisplay(date) {
   if (!date || !(date instanceof Date) || Number.isNaN(date.getTime())) return ''
-  return date.toLocaleDateString(undefined, { day: 'numeric', month: 'short', year: 'numeric' })
+  const day = date.getDate()
+  const month = date.toLocaleString(i18n.language, { month: 'short' })
+  const year = date.getFullYear()
+  return `${day} ${month} ${year}`
 }
 
 /** Today as YYYY-MM-DD in local time. */
