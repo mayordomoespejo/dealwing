@@ -55,7 +55,6 @@ export function Modal({ isOpen, onClose, title, titleNode, children, size = 'md'
           exit={{ opacity: 0 }}
           transition={{ duration: 0.2 }}
           onClick={onClose}
-          aria-hidden="true"
         >
           <motion.div
             ref={dialogRef}

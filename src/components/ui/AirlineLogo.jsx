@@ -1,18 +1,49 @@
-const AIRLINE_LOGO_BASE = 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/symbols'
+import { useState } from 'react'
+
+const AIRLINE_LOGO_CDN = 'https://www.gstatic.com/flights/airline_logos/70px'
 
 /**
- * Renders an airline logo and hides the image if the asset fails to load.
+ * Renders an airline logo with a text-code fallback if the image fails to load.
  *
  * @param {object} props
- * @param {string} [props.code] - airline IATA code used to build the fallback CDN URL
- * @param {string|null} [props.src] - explicit airline logo URL
+ * @param {string} [props.code] - airline IATA code used to build the CDN URL and text fallback
+ * @param {string|null} [props.src] - explicit airline logo URL (takes priority)
  * @param {string} props.alt - accessible airline name
  * @param {string} [props.className] - optional CSS class for the image element
  * @returns {JSX.Element | null}
  */
 export function AirlineLogo({ code, src, alt, className = '' }) {
-  const resolvedSrc = src || (code ? `${AIRLINE_LOGO_BASE}/${code}.png` : '')
-  if (!resolvedSrc) return null
+  const [failed, setFailed] = useState(false)
+  const resolvedSrc = src || (code ? `${AIRLINE_LOGO_CDN}/${code}.png` : '')
+
+  if (!resolvedSrc || failed) {
+    if (!code) return null
+    return (
+      <span
+        className={className}
+        title={alt}
+        style={{
+          display: 'inline-flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          fontSize: '9px',
+          fontWeight: 700,
+          letterSpacing: '0.02em',
+          color: 'var(--color-text-secondary)',
+          background: 'var(--color-surface-raised)',
+          border: '1px solid var(--color-border)',
+          borderRadius: '3px',
+          width: '18px',
+          height: '18px',
+          flexShrink: 0,
+          userSelect: 'none',
+        }}
+        aria-label={alt}
+      >
+        {code}
+      </span>
+    )
+  }
 
   return (
     <img
@@ -20,9 +51,7 @@ export function AirlineLogo({ code, src, alt, className = '' }) {
       src={resolvedSrc}
       alt={alt}
       loading="lazy"
-      onError={event => {
-        event.currentTarget.style.display = 'none'
-      }}
+      onError={() => setFailed(true)}
     />
   )
 }
