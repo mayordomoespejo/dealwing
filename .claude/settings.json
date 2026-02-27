@@ -29,7 +29,8 @@
       "Bash(npx vercel whoami)",
       "Bash(python3 -c \":*)",
       "Bash(git remote add origin https://github.com/mayordomoespejo/dealwing.git)",
-      "Bash(git push --force origin DW-001)"
+      "Bash(git push --force origin DW-001)",
+      "Bash(ls /Users/Miguel/Documents/developer/dealwing/README*)"
     ],
     "additionalDirectories": ["/Users/Miguel/Documents/developer/dealwing/node_modules/.vite"]
   }

@@ -77,10 +77,13 @@ dealwing/
 │   │   ├── flights/             # api, hooks, mapper, dealScore, CO2, cards, detail
 │   │   ├── map/                 # MapView + useMap hook
 │   │   └── saved/               # useSaved hook + SavedList
-│   ├── components/ui/           # Button, Modal, Skeleton, Badge, Toast, ErrorBoundary
+│   ├── components/ui/           # Button, Modal, Skeleton, Badge, Toast, ErrorBoundary,
+│   │                            #   AirlineLogo, DateRangePickerField, FieldError
 │   ├── contexts/                # ThemeContext (system/light/dark)
 │   ├── hooks/                   # useLocalStorage, useKeyboard, useDebounce
-│   ├── lib/                     # airports (~100 entries), formatters, geo, http, queryKeys
+│   ├── icons/                   # Inline SVG icon components
+│   ├── lib/                     # airports (~100 entries), formatters, geo, http, queryKeys,
+│   │                            #   dateUtils, i18n (react-i18next init)
 │   └── styles/                  # variables.css (design tokens), reset.css
 │
 ├── e2e/                         # Playwright end-to-end tests
