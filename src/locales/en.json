@@ -28,6 +28,7 @@
     "dates": "Dates",
     "today": "Today",
     "clearDates": "Clear",
+    "done": "Done",
     "datePlaceholder": "dd/mm/yyyy",
     "datePlaceholderRange": "From – To",
     "datePlaceholderSingle": "Date",

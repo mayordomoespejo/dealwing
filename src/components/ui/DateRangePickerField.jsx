@@ -143,8 +143,13 @@ export function DateRangePickerField({
     setMonth(minDate || new Date())
   }
 
+  function handleDone() {
+    setOpen(false)
+  }
+
   const resolvedTodayLabel = todayLabel || t('search.today')
   const resolvedClearLabel = clearLabel || t('search.clearDates')
+  const resolvedDoneLabel = t('search.done')
   const fallbackPlaceholder =
     placeholder ||
     (tripType === 'round-trip'
@@ -204,24 +209,41 @@ export function DateRangePickerField({
             />
           )}
           <div className={styles.footer}>
-            <button
-              type="button"
-              className={styles.todayBtn}
-              onClick={handleToday}
-              aria-label={resolvedTodayLabel}
-            >
-              {resolvedTodayLabel}
-            </button>
-            {fromDate && (
+            <div className={styles.footerActions}>
               <button
                 type="button"
-                className={styles.clearBtn}
-                onClick={handleClear}
-                aria-label={resolvedClearLabel}
+                className={styles.todayBtn}
+                onClick={handleToday}
+                aria-label={resolvedTodayLabel}
               >
-                {resolvedClearLabel}
+                {resolvedTodayLabel}
               </button>
-            )}
+            </div>
+            <div className={styles.footerSecondaryActions}>
+              {fromDate && (
+                <>
+                  <button
+                    type="button"
+                    className={styles.clearBtn}
+                    onClick={handleClear}
+                    aria-label={resolvedClearLabel}
+                  >
+                    {resolvedClearLabel}
+                  </button>
+                  <span className={styles.footerDivider} aria-hidden="true">
+                    |
+                  </span>
+                </>
+              )}
+              <button
+                type="button"
+                className={styles.doneBtn}
+                onClick={handleDone}
+                aria-label={resolvedDoneLabel}
+              >
+                {resolvedDoneLabel}
+              </button>
+            </div>
           </div>
         </div>
       </div>
