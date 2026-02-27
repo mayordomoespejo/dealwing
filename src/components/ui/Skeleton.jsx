@@ -23,24 +23,36 @@ export function Skeleton({ className = '', variant = 'rect', width, height, styl
 export function FlightCardSkeleton() {
   return (
     <div className={styles.card}>
-      <div className={styles.row}>
-        <Skeleton width={32} height={32} variant="circle" />
-        <div className={styles.col}>
-          <Skeleton width={120} height={14} />
-          <Skeleton width={80} height={12} style={{ marginTop: 6 }} />
+      <div className={styles.topRow}>
+        <Skeleton width={18} height={18} variant="circle" />
+        <Skeleton width={100} height={12} />
+        <Skeleton width={32} height={32} style={{ marginLeft: 'auto', borderRadius: 8 }} />
+      </div>
+
+      <div className={styles.routes}>
+        <div className={styles.routeRow}>
+          <div className={styles.timeCol}>
+            <Skeleton width={52} height={22} />
+            <Skeleton width={28} height={10} />
+          </div>
+          <div className={styles.routeMiddle}>
+            <Skeleton width={14} height={14} style={{ borderRadius: '50%' }} />
+            <Skeleton height={2} style={{ width: '100%' }} />
+            <Skeleton width={38} height={11} />
+          </div>
+          <div className={styles.timeColRight}>
+            <Skeleton width={52} height={22} />
+            <Skeleton width={28} height={10} />
+          </div>
         </div>
-        <Skeleton width={70} height={20} style={{ marginLeft: 'auto' }} />
       </div>
-      <div className={styles.divider} />
-      <div className={styles.row}>
-        <Skeleton width={90} height={28} />
-        <Skeleton width={40} height={12} style={{ margin: '0 auto' }} />
-        <Skeleton width={90} height={28} style={{ marginLeft: 'auto' }} />
-      </div>
-      <div className={styles.row} style={{ marginTop: 12 }}>
-        <Skeleton width={60} height={22} style={{ borderRadius: 999 }} />
-        <Skeleton width={80} height={22} style={{ borderRadius: 999 }} />
-        <Skeleton width={60} height={22} style={{ marginLeft: 'auto', borderRadius: 999 }} />
+
+      <div className={styles.bottomRow}>
+        <Skeleton width={76} height={20} style={{ borderRadius: 999 }} />
+        <div className={styles.priceGroup}>
+          <Skeleton width={60} height={26} />
+          <Skeleton width={22} height={10} />
+        </div>
       </div>
     </div>
   )

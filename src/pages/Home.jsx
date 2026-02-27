@@ -8,6 +8,7 @@ import { useFlightSearch } from '@/features/flights/hooks.js'
 import { useSaved } from '@/features/saved/useSaved.js'
 import { useToast } from '@/components/ui/Toast.jsx'
 import { useKeyboard } from '@/hooks/useKeyboard.js'
+import { ErrorBoundary } from '@/components/ui/ErrorBoundary.jsx'
 import { SearchIcon, ListIcon, MapPinIcon } from '@/icons'
 import styles from './Home.module.css'
 
@@ -59,17 +60,19 @@ export function Home() {
           </section>
 
           <section className={styles.resultsSection}>
-            <FlightList
-              flights={flights}
-              isLoading={isLoading}
-              error={error}
-              selectedId={selectedFlight?.id}
-              onSelect={handleSelect}
-              onShowDetail={setDetailFlight}
-              onSave={handleSave}
-              isSaved={f => isSaved(f.id)}
-              searchParams={searchParams}
-            />
+            <ErrorBoundary>
+              <FlightList
+                flights={flights}
+                isLoading={isLoading}
+                error={error}
+                selectedId={selectedFlight?.id}
+                onSelect={handleSelect}
+                onShowDetail={setDetailFlight}
+                onSave={handleSave}
+                isSaved={f => isSaved(f.id)}
+                searchParams={searchParams}
+              />
+            </ErrorBoundary>
           </section>
         </div>
       </aside>

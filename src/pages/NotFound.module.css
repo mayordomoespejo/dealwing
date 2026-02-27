@@ -26,8 +26,7 @@
 }
 
 .plane {
-  font-size: 48px;
-  margin-top: -var(--space-4);
+  color: var(--color-brand);
   animation: float 3s ease-in-out infinite;
 }
 

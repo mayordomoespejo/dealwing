@@ -9,7 +9,13 @@
 
 .header {
   display: flex;
-  align-items: flex-start;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.headerMeta {
+  display: flex;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
 }
@@ -24,7 +30,7 @@
 .subtitle {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);
-  margin-top: var(--space-1);
+  margin: 0;
 }
 
 .list {
@@ -33,24 +39,40 @@
   gap: var(--space-3);
 }
 
+/* ── Card ─────────────────────────────────────────────────────────────── */
+
 .card {
   background: var(--color-surface);
   border: 1.5px solid var(--color-border);
   border-radius: var(--radius-xl);
-  padding: var(--space-5);
+  padding: var(--space-4);
   display: flex;
   flex-direction: column;
-  gap: var(--space-4);
-  transition: box-shadow var(--duration-fast) var(--ease);
+  gap: var(--space-3);
+  cursor: pointer;
+  outline: none;
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease),
+    transform var(--duration-fast) var(--ease);
 }
 
 .card:hover {
+  border-color: var(--color-brand-300);
   box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
 }
+
+.card:focus-visible {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px var(--color-brand-100);
+}
+
+/* ── Card header: route + price ───────────────────────────────────────── */
 
 .cardHeader {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
 }
@@ -58,8 +80,14 @@
 .route {
   display: flex;
   align-items: center;
-  flex-wrap: wrap;
-  gap: var(--space-2);
+  gap: var(--space-3);
+}
+
+.routeCity {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 2px;
 }
 
 .routeIata {
@@ -67,65 +95,126 @@
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
   font-family: var(--font-mono);
-  letter-spacing: 0.02em;
+  letter-spacing: -0.04em;
+  line-height: 1;
+}
+
+.routeCityName {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  text-align: center;
 }
 
 .routeArrow {
   font-size: var(--text-xl);
   color: var(--color-text-tertiary);
+  padding: 0 var(--space-1);
+  line-height: 1;
 }
 
-.routeCities {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
-  margin-left: var(--space-1);
-}
-
-.details {
+.priceBlock {
   display: flex;
-  gap: var(--space-6);
-  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
 }
 
-.detail {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
+.price {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
 }
 
-.detailLabel {
-  font-size: var(--text-xs);
+.priceLabel {
+  font-size: 10px;
   font-weight: var(--font-medium);
   color: var(--color-text-tertiary);
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
 }
 
-.detailValue {
+/* ── Itinerary grid ───────────────────────────────────────────────────── */
+
+.itineraryRows {
+  display: grid;
+  grid-template-columns: 16px 1fr auto auto;
+  align-items: center;
+  gap: var(--space-2) var(--space-3);
+  padding: var(--space-3) 0;
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+}
+
+.rowDivider {
+  grid-column: 1 / -1;
+  height: 1px;
+  background: var(--color-border);
+}
+
+.itineraryIcon {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.itineraryDateTime {
   font-size: var(--text-sm);
-  font-weight: var(--font-semibold);
+  font-weight: var(--font-medium);
   color: var(--color-text-primary);
 }
+
+.itineraryDuration {
+  font-size: var(--text-sm);
+  font-weight: var(--font-semibold);
+  color: var(--color-brand);
+  text-align: right;
+}
+
+.itineraryAirline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.itineraryAirlineLogo {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.itineraryAirlineName {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 120px;
+}
+
+/* ── Footer ───────────────────────────────────────────────────────────── */
 
 .cardFooter {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-4);
-  flex-wrap: wrap;
-  padding-top: var(--space-3);
-  border-top: 1px solid var(--color-border);
 }
 
 .badges {
   display: flex;
   align-items: center;
   gap: var(--space-2);
-  flex-wrap: wrap;
 }
 
 .sproutIcon {
   color: var(--color-success);
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex-shrink: 0;
 }
 
 .savedAt {
@@ -133,18 +222,46 @@
   color: var(--color-text-tertiary);
 }
 
-.cardActions {
+.trashBtn {
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
-  gap: var(--space-3);
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+  transition:
+    color var(--duration-fast) var(--ease),
+    background-color var(--duration-fast) var(--ease);
 }
 
-.price {
-  font-size: var(--text-xl);
-  font-weight: var(--font-bold);
-  color: var(--color-text-primary);
-  letter-spacing: -0.02em;
+.trashBtn:hover {
+  color: var(--color-error);
+  background: var(--color-error-light);
 }
+
+/* ── Confirm remove modal ─────────────────────────────────────────────── */
+
+.confirmBody {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-5);
+}
+
+.confirmText {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+  line-height: var(--leading-relaxed);
+}
+
+.confirmActions {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+}
+
+/* ── Empty state ──────────────────────────────────────────────────────── */
 
 .empty {
   display: flex;

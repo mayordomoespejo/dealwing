@@ -19,6 +19,5 @@ export function useFlightSearch(searchParams) {
     enabled: !!searchParams,
     staleTime: 1000 * 60 * 5,
     retry: 1,
-    select: data => data,
   })
 }

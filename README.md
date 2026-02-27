@@ -14,9 +14,9 @@ Powered by **[Duffel](https://duffel.com)** (Sandbox).
 
 - **Interactive map** — MapLibre GL JS with curved arc routes + animated price bubble markers
 - **Airport autocomplete** — debounced search with IATA/city/country matching
-- **Flight search** — one-way & round-trip, date pickers, adults selector, currency switcher
-- **Deal Score (0–100)** — composite score vs. the full result set (price 60%, duration 30%, stops 10%)
-- **CO₂ estimation** — approximate per-passenger emissions (ICAO method, with disclaimer)
+- **Flight search** — one-way & round-trip, date pickers, adults selector
+- **Deal Score (0–100)** — composite score relative to the full result set (price 60%, duration 30%, stops 10%)
+- **CO₂ estimation** — approximate per-passenger emissions (simplified ICAO method, with disclaimer)
 - **Search history** — last 8 searches in localStorage, one-click restore
 - **Saved flights** — heart-save any offer, review at `/saved`
 - **Filters & sorting** — max price slider, stops filter, airline selector; sort by price/duration/deal score
@@ -26,11 +26,13 @@ Powered by **[Duffel](https://duffel.com)** (Sandbox).
 
 - Keyboard shortcuts: `/` → focus search field, `Esc` → close modal
 - Skeleton loading cards + graceful empty / error states
-- Dark mode via `prefers-color-scheme` + CSS custom properties
+- **3-way theme toggle** — system / light / dark, persisted across sessions
+- **Internationalisation** — English and Spanish (i18n via react-i18next)
 - Micro-animations: Framer Motion stagger cards, spring modal, fade toasts
 - Collapsible sidebar with animated toggle
-- Fully accessible: ARIA roles, focus trap in modal, keyboard nav in autocomplete
+- Fully accessible: ARIA roles, focus trap in modal, keyboard nav in autocomplete + custom selects
 - Mobile responsive (drawer layout on small screens)
+- React error boundary isolates flight-list crashes from the rest of the page
 
 ---
 
@@ -39,17 +41,18 @@ Powered by **[Duffel](https://duffel.com)** (Sandbox).
 | Layer         | Technology                                               |
 | ------------- | -------------------------------------------------------- |
 | Frontend      | React 19 + Vite 7                                        |
-| Routing       | React Router v7                                          |
+| Routing       | React Router v7 (lazy-loaded secondary routes)           |
 | Data fetching | TanStack Query v5                                        |
 | Forms         | react-hook-form + Zod v4                                 |
 | HTTP          | Native `fetch` (no axios)                                |
 | Map           | MapLibre GL JS v5 + OpenFreeMap tiles (free, no API key) |
 | Animations    | Framer Motion v12                                        |
-| Styling       | CSS Modules + CSS custom properties                      |
+| Styling       | CSS Modules + CSS custom properties (design tokens)      |
 | BFF           | Vercel Serverless Functions (`/api/`)                    |
 | Flight API    | Duffel (Sandbox)                                         |
+| i18n          | react-i18next (EN / ES)                                  |
 | Testing       | Vitest + Testing Library + Playwright                    |
-| Lint/Format   | ESLint 9 + Prettier                                      |
+| Lint/Format   | ESLint 9 (flat config) + Prettier                        |
 | Git hooks     | Husky v9 + lint-staged                                   |
 | CI            | GitHub Actions                                           |
 | Deploy        | Vercel (frontend + functions)                            |
@@ -62,7 +65,7 @@ Powered by **[Duffel](https://duffel.com)** (Sandbox).
 dealwing/
 ├── api/                         # Vercel Serverless Functions (BFF)
 │   ├── _duffel.js               # Duffel API helper (duffelPost)
-│   ├── _aerodatabox.js          # Airport provider helper
+│   ├── _aerodatabox.js          # AeroDataBox airport provider helper
 │   ├── offers.js                # POST /api/offers → Duffel offer_requests
 │   └── locations.js             # GET /api/locations?q=... (local dataset)
 │
@@ -74,15 +77,27 @@ dealwing/
 │   │   ├── flights/             # api, hooks, mapper, dealScore, CO2, cards, detail
 │   │   ├── map/                 # MapView + useMap hook
 │   │   └── saved/               # useSaved hook + SavedList
-│   ├── components/ui/           # Button, Modal, Skeleton, Badge, Toast
-│   ├── hooks/                   # useLocalStorage, useKeyboard
-│   ├── lib/                     # airports (~100), formatters, geo, http, queryKeys
+│   ├── components/ui/           # Button, Modal, Skeleton, Badge, Toast, ErrorBoundary
+│   ├── contexts/                # ThemeContext (system/light/dark)
+│   ├── hooks/                   # useLocalStorage, useKeyboard, useDebounce
+│   ├── lib/                     # airports (~100 entries), formatters, geo, http, queryKeys
 │   └── styles/                  # variables.css (design tokens), reset.css
 │
 ├── e2e/                         # Playwright end-to-end tests
-├── .github/workflows/ci.yml    # Lint + test + build CI
+├── .github/workflows/ci.yml     # Lint + test + build CI
 └── vercel.json
 ```
+
+### Key design decisions
+
+| Decision                     | Rationale                                                               |
+| ---------------------------- | ----------------------------------------------------------------------- |
+| BFF pattern (`/api/`)        | Keeps Duffel and RapidAPI tokens off the client                         |
+| Local airport dataset        | Duffel has no free airport search endpoint                              |
+| TanStack Query               | Server-state caching with `staleTime: 5 min` avoids redundant API calls |
+| CSS Modules                  | Scoped styles without a CSS-in-JS runtime cost                          |
+| `React.memo` on `FlightCard` | Prevents re-renders triggered by map interactions                       |
+| `React.lazy` on `/saved`     | Secondary route isn't needed on first load                              |
 
 ---
 
@@ -165,6 +180,21 @@ npm run test:e2e      # Playwright end-to-end
 
 ---
 
+## Testing
+
+```bash
+npm run test          # Run all Vitest unit tests once
+npm run test:watch    # Watch mode (re-runs on file change)
+npm run test:e2e      # Playwright end-to-end (requires a running dev server)
+```
+
+Unit tests live in `src/**/*.test.{js,jsx}` alongside the code they test.
+Current coverage targets: `dealScore`, `co2`, `formatters`.
+
+End-to-end tests live in `e2e/`. The CI pipeline runs lint → unit tests → build on every push.
+
+---
+
 ## API Integration
 
 DealWing proxies all external calls through a small BFF layer (`/api/`) so API keys are never exposed in the browser.
@@ -190,6 +220,16 @@ Set `VITE_MOCK_API=true` (default in development) to use the built-in mock datas
    - `DUFFEL_ACCESS_TOKEN` — your Duffel access token
    - `VITE_MOCK_API` = `false`
 3. Deploy — Vercel auto-detects Vite + the `/api/` serverless functions
+
+---
+
+## Contributing
+
+Branch naming: `DW-<issue>` (e.g. `DW-042-price-calendar`).
+
+Commits follow Conventional Commits (`feat:`, `fix:`, `refactor:`, `docs:`, `test:`).
+
+A pre-commit hook (Husky + lint-staged) runs ESLint and Prettier automatically on staged files. To bypass in an emergency: `git commit --no-verify` (use sparingly).
 
 ---
 

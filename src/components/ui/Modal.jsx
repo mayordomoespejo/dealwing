@@ -10,8 +10,17 @@ import styles from './Modal.module.css'
  * Accessible modal / bottom-drawer.
  * On desktop: centered modal.
  * On mobile (< 640px): slides up from the bottom as a drawer.
+ *
+ * @param {object} props
+ * @param {boolean} props.isOpen - modal visibility state
+ * @param {Function} props.onClose - close handler
+ * @param {string} props.title - accessible dialog label
+ * @param {React.ReactNode} [props.titleNode] - optional custom title markup
+ * @param {React.ReactNode} props.children - modal body content
+ * @param {'sm'|'md'|'lg'} [props.size='md'] - width preset
+ * @returns {React.ReactPortal}
  */
-export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
+export function Modal({ isOpen, onClose, title, titleNode, children, size = 'md' }) {
   const { t } = useTranslation()
   const dialogRef = useRef(null)
 
@@ -62,7 +71,7 @@ export function Modal({ isOpen, onClose, title, children, size = 'md' }) {
             onClick={e => e.stopPropagation()}
           >
             <div className={styles.header}>
-              <h2 className={styles.title}>{title}</h2>
+              <h2 className={styles.title}>{titleNode ?? title}</h2>
               <button className={styles.closeBtn} onClick={onClose} aria-label={t('common.close')}>
                 <XIcon size={20} />
               </button>

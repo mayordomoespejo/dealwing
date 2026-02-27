@@ -1,14 +1,30 @@
+import { memo } from 'react'
 import { motion } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { Badge } from '@/components/ui/Badge.jsx'
-import { HeartIcon, SproutIcon } from '@/icons'
+import { AirlineLogo } from '@/components/ui/AirlineLogo.jsx'
+import { HeartIcon, SproutIcon, TakeoffIcon, LandingIcon } from '@/icons'
 import { formatPrice, formatDuration, formatTime, formatCO2 } from '@/lib/formatters.js'
 import styles from './FlightCard.module.css'
 
-const AIRLINE_LOGO_BASE = 'https://content.r9cdn.net/rimg/provider-logos/airlines/v/symbols'
+/**
+ * Builds the list of airline logo and name data displayed in the card header.
+ *
+ * @param {object} flight - flight offer shown by the card
+ * @returns {{ code: string, name: string, src: string | null }[]}
+ */
+function getAirlineDisplayData(flight) {
+  return (flight.airlines ?? []).map((code, index) => ({
+    code,
+    name: flight.airlineNames?.[index] ?? code,
+    src: flight.airlineLogoUrls?.[index] ?? null,
+  }))
+}
 
 /**
  * Compact flight offer card for the results list.
+ * Memoized to prevent unnecessary re-renders when the parent list re-renders
+ * (e.g. on map interactions) but the flight data hasn't changed.
  *
  * @param {object}   flight        - domain FlightOffer
  * @param {boolean}  isSelected    - highlighted state (selected on map)
@@ -17,19 +33,24 @@ const AIRLINE_LOGO_BASE = 'https://content.r9cdn.net/rimg/provider-logos/airline
  * @param {Function} onSave        - called when heart icon is pressed
  * @param {boolean}  isSaved       - if true, heart is filled
  */
-export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave, isSaved }) {
+export const FlightCard = memo(function FlightCard({
+  flight,
+  isSelected,
+  onSelect,
+  onShowDetail,
+  onSave,
+  isSaved,
+}) {
   const { t } = useTranslation()
+  const airlines = getAirlineDisplayData(flight)
 
   const outSeg = flight.outbound.segments
   const firstSeg = outSeg[0]
   const lastSeg = outSeg.at(-1)
 
-  const stopsLabel =
-    flight.stops === 0
-      ? t('formatters.direct')
-      : flight.stops === 1
-        ? t('formatters.oneStop')
-        : t('formatters.stops', { count: flight.stops })
+  const inSeg = flight.inbound?.segments
+  const inFirstSeg = inSeg?.[0]
+  const inLastSeg = inSeg?.at(-1)
 
   function handleKeyDown(e) {
     if (e.key === 'Enter' || e.key === ' ') {
@@ -61,32 +82,19 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
     >
       <div className={styles.topRow}>
         <div className={styles.airline}>
-          {flight.airlines?.[0] != null &&
-            (flight.airlineLogoUrls?.[0] ? (
-              <>
-                <img
-                  className={styles.airlineLogoImg}
-                  src={flight.airlineLogoUrls[0]}
-                  alt={flight.airlineNames?.[0]}
-                  onError={e => {
-                    e.target.style.display = 'none'
-                  }}
-                />
-                <span className={styles.airlineName}>{flight.airlineNames?.join(', ') ?? ''}</span>
-              </>
-            ) : (
-              <>
-                <img
-                  className={styles.airlineLogoImg}
-                  src={`${AIRLINE_LOGO_BASE}/${flight.airlines[0]}.png`}
-                  alt={flight.airlineNames?.[0]}
-                  onError={e => {
-                    e.target.style.display = 'none'
-                  }}
-                />
-                <span className={styles.airlineName}>{flight.airlineNames?.join(', ') ?? ''}</span>
-              </>
-            ))}
+          {airlines[0] && (
+            <>
+              <AirlineLogo
+                code={airlines[0].code}
+                src={airlines[0].src}
+                alt={airlines[0].name}
+                className={styles.airlineLogoImg}
+              />
+              <span className={styles.airlineName}>
+                {airlines.map(airline => airline.name).join(', ')}
+              </span>
+            </>
+          )}
         </div>
 
         <div className={styles.topActions}>
@@ -104,34 +112,61 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
         </div>
       </div>
 
-      <div className={styles.route}>
-        <div className={styles.timeBlock}>
-          <span className={styles.time}>{formatTime(firstSeg.departure.at)}</span>
-          <span className={styles.iata}>{firstSeg.departure.iataCode}</span>
-        </div>
-
-        <div className={styles.routeMiddle}>
-          <span className={styles.duration}>{formatDuration(flight.outbound.duration)}</span>
-          <div className={styles.routeLine}>
-            <div className={styles.routeDot} />
-            <div className={styles.routeTrack}>
-              {flight.stops > 0 && <span className={styles.stopCount}>{flight.stops}</span>}
-            </div>
-            <div className={`${styles.routeDot} ${styles.routeDotEnd}`} />
+      <div className={styles.routes}>
+        <div className={styles.route}>
+          <div className={styles.timeBlock}>
+            <span className={styles.time}>{formatTime(firstSeg.departure.at)}</span>
+            <span className={styles.iata}>{firstSeg.departure.iataCode}</span>
           </div>
-          <span className={styles.stopsLabel}>{stopsLabel}</span>
+
+          <div className={styles.routeMiddle}>
+            <TakeoffIcon size={14} className={styles.routeIcon} />
+            <div className={styles.routeLine}>
+              <div className={styles.routeDot} />
+              <div className={styles.routeTrack} />
+              <div className={`${styles.routeDot} ${styles.routeDotEnd}`} />
+            </div>
+            <span className={styles.duration}>{formatDuration(flight.outbound.duration)}</span>
+          </div>
+
+          <div className={`${styles.timeBlock} ${styles.timeBlockRight}`}>
+            <span className={styles.time}>{formatTime(lastSeg.arrival.at)}</span>
+            <span className={styles.iata}>{lastSeg.arrival.iataCode}</span>
+          </div>
         </div>
 
-        <div className={`${styles.timeBlock} ${styles.timeBlockRight}`}>
-          <span className={styles.time}>{formatTime(lastSeg.arrival.at)}</span>
-          <span className={styles.iata}>{lastSeg.arrival.iataCode}</span>
-        </div>
+        {flight.inbound && inFirstSeg && inLastSeg && (
+          <>
+            <div className={styles.routeSeparator} />
+            <div className={styles.route}>
+              <div className={styles.timeBlock}>
+                <span className={styles.time}>{formatTime(inFirstSeg.departure.at)}</span>
+                <span className={styles.iata}>{inFirstSeg.departure.iataCode}</span>
+              </div>
+
+              <div className={styles.routeMiddle}>
+                <LandingIcon size={14} className={styles.routeIcon} />
+                <div className={styles.routeLine}>
+                  <div className={styles.routeDot} />
+                  <div className={styles.routeTrack} />
+                  <div className={`${styles.routeDot} ${styles.routeDotEnd}`} />
+                </div>
+                <span className={styles.duration}>{formatDuration(flight.inbound.duration)}</span>
+              </div>
+
+              <div className={`${styles.timeBlock} ${styles.timeBlockRight}`}>
+                <span className={styles.time}>{formatTime(inLastSeg.arrival.at)}</span>
+                <span className={styles.iata}>{inLastSeg.arrival.iataCode}</span>
+              </div>
+            </div>
+          </>
+        )}
       </div>
 
       <div className={styles.bottomRow}>
         <div className={styles.badges}>
           {flight.co2Kg > 0 && (
-            <Badge variant="default" size="sm" title="Approximate CO₂ per passenger">
+            <Badge variant="default" size="sm" title={t('detail.co2Disclaimer')}>
               <SproutIcon size={14} className={styles.sproutIcon} /> {formatCO2(flight.co2Kg)}
             </Badge>
           )}
@@ -144,4 +179,4 @@ export function FlightCard({ flight, isSelected, onSelect, onShowDetail, onSave,
       </div>
     </motion.article>
   )
-}
+})

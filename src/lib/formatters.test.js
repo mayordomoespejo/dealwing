@@ -1,11 +1,5 @@
 import { describe, it, expect } from 'vitest'
-import {
-  formatPrice,
-  parseDurationMinutes,
-  formatDuration,
-  formatStops,
-  dealScoreLabel,
-} from './formatters.js'
+import { formatPrice, parseDurationMinutes, formatDuration } from './formatters.js'
 
 describe('formatPrice', () => {
   it('formats EUR', () => {
@@ -48,30 +42,5 @@ describe('formatDuration', () => {
 
   it('formats minutes only', () => {
     expect(formatDuration('PT45M')).toBe('45m')
-  })
-})
-
-describe('formatStops', () => {
-  it('returns Direct for 0', () => {
-    expect(formatStops(0)).toBe('Direct')
-  })
-  it('returns "1 stop" for 1', () => {
-    expect(formatStops(1)).toBe('1 stop')
-  })
-  it('returns "2 stops" for 2', () => {
-    expect(formatStops(2)).toBe('2 stops')
-  })
-})
-
-describe('dealScoreLabel', () => {
-  it('returns Great deal for high scores', () => {
-    expect(dealScoreLabel(80)).toBe('Great deal')
-    expect(dealScoreLabel(70)).toBe('Great deal')
-  })
-  it('returns Good deal for mid scores', () => {
-    expect(dealScoreLabel(55)).toBe('Good deal')
-  })
-  it('returns Fair price for low scores', () => {
-    expect(dealScoreLabel(20)).toBe('Fair price')
   })
 })

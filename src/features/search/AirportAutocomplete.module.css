@@ -83,6 +83,11 @@
   justify-content: center;
 }
 
+:global([data-theme='dark']) .iataTag {
+  background: color-mix(in srgb, var(--color-brand) 12%, transparent);
+  border-color: color-mix(in srgb, var(--color-brand) 40%, transparent);
+}
+
 .clearBtn {
   position: absolute;
   right: var(--space-2);

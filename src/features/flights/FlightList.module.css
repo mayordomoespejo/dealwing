@@ -66,8 +66,8 @@
 }
 
 .emptyIcon {
-  font-size: 48px;
-  line-height: 1;
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
 }
 
 .emptyTitle {

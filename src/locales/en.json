@@ -40,10 +40,13 @@
     "swapAirports": "Swap origin and destination",
     "clearAirport": "Clear airport selection",
     "removeSearch": "Remove this search from history",
+    "decreaseAdults": "Decrease passenger count",
+    "increaseAdults": "Increase passenger count",
     "required": " *",
     "airportSuggestions": "Airport suggestions for {{label}}",
     "minCharsAirport": "Type at least 3 characters to search",
     "airportSearchError": "No airports found. Try different terms.",
+    "datePickerAriaLabel": "Choose travel dates",
     "validation": {
       "originRequired": "Origin is required",
       "originIataLength": "Must be a 3-letter IATA code",
@@ -65,9 +68,6 @@
     "bestDeal": "Best deal",
     "maxPrice": "Max price",
     "any": "Any",
-    "stops": "Stops",
-    "directOnly": "Direct only",
-    "max1Stop": "Max 1 stop",
     "airlines": "Airlines",
     "resetFilters": "Reset filters"
   },
@@ -95,7 +95,7 @@
     "title": "Flight details",
     "roundTrip": "Round trip",
     "oneWay": "One way",
-    "dealScoreExplanation": "Scored relative to all results for this search. Based on price, duration, and stops.",
+    "dealScoreExplanation": "Scored relative to all results for this search. Based on price and duration.",
     "outbound": "Outbound",
     "return": "Return",
     "terminal": "Terminal {{n}}",
@@ -104,8 +104,10 @@
     "co2Disclaimer": "Approximate estimate based on average emission factors (ICAO simplified method). Actual emissions vary by aircraft, load factor, and routing.",
     "perPersonTotal": "per person, total",
     "unsave": "Unsave",
+    "unsaveShort": "Remove",
     "save": "Save",
     "bookNow": "Book now →",
+    "bookNowShort": "Book now",
     "bookingSoon": "Booking integration coming soon!"
   },
   "saved": {
@@ -121,7 +123,15 @@
     "airline": "Airline",
     "savedOn": "Saved {{date}}",
     "details": "Details",
-    "removeSaved": "Remove saved flight"
+    "removeSaved": "Remove saved flight",
+    "confirmRemoveTitle": "Remove {{origin}} → {{destination}}?",
+    "confirmRemoveBody": "This action cannot be undone.",
+    "confirmRemove": "Remove",
+    "cancelRemove": "Keep",
+    "confirmClearTitle": "Remove all saved flights?",
+    "confirmClearBody": "This action cannot be undone.",
+    "confirmClear": "Remove all",
+    "cancelClear": "Keep"
   },
   "map": {
     "ariaLabel": "Flight destinations map",
@@ -143,14 +153,7 @@
   },
   "common": {
     "close": "Close",
-    "dismissNotification": "Dismiss notification"
-  },
-  "formatters": {
-    "direct": "Direct",
-    "oneStop": "1 stop",
-    "stops": "{{count}} stops",
-    "greatDeal": "Great deal",
-    "goodDeal": "Good deal",
-    "fairDeal": "Fair deal"
+    "dismissNotification": "Dismiss notification",
+    "errorBoundaryMessage": "Something went wrong. Please refresh the page."
   }
 }

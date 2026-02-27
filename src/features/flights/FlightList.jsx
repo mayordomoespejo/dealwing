@@ -3,7 +3,7 @@ import { AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { FlightCard } from './FlightCard.jsx'
 import { FlightCardSkeleton } from '@/components/ui/Skeleton.jsx'
-import { GlobeIcon } from '@/icons'
+import { GlobeIcon, PaperPlaneIcon, SearchIcon } from '@/icons'
 import { computePriceStats } from './dealScore.js'
 import { formatPrice } from '@/lib/formatters.js'
 import styles from './FlightList.module.css'
@@ -44,7 +44,7 @@ export function FlightList({
   if (error) {
     return (
       <div className={styles.empty}>
-        <div className={styles.emptyIcon}>✈️</div>
+        <PaperPlaneIcon size={48} className={styles.emptyIcon} />
         <h3 className={styles.emptyTitle}>{t('flights.error')}</h3>
         <p className={styles.emptyText}>{error.message ?? t('flights.errorLoading')}</p>
       </div>
@@ -68,7 +68,7 @@ export function FlightList({
   if (!sorted.length) {
     return (
       <div className={styles.empty}>
-        <div className={styles.emptyIcon}>🔍</div>
+        <SearchIcon size={48} className={styles.emptyIcon} />
         <h3 className={styles.emptyTitle}>{t('flights.noFlightsTitle')}</h3>
         <p className={styles.emptyText}>{t('flights.noFlightsHint')}</p>
       </div>

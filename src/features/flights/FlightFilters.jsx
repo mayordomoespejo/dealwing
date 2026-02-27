@@ -56,28 +56,6 @@ export function FlightFilters({ flights, filters, onChange }) {
         </div>
       </div>
 
-      <div className={styles.section}>
-        <h3 className={styles.sectionTitle}>{t('filters.stops')}</h3>
-        <div className={styles.checkboxGroup}>
-          {[
-            { value: 0, label: t('filters.directOnly') },
-            { value: 1, label: t('filters.max1Stop') },
-            { value: 99, label: t('filters.any') },
-          ].map(({ value, label }) => (
-            <label key={value} className={styles.checkboxLabel}>
-              <input
-                type="radio"
-                name="maxStops"
-                className={styles.radio}
-                checked={(filters.maxStops ?? 99) === value}
-                onChange={() => update('maxStops', value)}
-              />
-              {label}
-            </label>
-          ))}
-        </div>
-      </div>
-
       {allAirlines.length > 1 && (
         <div className={styles.section}>
           <h3 className={styles.sectionTitle}>{t('filters.airlines')}</h3>
@@ -99,7 +77,7 @@ export function FlightFilters({ flights, filters, onChange }) {
 
       <button
         className={styles.resetBtn}
-        onClick={() => onChange({ maxPrice: null, maxStops: 99, airlines: [] })}
+        onClick={() => onChange({ maxPrice: null, airlines: [] })}
       >
         {t('filters.resetFilters')}
       </button>

@@ -10,6 +10,8 @@ import { CalendarIcon } from '@/icons'
 import { CaptionDropdown } from '@/components/ui/DatePickerCaptionDropdown.jsx'
 import styles from './DateRangePickerField.module.css'
 
+const CALENDAR_WIDTH = 280
+
 /**
  * Single input for departure + return date range.
  * - One trigger showing "from – to" or "from" for one-way.
@@ -37,10 +39,10 @@ export function DateRangePickerField({
   error,
   className = '',
   placeholder = '',
-  todayLabel = 'Today',
-  clearLabel = 'Clear',
+  todayLabel,
+  clearLabel,
 }) {
-  const { i18n } = useTranslation()
+  const { i18n, t } = useTranslation()
   const locale = i18n.language === 'es' ? es : enUS
   const { departureDate, returnDate } = value || {}
   const [open, setOpen] = useState(false)
@@ -77,7 +79,6 @@ export function DateRangePickerField({
       return
     }
     setMonth(new Date())
-    // Depend on string props so we don't get new Date() refs on every render (infinite loop)
   }, [departureDate, min])
 
   const startMonth = minDate || new Date(new Date().getFullYear(), 0, 1)
@@ -102,35 +103,30 @@ export function DateRangePickerField({
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [open])
 
-  function handleSelect(range) {
-    if (!range?.from) return
-    let departureDate
-    let returnDateStr = ''
-    const hasExistingRange = tripType === 'round-trip' && fromDate && toDate
+  function handleSelectSingle(date) {
+    if (!date) return
+    onChange({ departureDate: toISODate(date), returnDate: '' })
+  }
 
-    if (tripType === 'round-trip' && range.to) {
+  function handleSelectRange(range) {
+    if (!range?.from) return
+    const hasExistingRange = fromDate && toDate
+
+    if (range.to) {
       const start = range.from.getTime() <= range.to.getTime() ? range.from : range.to
       const end = range.from.getTime() <= range.to.getTime() ? range.to : range.from
-      departureDate = toISODate(start)
-      returnDateStr = toISODate(end)
+      onChange({ departureDate: toISODate(start), returnDate: toISODate(end) })
+      return
     }
-    if (hasExistingRange && !range.to) {
+    if (hasExistingRange) {
       const pivot = toDate
       const clicked = range.from
       const start = pivot.getTime() <= clicked.getTime() ? pivot : clicked
       const end = pivot.getTime() <= clicked.getTime() ? clicked : pivot
-      departureDate = toISODate(start)
-      returnDateStr = toISODate(end)
-      onChange({ departureDate, returnDate: returnDateStr })
+      onChange({ departureDate: toISODate(start), returnDate: toISODate(end) })
       return
     }
-    if (tripType === 'round-trip' && range.to) {
-      onChange({ departureDate, returnDate: returnDateStr })
-      return
-    }
-    const dateToUse = tripType === 'one-way' && range.to ? range.to : range.from
-    departureDate = toISODate(dateToUse)
-    onChange({ departureDate, returnDate: returnDateStr })
+    onChange({ departureDate: toISODate(range.from), returnDate: '' })
   }
 
   function handleToday() {
@@ -147,6 +143,28 @@ export function DateRangePickerField({
     setMonth(minDate || new Date())
   }
 
+  const resolvedTodayLabel = todayLabel || t('search.today')
+  const resolvedClearLabel = clearLabel || t('search.clearDates')
+  const fallbackPlaceholder =
+    placeholder ||
+    (tripType === 'round-trip'
+      ? t('search.datePlaceholderRange')
+      : t('search.datePlaceholderSingle'))
+  const dayPickerProps = {
+    locale,
+    month,
+    onMonthChange: setMonth,
+    disabled: minDate ? { before: minDate } : undefined,
+    numberOfMonths: 1,
+    captionLayout: 'dropdown',
+    startMonth,
+    endMonth,
+    components: { Dropdown: CaptionDropdown },
+    formatters: {
+      formatCaption: date => date.toLocaleDateString(i18n.language, { month: 'long' }),
+    },
+  }
+
   const popoverContent =
     open && popoverRect ? (
       <div
@@ -154,7 +172,7 @@ export function DateRangePickerField({
         className={styles.popover}
         role="dialog"
         aria-modal="true"
-        aria-label="Choose date range"
+        aria-label={t('search.datePickerAriaLabel')}
         style={{
           position: 'fixed',
           top: popoverRect.top,
@@ -166,45 +184,42 @@ export function DateRangePickerField({
         <div
           className={styles.popoverInner}
           style={{
-            // Scale down the calendar when the input is narrower than the natural calendar width
-            transform: `scale(${Math.min(1, popoverRect.width / 280)})`,
+            transform: `scale(${Math.min(1, popoverRect.width / CALENDAR_WIDTH)})`,
             transformOrigin: 'top center',
           }}
         >
-          <DayPicker
-            mode="range"
-            locale={locale}
-            selected={selectedRange}
-            onSelect={handleSelect}
-            month={month}
-            onMonthChange={setMonth}
-            disabled={minDate ? { before: minDate } : undefined}
-            numberOfMonths={1}
-            captionLayout="dropdown"
-            startMonth={startMonth}
-            endMonth={endMonth}
-            components={{ Dropdown: CaptionDropdown }}
-            formatters={{
-              formatCaption: date => date.toLocaleDateString(i18n.language, { month: 'long' }),
-            }}
-          />
+          {tripType === 'one-way' ? (
+            <DayPicker
+              mode="single"
+              selected={fromDate || undefined}
+              onSelect={handleSelectSingle}
+              {...dayPickerProps}
+            />
+          ) : (
+            <DayPicker
+              mode="range"
+              selected={selectedRange}
+              onSelect={handleSelectRange}
+              {...dayPickerProps}
+            />
+          )}
           <div className={styles.footer}>
             <button
               type="button"
               className={styles.todayBtn}
               onClick={handleToday}
-              aria-label={todayLabel}
+              aria-label={resolvedTodayLabel}
             >
-              {todayLabel}
+              {resolvedTodayLabel}
             </button>
             {fromDate && (
               <button
                 type="button"
                 className={styles.clearBtn}
                 onClick={handleClear}
-                aria-label={clearLabel}
+                aria-label={resolvedClearLabel}
               >
-                {clearLabel}
+                {resolvedClearLabel}
               </button>
             )}
           </div>
@@ -227,12 +242,10 @@ export function DateRangePickerField({
         onClick={() => setOpen(o => !o)}
         aria-haspopup="dialog"
         aria-expanded={open}
-        aria-label={
-          label ? `${label}, ${displayValue || placeholder || 'Select dates'}` : undefined
-        }
+        aria-label={label ? `${label}, ${displayValue || fallbackPlaceholder}` : undefined}
       >
         <span className={displayValue ? styles.value : styles.placeholder}>
-          {displayValue || placeholder || (tripType === 'round-trip' ? 'From – To' : 'Date')}
+          {displayValue || fallbackPlaceholder}
         </span>
         <span className={styles.calendarIcon} aria-hidden="true">
           <CalendarIcon size={18} />

@@ -4,19 +4,10 @@ import { motion, AnimatePresence } from 'framer-motion'
 import { useTranslation } from 'react-i18next'
 import { queryKeys } from '@/lib/queryKeys.js'
 import { http } from '@/lib/http.js'
+import { useDebounce } from '@/hooks/useDebounce.js'
 import { FieldError } from '@/components/ui/FieldError.jsx'
 import { XIcon } from '@/icons'
 import styles from './AirportAutocomplete.module.css'
-
-/** Debounce hook */
-function useDebounce(value, delay = 300) {
-  const [debounced, setDebounced] = useState(value)
-  useEffect(() => {
-    const t = setTimeout(() => setDebounced(value), delay)
-    return () => clearTimeout(t)
-  }, [value, delay])
-  return debounced
-}
 
 const MIN_SEARCH_CHARS = 3
 
@@ -31,12 +22,16 @@ const MIN_SEARCH_CHARS = 3
  * @param {boolean}  required
  * @param {string}   error       - validation error message
  * @param {string}   label
+ * @param {React.ReactNode} [icon] - leading decorative icon
+ * @param {string} [externalLabel] - hydrated display label for controlled values
+ * @param {Function} [onLabelChange] - called with the human-readable label of the selected airport
+ * @returns {JSX.Element}
  */
 export function AirportAutocomplete({
   name,
   value,
   onChange,
-  placeholder = 'City or airport',
+  placeholder,
   required,
   error,
   label,
@@ -58,6 +53,7 @@ export function AirportAutocomplete({
   const debouncedQuery = useDebounce(inputText, 280)
   const queryTrimmed = debouncedQuery.trim()
   const hasMinChars = queryTrimmed.length >= MIN_SEARCH_CHARS
+  const resolvedPlaceholder = placeholder || t('search.cityOrAirport')
 
   useEffect(() => {
     if (!value) {
@@ -166,7 +162,7 @@ export function AirportAutocomplete({
           onFocus={() => setOpen(true)}
           onBlur={handleBlur}
           onKeyDown={handleKeyDown}
-          placeholder={placeholder}
+          placeholder={resolvedPlaceholder}
           autoComplete="off"
           spellCheck="false"
           aria-required={required}

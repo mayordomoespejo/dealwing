@@ -42,6 +42,7 @@ function AdultsCounter({
   validationMessage,
   onClearError,
 }) {
+  const { t } = useTranslation()
   const [inputStr, setInputStr] = useState(null)
   const [attemptError, setAttemptError] = useState(false)
   const inputRef = useRef(null)
@@ -141,7 +142,7 @@ function AdultsCounter({
             e.stopPropagation()
             handleDecrement()
           }}
-          aria-label="Decrease adults"
+          aria-label={t('search.decreaseAdults')}
         >
           <MinusIcon size={16} />
         </button>
@@ -168,7 +169,7 @@ function AdultsCounter({
             e.stopPropagation()
             handleIncrement()
           }}
-          aria-label="Increase adults"
+          aria-label={t('search.increaseAdults')}
         >
           <PlusIcon size={16} />
         </button>

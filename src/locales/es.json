@@ -40,10 +40,13 @@
     "swapAirports": "Intercambiar origen y destino",
     "clearAirport": "Limpiar selección de aeropuerto",
     "removeSearch": "Quitar esta búsqueda del historial",
+    "decreaseAdults": "Reducir número de pasajeros",
+    "increaseAdults": "Aumentar número de pasajeros",
     "required": " *",
     "airportSuggestions": "Sugerencias de aeropuerto para {{label}}",
     "minCharsAirport": "Escribe al menos 3 caracteres para buscar",
     "airportSearchError": "No se encontraron aeropuertos. Prueba otros términos.",
+    "datePickerAriaLabel": "Elegir fechas de viaje",
     "validation": {
       "originRequired": "El origen es obligatorio",
       "originIataLength": "Debe ser un código IATA de 3 letras",
@@ -65,9 +68,6 @@
     "bestDeal": "Mejor oferta",
     "maxPrice": "Precio máximo",
     "any": "Cualquiera",
-    "stops": "Escalas",
-    "directOnly": "Solo directo",
-    "max1Stop": "Máx. 1 escala",
     "airlines": "Aerolíneas",
     "resetFilters": "Restablecer filtros"
   },
@@ -95,7 +95,7 @@
     "title": "Detalles del vuelo",
     "roundTrip": "Ida y vuelta",
     "oneWay": "Solo ida",
-    "dealScoreExplanation": "Puntuado respecto al conjunto de resultados. Basado en precio, duración y escalas.",
+    "dealScoreExplanation": "Puntuado respecto al conjunto de resultados. Basado en precio y duración.",
     "outbound": "Ida",
     "return": "Vuelta",
     "terminal": "Terminal {{n}}",
@@ -104,8 +104,10 @@
     "co2Disclaimer": "Estimación aproximada basada en factores de emisión medios (método simplificado ICAO). Las emisiones reales varían según aeronave, factor de ocupación y ruta.",
     "perPersonTotal": "por persona, total",
     "unsave": "Quitar guardado",
+    "unsaveShort": "Quitar",
     "save": "Guardar",
     "bookNow": "Reservar →",
+    "bookNowShort": "Reservar",
     "bookingSoon": "¡La integración de reservas estará disponible pronto!"
   },
   "saved": {
@@ -121,7 +123,15 @@
     "airline": "Aerolínea",
     "savedOn": "Guardado el {{date}}",
     "details": "Detalles",
-    "removeSaved": "Quitar vuelo guardado"
+    "removeSaved": "Quitar vuelo guardado",
+    "confirmRemoveTitle": "¿Quitar {{origin}} → {{destination}}?",
+    "confirmRemoveBody": "Esta acción no se podrá deshacer.",
+    "confirmRemove": "Quitar",
+    "cancelRemove": "Conservar",
+    "confirmClearTitle": "¿Eliminar todos los vuelos guardados?",
+    "confirmClearBody": "Esta acción no se podrá deshacer.",
+    "confirmClear": "Eliminar todo",
+    "cancelClear": "Conservar"
   },
   "map": {
     "ariaLabel": "Mapa de destinos de vuelo",
@@ -143,14 +153,7 @@
   },
   "common": {
     "close": "Cerrar",
-    "dismissNotification": "Descartar notificación"
-  },
-  "formatters": {
-    "direct": "Directo",
-    "oneStop": "1 escala",
-    "stops": "{{count}} escalas",
-    "greatDeal": "Gran oferta",
-    "goodDeal": "Buena oferta",
-    "fairDeal": "Oferta regular"
+    "dismissNotification": "Descartar notificación",
+    "errorBoundaryMessage": "Algo salió mal. Recarga la página."
   }
 }

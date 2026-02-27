@@ -61,7 +61,8 @@ export function estimateCO2(originIata, destIata, segments = [], durationMin = 0
     const co2 = totalKm * factor * RFI * OVERHEAD
 
     return Math.round(co2)
-  } catch {
+  } catch (err) {
+    console.warn('[estimateCO2] Unexpected error during CO₂ estimation, returning 0:', err)
     return 0
   }
 }

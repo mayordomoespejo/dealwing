@@ -26,7 +26,9 @@
       "Bash(git add eslint.config.js src/app/Header.jsx src/app/Header.module.css src/app/Providers.jsx src/components/ui/Modal.jsx src/components/ui/Toast.jsx src/components/ui/DatePickerField.jsx src/components/ui/DatePickerField.module.css src/components/ui/DateRangePickerField.jsx src/components/ui/DateRangePickerField.module.css src/components/ui/FieldError.jsx src/components/ui/FieldError.module.css src/components/ui/Select.jsx src/components/ui/Select.module.css src/contexts/ src/features/flights/FlightCard.jsx src/features/flights/FlightDetail.jsx src/features/flights/FlightFilters.jsx src/features/flights/FlightList.jsx src/features/map/MapView.jsx src/features/map/useMap.js src/features/saved/SavedList.jsx src/features/search/AirportAutocomplete.jsx src/features/search/AirportAutocomplete.module.css src/features/search/SearchForm.jsx src/features/search/SearchForm.module.css src/icons/ src/lib/dateUtils.js src/lib/i18n.js src/lib/formatters.js src/locales/ src/main.jsx src/pages/Home.jsx src/pages/NotFound.jsx src/styles/variables.css package.json package-lock.json)",
       "Bash(lsof -i :3000)",
       "Bash(npm install --save-dev vercel)",
-      "Bash(npx vercel whoami)"
-    ]
+      "Bash(npx vercel whoami)",
+      "Bash(python3 -c \":*)"
+    ],
+    "additionalDirectories": ["/Users/Miguel/Documents/developer/dealwing/node_modules/.vite"]
   }
 }

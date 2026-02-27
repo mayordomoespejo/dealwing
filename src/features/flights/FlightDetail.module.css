@@ -21,11 +21,12 @@
 .summaryCity {
   display: flex;
   flex-direction: column;
+  align-items: center;
   gap: 2px;
 }
 
 .summaryCityRight {
-  align-items: flex-end;
+  align-items: center;
 }
 
 .summaryIata {
@@ -34,6 +35,7 @@
   color: var(--color-text-primary);
   letter-spacing: -0.04em;
   font-family: var(--font-mono);
+  line-height: 1;
 }
 
 .summaryCityName {
@@ -42,29 +44,87 @@
 }
 
 .summaryArrow {
-  flex: 1;
-  text-align: center;
   font-size: var(--text-2xl);
   color: var(--color-text-tertiary);
+  padding: 0 var(--space-2);
 }
 
 .summaryMeta {
   display: flex;
   flex-wrap: wrap;
+  align-items: center;
   gap: var(--space-2);
+}
+
+/* Airline logo chip — replaces the text-only info badge */
+.airlineChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 24px;
+  padding: 0 var(--space-2);
+  background: var(--color-bg-tertiary);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-full);
+  white-space: nowrap;
+}
+
+.airlineChipLogo {
+  width: 16px;
+  height: 16px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.airlineChipName {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  line-height: 1;
+}
+
+/* Wrapper for outbound + inbound itineraries */
+.itineraries {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+@media (min-width: 640px) {
+  .itineraries {
+    flex-direction: row;
+    align-items: flex-start;
+  }
+
+  .itineraries > * {
+    flex: 1;
+    min-width: 0;
+  }
 }
 
 .itinerary {
   background: var(--color-bg-tertiary);
   border-radius: var(--radius-xl);
   padding: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
 }
 
 .itineraryHeader {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: var(--space-4);
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--color-border);
+  padding-bottom: var(--space-4);
+}
+
+.itineraryLabelGroup {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  min-width: 0;
 }
 
 .itineraryLabel {
@@ -73,12 +133,43 @@
   text-transform: uppercase;
   letter-spacing: 0.06em;
   color: var(--color-text-secondary);
+  flex-shrink: 0;
+}
+
+.itineraryChevron {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+  transform: rotate(-90deg);
+}
+
+.itineraryAirline {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  min-width: 0;
+}
+
+.itineraryAirlineLogo {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.itineraryAirlineName {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .itineraryDuration {
   font-size: var(--text-sm);
   font-weight: var(--font-semibold);
   color: var(--color-brand);
+  flex-shrink: 0;
 }
 
 .segments {
@@ -97,47 +188,34 @@
   gap: var(--space-3);
 }
 
-.timeline {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0;
-  flex-shrink: 0;
-  width: 16px;
-  padding-top: 4px;
-}
-
-.dot {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--color-brand);
-  flex-shrink: 0;
-  border: 2px solid var(--color-surface);
-  box-shadow: 0 0 0 2px var(--color-brand);
-}
-
-.line {
-  width: 2px;
-  flex: 1;
-  background: var(--color-border-strong);
-  margin: var(--space-1) 0;
-  min-height: 60px;
-}
-
 .segContent {
   flex: 1;
-  padding-bottom: var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.segDivider {
+  height: 1px;
+  background: var(--color-border);
 }
 
 .segRow {
   display: flex;
-  align-items: flex-start;
-  gap: var(--space-4);
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.segIcon {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
 }
 
 .segTime {
   min-width: 80px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 }
 
 .segTimeVal {
@@ -150,10 +228,8 @@
 }
 
 .segDate {
-  display: block;
   font-size: var(--text-xs);
   color: var(--color-text-tertiary);
-  margin-top: 2px;
 }
 
 .segPlace {
@@ -163,10 +239,11 @@
 }
 
 .segIata {
-  font-size: var(--text-lg);
+  font-size: var(--text-xl);
   font-weight: var(--font-bold);
   color: var(--color-text-primary);
   font-family: var(--font-mono);
+  line-height: 1;
 }
 
 .segTerminal {
@@ -179,7 +256,28 @@
   align-items: center;
   gap: var(--space-3);
   padding: var(--space-2) 0;
-  margin-left: 0;
+  flex-wrap: wrap;
+}
+
+/* Carrier logo + name inline in segment row */
+.segCarrier {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  margin-right: var(--space-1);
+}
+
+.segCarrierLogo {
+  width: 14px;
+  height: 14px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.segCarrierName {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+  font-weight: var(--font-medium);
 }
 
 .segFlight {
@@ -211,6 +309,13 @@
   margin: var(--space-2) 0 var(--space-2) var(--space-5);
 }
 
+.layoverDuration {
+  margin-left: auto;
+  font-weight: var(--font-semibold);
+  color: var(--color-warning);
+  opacity: 0.85;
+}
+
 .co2Card {
   background: color-mix(in srgb, var(--color-success) 6%, var(--color-surface));
   border: 1px solid color-mix(in srgb, var(--color-success) 20%, transparent);
@@ -218,16 +323,26 @@
   padding: var(--space-4);
 }
 
+/* Same column widths so header and disclaimer text align */
 .co2Header {
-  display: flex;
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 0 var(--space-3);
   align-items: center;
-  gap: var(--space-3);
   margin-bottom: var(--space-2);
 }
 
 .co2Icon {
   font-size: 24px;
   color: var(--color-success);
+  flex-shrink: 0;
+}
+
+/* Wrapper so value and label sit on same line with consistent spacing */
+.co2HeaderText {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
 }
 
 .co2Value {
@@ -237,14 +352,24 @@
 }
 
 .co2Label {
-  font-size: var(--text-sm);
-  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: var(--font-medium);
+  color: var(--color-text-tertiary);
 }
 
 .co2Disclaimer {
   font-size: var(--text-xs);
   color: var(--color-text-tertiary);
   line-height: var(--leading-relaxed);
+  display: grid;
+  grid-template-columns: 24px 1fr;
+  gap: 0 var(--space-3);
+  align-items: flex-start;
+}
+
+.co2DisclaimerIcon {
+  flex-shrink: 0;
+  margin-top: 0.125rem;
 }
 
 .footer {
@@ -253,13 +378,18 @@
   justify-content: space-between;
   gap: var(--space-4);
   padding-top: var(--space-4);
+  padding-left: var(--space-6);
+  padding-right: var(--space-6);
+  margin-left: calc(-1 * var(--space-6));
+  margin-right: calc(-1 * var(--space-6));
   border-top: 1px solid var(--color-border);
 }
 
 .footerPrice {
   display: flex;
-  flex-direction: column;
-  gap: 2px;
+  flex-direction: row;
+  align-items: baseline;
+  gap: 3px;
 }
 
 .footerPriceValue {
@@ -270,12 +400,45 @@
 }
 
 .footerPriceLabel {
-  font-size: var(--text-xs);
-  color: var(--color-text-secondary);
+  font-size: 10px;
+  font-weight: var(--font-medium);
+  color: var(--color-text-tertiary);
 }
 
 .footerActions {
   display: flex;
   gap: var(--space-2);
-  align-items: center;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+}
+
+.footerBtn {
+  flex: 1;
+  min-width: 0;
+}
+
+/* Ocultar icono de los botones del footer solo en móvil */
+@media (max-width: 639px) {
+  .footerBtn:has(.footerBtnIcon) > *:first-child {
+    display: none;
+  }
+}
+
+.btnLabelFull {
+  display: none;
+}
+
+.btnLabelShort {
+  display: inline;
+}
+
+@media (min-width: 640px) {
+  .btnLabelFull {
+    display: inline;
+  }
+
+  .btnLabelShort {
+    display: none;
+  }
 }

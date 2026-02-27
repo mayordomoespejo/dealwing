@@ -62,17 +62,18 @@
 }
 
 .legendDotOrigin {
-  width: 10px;
-  height: 10px;
+  width: 18px;
+  height: 18px;
   border-radius: 50%;
   background: var(--color-brand);
-  border: 2px solid white;
-  box-shadow: 0 0 0 2px var(--color-brand-300);
+  border: 3px solid white;
+  flex-shrink: 0;
 }
 
 .legendDotDest {
-  width: 16px;
-  height: 8px;
+  width: 18px;
+  height: 10px;
   border-radius: 4px;
   background: var(--color-gray-800);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
 }

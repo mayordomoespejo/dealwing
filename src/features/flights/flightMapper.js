@@ -4,13 +4,67 @@ import { computeDealScore } from './dealScore.js'
 import { estimateCO2 } from './co2.js'
 
 /**
+ * Builds a normalized airport object from static data or Duffel fallback fields.
+ *
+ * @param {string} iataCode - airport IATA code
+ * @param {object | undefined} airportData - Duffel location payload
+ * @returns {object}
+ */
+function resolveAirport(iataCode, airportData) {
+  const airport = getAirport(iataCode)
+  if (airport) return airport
+
+  return {
+    iata: iataCode,
+    name: airportData?.name ?? iataCode,
+    city: airportData?.city_name ?? iataCode,
+    country: airportData?.iata_country_code ?? '',
+    lat: airportData?.latitude,
+    lng: airportData?.longitude,
+  }
+}
+
+/**
+ * Collects distinct marketing carriers from the itinerary segments.
+ *
+ * @param {object[]} segments - normalized flight segments
+ * @returns {{ airlines: string[], airlineNames: string[], airlineLogoUrls: Array<string | null> }}
+ */
+function collectAirlines(segments) {
+  const seenCodes = new Set()
+  const airlines = []
+  const airlineNames = []
+  const airlineLogoUrls = []
+
+  for (const segment of segments) {
+    if (seenCodes.has(segment.carrierCode)) continue
+    seenCodes.add(segment.carrierCode)
+    airlines.push(segment.carrierCode)
+    airlineNames.push(segment.carrierName)
+    airlineLogoUrls.push(segment.carrierLogoUrl)
+  }
+
+  return { airlines, airlineNames, airlineLogoUrls }
+}
+
+/**
  * Map a Duffel flight offer to our UI domain model.
  *
- * Domain FlightOffer:
- *   id, origin, destination, price, currency,
- *   outbound { duration, segments[] }, inbound? { duration, segments[] },
- *   totalDurationMin, stops, airlines, airlineNames, airlineLogoUrls,
- *   dealScore, co2Kg, isRoundTrip
+ * @param {object} rawOffer - raw Duffel offer object from `/air/offer_requests`
+ * @returns {{
+ *   id: string,
+ *   origin: object, destination: object,
+ *   price: number, priceBase: number, currency: string,
+ *   outbound: { duration: string, durationMin: number, stops: number, segments: object[] },
+ *   inbound: { duration: string, durationMin: number, stops: number, segments: object[] } | null,
+ *   totalDurationMin: number,
+ *   stops: number,
+ *   airlines: string[], airlineNames: string[], airlineLogoUrls: string[],
+ *   isRoundTrip: boolean,
+ *   dealScore: number,
+ *   co2Kg: number,
+ *   _raw: object
+ * }}
  */
 export function mapFlightOffer(rawOffer) {
   const outboundSlice = rawOffer.slices[0]
@@ -32,18 +86,7 @@ export function mapFlightOffer(rawOffer) {
   const inStops = inboundSegments ? inboundSegments.length - 1 : 0
 
   const allSegments = [...outboundSegments, ...(inboundSegments ?? [])]
-  const seenCodes = new Set()
-  const airlines = []
-  const airlineNames = []
-  const airlineLogoUrls = []
-  for (const seg of allSegments) {
-    if (!seenCodes.has(seg.carrierCode)) {
-      seenCodes.add(seg.carrierCode)
-      airlines.push(seg.carrierCode)
-      airlineNames.push(seg.carrierName)
-      airlineLogoUrls.push(seg.carrierLogoUrl)
-    }
-  }
+  const { airlines, airlineNames, airlineLogoUrls } = collectAirlines(allSegments)
 
   const passengerCount = rawOffer.passengers?.length || 1
   const totalPrice = parseFloat(rawOffer.total_amount)
@@ -56,22 +99,8 @@ export function mapFlightOffer(rawOffer) {
 
   return {
     id: rawOffer.id,
-    origin: getAirport(originIata) ?? {
-      iata: originIata,
-      name: duffelOrigin?.name ?? originIata,
-      city: duffelOrigin?.city_name ?? originIata,
-      country: duffelOrigin?.iata_country_code ?? '',
-      lat: duffelOrigin?.latitude,
-      lng: duffelOrigin?.longitude,
-    },
-    destination: getAirport(destIata) ?? {
-      iata: destIata,
-      name: duffelDest?.name ?? destIata,
-      city: duffelDest?.city_name ?? destIata,
-      country: duffelDest?.iata_country_code ?? '',
-      lat: duffelDest?.latitude,
-      lng: duffelDest?.longitude,
-    },
+    origin: resolveAirport(originIata, duffelOrigin),
+    destination: resolveAirport(destIata, duffelDest),
     price: pricePerPax,
     priceBase: parseFloat(rawOffer.base_amount ?? rawOffer.total_amount) / passengerCount,
     currency,
@@ -102,9 +131,22 @@ export function mapFlightOffer(rawOffer) {
 }
 
 /**
- * Map a Duffel segment to our domain segment model.
- * Duffel uses snake_case and different field names.
- * marketing_carrier can include logo_symbol_url (Duffel airline asset).
+ * Map a single Duffel segment to our domain segment model.
+ * Duffel uses snake_case field names; this normalises them to camelCase.
+ * `marketing_carrier` may include a `logo_symbol_url` (Duffel hosted asset).
+ *
+ * @param {object} seg - raw Duffel segment object
+ * @returns {{
+ *   id: string,
+ *   departure: { iataCode: string, terminal: string|null, at: string },
+ *   arrival:   { iataCode: string, terminal: string|null, at: string },
+ *   carrierCode: string, carrierName: string, carrierLogoUrl: string|null,
+ *   operatingCarrier: string,
+ *   flightNumber: string,
+ *   aircraftCode: string,
+ *   duration: string,
+ *   stops: number
+ * }}
  */
 function mapSegment(seg) {
   const carrier = seg.marketing_carrier
