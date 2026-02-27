@@ -1,0 +1,331 @@
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+  position: relative;
+}
+
+.label {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+}
+
+.trigger {
+  height: 44px;
+  padding: 0 var(--space-3);
+  font-size: var(--text-sm);
+  font-family: var(--font-sans);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  color: var(--color-text-primary);
+  outline: none;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  cursor: pointer;
+  transition: border-color var(--duration-fast) var(--ease);
+  text-align: left;
+}
+
+.trigger:hover {
+  border-color: var(--color-border-strong);
+}
+
+.trigger:focus-visible {
+  border-color: var(--color-brand);
+}
+
+.triggerOpen {
+  border-color: var(--color-brand);
+}
+
+.triggerError {
+  border-color: var(--color-error);
+}
+
+.value {
+  color: var(--color-text-primary);
+}
+
+.placeholder {
+  color: var(--color-text-tertiary);
+}
+
+.calendarIcon {
+  flex-shrink: 0;
+  color: var(--color-text-tertiary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.popover {
+  position: absolute;
+  top: calc(100% + var(--space-2));
+  left: 0;
+  z-index: var(--z-modal);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-lg);
+  padding: var(--space-3);
+  overflow: hidden;
+  display: flex;
+  justify-content: center;
+}
+
+/* Inner wrapper: natural calendar width; parent sets width and scales this so it fits and stays centered */
+.popoverInner {
+  width: 280px;
+  flex-shrink: 0;
+}
+
+.footer {
+  margin-top: var(--space-3);
+  padding: var(--space-3) var(--space-4) 0;
+  border-top: 1px solid var(--color-border);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.todayBtn {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: var(--font-sans);
+  color: var(--color-brand);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease);
+}
+
+.todayBtn:hover {
+  color: var(--color-brand-hover);
+}
+
+.clearBtn {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  font-family: var(--font-sans);
+  color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  transition: color var(--duration-fast) var(--ease);
+}
+
+.clearBtn:hover {
+  color: var(--color-error);
+}
+
+/* ── DayPicker tokens ─────────────────────────────────────────────────── */
+.popover :global(.rdp-root) {
+  --rdp-accent-color: var(--color-brand-600);
+  --rdp-accent-background-color: var(--color-brand-50);
+  --rdp-range_middle-background-color: var(--color-brand-50);
+  --rdp-range_middle-color: var(--color-brand-700);
+  --rdp-day_button-border-radius: var(--radius-md);
+  --rdp-day_button-border: 2px solid transparent;
+  --rdp-day_button-height: 40px;
+  --rdp-day_button-width: 40px;
+  --rdp-day-height: 44px;
+  --rdp-day-width: 44px;
+  --rdp-today-color: var(--color-brand-600);
+  --rdp-selected-border: 2px solid transparent;
+  --rdp-outside-opacity: 0.35;
+  --rdp-disabled-opacity: 0.3;
+  --rdp-animation_duration: var(--duration-normal);
+  --rdp-animation_timing: var(--ease);
+  --rdp-nav_button-height: 36px;
+  --rdp-nav_button-width: 36px;
+  --rdp-nav-height: 44px;
+  --rdp-weekday-opacity: 1;
+
+  font-family: var(--font-sans);
+  font-size: var(--text-sm);
+  color: var(--color-text-primary);
+}
+
+/* ── Layout ───────────────────────────────────────────────────────────── */
+.popover :global(.rdp-month_caption) {
+  font-weight: var(--font-semibold);
+  color: var(--color-text-primary);
+  font-size: inherit;
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  width: 100%;
+  min-width: 0;
+}
+
+.popover :global(.rdp-dropdowns) {
+  display: flex;
+  flex: 1;
+  gap: var(--space-2);
+  min-width: 0;
+}
+
+.popover :global(.rdp-dropdown_root) {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.popover :global(.rdp-caption_label) {
+  padding-left: var(--space-3);
+}
+
+.popover :global(.rdp-weekday) {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-medium);
+}
+
+/* ── Day button base ──────────────────────────────────────────────────── */
+.popover :global(.rdp-day_button) {
+  color: var(--color-text-primary);
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+
+/* ── Hover (unselected days) ──────────────────────────────────────────── */
+.popover :global(.rdp-day_button:hover:not([disabled]):not(.rdp-selected)) {
+  background: var(--color-brand-100);
+  color: var(--color-brand-700);
+}
+
+/* ── Today (not selected) ─────────────────────────────────────────────── */
+.popover :global(.rdp-today .rdp-day_button:not(.rdp-selected)) {
+  color: var(--color-brand-600);
+  font-weight: var(--font-semibold);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* ── Selected start / end ─────────────────────────────────────────────── */
+.popover :global(.rdp-selected) {
+  font-size: inherit;
+}
+
+.popover :global(.rdp-selected .rdp-day_button),
+.popover :global(.rdp-day_button.rdp-selected) {
+  background: var(--color-brand-600) !important;
+  color: #fff !important;
+  border: 2px solid transparent !important;
+  border-radius: var(--rdp-day_button-border-radius) !important;
+  box-sizing: border-box;
+}
+
+.popover :global(.rdp-selected .rdp-day_button:hover),
+.popover :global(.rdp-day_button.rdp-selected:hover) {
+  background: var(--color-brand-700) !important;
+  color: #fff !important;
+}
+
+/* ── Range middle ─────────────────────────────────────────────────────── */
+.popover :global(.rdp-range_middle) {
+  background-color: var(--color-brand-50);
+  min-height: var(--rdp-day-height);
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+.popover :global(.rdp-range_middle .rdp-day_button) {
+  background: var(--color-brand-50) !important;
+  color: var(--color-brand-700) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}
+
+.popover :global(.rdp-range_middle .rdp-day_button:hover) {
+  background: var(--color-brand-100) !important;
+  color: var(--color-brand-800) !important;
+}
+
+/* ── Nav buttons ──────────────────────────────────────────────────────── */
+.popover :global(.rdp-nav_button) {
+  color: var(--color-text-secondary);
+  border-radius: var(--radius-md);
+  transition:
+    background-color var(--duration-fast) var(--ease),
+    color var(--duration-fast) var(--ease);
+}
+
+.popover :global(.rdp-nav_button:hover:not([disabled])) {
+  background: var(--color-brand-50);
+  color: var(--color-brand-600);
+}
+
+/* ── Dark mode ────────────────────────────────────────────────────────── */
+:global([data-theme='dark']) .popover :global(.rdp-root) {
+  --rdp-accent-color: var(--color-brand-400);
+  --rdp-accent-background-color: color-mix(
+    in srgb,
+    var(--color-brand-500) 18%,
+    var(--color-surface)
+  );
+  --rdp-range_middle-background-color: color-mix(
+    in srgb,
+    var(--color-brand-500) 18%,
+    var(--color-surface)
+  );
+  --rdp-range_middle-color: var(--color-brand-300);
+  --rdp-today-color: var(--color-brand-400);
+}
+
+:global([data-theme='dark'])
+  .popover
+  :global(.rdp-day_button:hover:not([disabled]):not(.rdp-selected)) {
+  background: color-mix(in srgb, var(--color-brand-500) 14%, var(--color-surface));
+  color: var(--color-brand-300);
+}
+
+:global([data-theme='dark']) .popover :global(.rdp-today .rdp-day_button:not(.rdp-selected)) {
+  color: var(--color-brand-400);
+}
+
+:global([data-theme='dark']) .popover :global(.rdp-selected .rdp-day_button),
+:global([data-theme='dark']) .popover :global(.rdp-day_button.rdp-selected) {
+  background: var(--color-brand-500) !important;
+  color: #fff !important;
+}
+
+:global([data-theme='dark']) .popover :global(.rdp-selected .rdp-day_button:hover),
+:global([data-theme='dark']) .popover :global(.rdp-day_button.rdp-selected:hover) {
+  background: var(--color-brand-600) !important;
+  color: #fff !important;
+}
+
+:global([data-theme='dark']) .popover :global(.rdp-range_middle) {
+  background-color: color-mix(in srgb, var(--color-brand-500) 18%, var(--color-surface));
+  font-size: inherit;
+  font-weight: inherit;
+}
+
+:global([data-theme='dark']) .popover :global(.rdp-range_middle .rdp-day_button) {
+  background: color-mix(in srgb, var(--color-brand-500) 18%, var(--color-surface)) !important;
+  color: var(--color-brand-300) !important;
+  border: none !important;
+  border-radius: 0 !important;
+  font-size: inherit !important;
+  font-weight: inherit !important;
+}
+
+:global([data-theme='dark']) .popover :global(.rdp-range_middle .rdp-day_button:hover) {
+  background: color-mix(in srgb, var(--color-brand-500) 28%, var(--color-surface)) !important;
+  color: var(--color-brand-200) !important;
+}
+
+:global([data-theme='dark']) .popover :global(.rdp-nav_button:hover:not([disabled])) {
+  background: color-mix(in srgb, var(--color-brand-500) 14%, var(--color-surface));
+  color: var(--color-brand-400);
+}

@@ -1,0 +1,223 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  background: var(--color-surface);
+  border: 1.5px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  padding: var(--space-4);
+  cursor: pointer;
+  transition:
+    border-color var(--duration-fast) var(--ease),
+    box-shadow var(--duration-fast) var(--ease),
+    transform var(--duration-fast) var(--ease);
+  position: relative;
+  outline: none;
+}
+
+.card:hover {
+  border-color: var(--color-brand-300);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.card:focus-visible {
+  border-color: var(--color-brand);
+  box-shadow: 0 0 0 3px var(--color-brand-100);
+}
+
+.selected {
+  border-color: var(--color-brand);
+}
+
+.topRow {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.airline {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.airlineLogoSvg {
+  display: block;
+  flex-shrink: 0;
+}
+
+.airlineLogoImg {
+  width: 18px;
+  height: 18px;
+  object-fit: contain;
+  flex-shrink: 0;
+}
+
+.airlineName {
+  font-size: var(--text-sm);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+}
+
+.topActions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.saveBtn {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  color: var(--color-text-tertiary);
+  transition:
+    color var(--duration-fast) var(--ease),
+    background-color var(--duration-fast) var(--ease);
+}
+
+.saveBtn:hover {
+  color: var(--color-error);
+  background: var(--color-error-light);
+}
+
+.saved {
+  color: var(--color-error);
+}
+
+.routes {
+  border-top: 1px solid var(--color-border);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  flex-direction: column;
+}
+
+.route {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) 0;
+}
+
+.routeSeparator {
+  height: 1px;
+  background: var(--color-border);
+}
+
+.timeBlock {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  flex-shrink: 0;
+}
+
+.timeBlockRight {
+  align-items: flex-end;
+}
+
+.time {
+  font-size: var(--text-xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.02em;
+  line-height: 1;
+}
+
+.iata {
+  font-size: var(--text-xs);
+  font-weight: var(--font-semibold);
+  color: var(--color-text-secondary);
+  font-family: var(--font-mono);
+  letter-spacing: 0.05em;
+  margin-top: 3px;
+}
+
+.routeMiddle {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.duration {
+  font-size: var(--text-xs);
+  font-weight: var(--font-medium);
+  color: var(--color-text-secondary);
+}
+
+.routeLine {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 0;
+  position: relative;
+}
+
+.routeDot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  flex-shrink: 0;
+}
+
+.routeDotEnd {
+  background: var(--color-gray-400);
+}
+
+.routeTrack {
+  flex: 1;
+  height: 1.5px;
+  background: linear-gradient(to right, var(--color-brand), var(--color-gray-300));
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.routeIcon {
+  color: var(--color-text-tertiary);
+  flex-shrink: 0;
+}
+
+.bottomRow {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+}
+
+.badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+}
+
+.sproutIcon {
+  color: var(--color-success);
+}
+
+.priceBlock {
+  display: flex;
+  align-items: baseline;
+  gap: 3px;
+  flex-shrink: 0;
+}
+
+.price {
+  font-size: var(--text-2xl);
+  font-weight: var(--font-bold);
+  color: var(--color-text-primary);
+  letter-spacing: -0.03em;
+  line-height: 1;
+}
+
+.priceLabel {
+  font-size: 10px;
+  font-weight: var(--font-medium);
+  color: var(--color-text-tertiary);
+}

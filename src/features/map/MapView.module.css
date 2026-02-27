@@ -1,0 +1,79 @@
+.wrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background: var(--color-bg-tertiary);
+  overflow: hidden;
+}
+
+.map {
+  width: 100%;
+  height: 100%;
+}
+
+.attribution {
+  position: absolute;
+  bottom: var(--space-2);
+  left: var(--space-3);
+  font-size: 11px;
+  color: var(--color-text-tertiary);
+  background: var(--color-surface);
+  padding: 2px 8px;
+  border-radius: var(--radius-full);
+  border: 1px solid var(--color-border);
+  z-index: 5;
+  pointer-events: auto;
+}
+
+.attribution a {
+  color: var(--color-brand);
+}
+
+.legend {
+  position: absolute;
+  top: var(--space-3);
+  left: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  padding: var(--space-2) var(--space-3);
+  box-shadow: var(--shadow-md);
+  z-index: 5;
+  pointer-events: none;
+}
+
+.legendItem {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.legendIcon {
+  width: 16px;
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.legendDotOrigin {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: var(--color-brand);
+  border: 3px solid white;
+  flex-shrink: 0;
+}
+
+.legendDotDest {
+  width: 18px;
+  height: 10px;
+  border-radius: 4px;
+  background: var(--color-gray-800);
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
